@@ -1,0 +1,53 @@
+[
+  {
+    "Name": "UG-PIM-EntraId-ExchangeAdmin",
+    "GroupMembershipType": "Direct",
+    "owners": [
+      "alex.wilson@contoso.com"
+    ],
+    "description": "PIM UserGroup for entraId ExchangeAdmin  role",
+    "members": [
+      "alex.wilson@contoso.com",
+      "emma.jones@contoso.com"
+    ],
+    "IsAssignableToRole": true
+  },
+  {
+    "Name": "UG-PIM-EntraId-GlobalReader",
+    "GroupMembershipType": "Direct",
+    "owners": [
+      "alex.wilson@contoso.com"
+    ],
+    "description": "PIM UserGroup for entraId GlobalReader role",
+    "members": [
+      "alex.wilson@contoso.com",
+      "emma.jones@contoso.com"
+    ],
+    "IsAssignableToRole": true
+  },
+  {
+    "Name": "UG-PIM-EntraId-HighSecurity-Approvers",
+    "GroupMembershipType": "Direct",
+    "owners": [
+      "alex.wilson@contoso.com"
+    ],
+    "description": "PIM UserGroup for entraId ExchangeAdmin Role approvers",
+    "members": [
+      "alex.wilson@contoso.com",
+      "emma.jones@contoso.com"
+    ],
+    "IsAssignableToRole": false
+  },
+  {
+    "Name": "UG-PIM-EntraId-PrinterTechnician",
+    "GroupMembershipType": "Direct",
+    "owners": [
+      "alex.wilson@contoso.com"
+    ],
+    "description": "PIM UserGroup for EntraId PrinterTechnician role",
+    "members": [
+      "remco.vermeer@azurestacknerd.com"
+    ],
+    "IsAssignableToRole": true
+  }
+]

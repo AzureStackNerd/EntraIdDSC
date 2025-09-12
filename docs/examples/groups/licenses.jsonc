@@ -1,0 +1,85 @@
+[
+    {
+        "Name": "UG-LIC-DynamicsBusinessCentralPremium",
+        "GroupMembershipType": "Direct",
+        "owners": [
+            "alex.wilson@contoso.com"
+        ],
+        "description": "License User Group for Microsoft Dynamics Business Central Premium",
+        "members": [
+            "alex.wilson@contoso.com",
+            "emma.jones@contoso.com",
+            "liam.smith@contoso.com",
+            "olivia.brown@contoso.com"
+        ],
+        "IsAssignableToRole": false
+    },
+    {
+        "Name": "UG-LIC-DynamicsSalesEnt",
+        "GroupMembershipType": "Direct",
+        "owners": [
+            "alex.wilson@contoso.com"
+        ],
+        "description": "License User Group for Microsoft Dynamics Sales Enterprise",
+        "members": [
+            "alex.wilson@contoso.com",
+            "emma.jones@contoso.com",
+            "liam.smith@contoso.com",
+            "olivia.brown@contoso.com"
+        ],
+        "IsAssignableToRole": false
+    },
+    {
+        "Name": "UG-LIC-EntraId-P2",
+        "GroupMembershipType": "Direct",
+        "owners": [
+            "alex.wilson@contoso.com"
+        ],
+        "description": "License User Group for Microsoft Entra ID P2",
+        "members": [
+            "alex.wilson@contoso.com",
+            "emma.jones@contoso.com"
+        ],
+        "IsAssignableToRole": false
+    },
+    {
+        "Name": "UG-LIC-M365COPILOT",
+        "GroupMembershipType": "Direct",
+        "owners": [
+            "alex.wilson@contoso.com"
+        ],
+        "description": "License User Group for Microsoft 365 Copilot",
+        "members": [
+            "emma.jones@contoso.com",
+            "alex.wilson@contoso.com"
+        ],
+        "IsAssignableToRole": false
+    },
+    {
+        "Name": "UG-LIC-OfficePremium",
+        "GroupMembershipType": "Direct",
+        "owners": [
+            "alex.wilson@contoso.com"
+        ],
+        "description": "License User Group for Microsoft Office Business Premium",
+        "members": [
+            "alex.wilson@contoso.com",
+            "emma.jones@contoso.com",
+            "liam.smith@contoso.com",
+            "olivia.brown@contoso.com"
+        ],
+        "IsAssignableToRole": false
+    },
+    {
+        "Name": "UG-LIC-PowerAppsPremium",
+        "GroupMembershipType": "Direct",
+        "owners": [
+            "alex.wilson@contoso.com"
+        ],
+        "description": "License User Group for Microsoft PowerApps Premium",
+        "members": [
+            "alex.wilson@contoso.com"
+        ],
+        "IsAssignableToRole": false
+    }
+]
