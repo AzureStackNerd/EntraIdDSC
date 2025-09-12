@@ -1,0 +1,157 @@
+<#
+.SYNOPSIS
+    Ensures an Entra ID (Azure AD) group exists with the specified name, description, and members (UPNs).
+
+.DESCRIPTION
+    This function checks if a group with the given name exists. If not, it creates the group with the specified name and description. It then ensures the group description is correct and synchronizes the group membership to match the provided list of UPNs (adding missing members and removing extra ones). Owners can also be specified and synchronized.
+
+.PARAMETER GroupName
+    The display name of the Entra ID group to ensure exists and is configured.
+
+.PARAMETER Description
+    The description to set on the group.
+
+.PARAMETER Members
+    An array of user principal names (UPNs) to be members of the group.
+
+.PARAMETER Owners
+    An array of user principal names (UPNs) to be owners of the group.
+
+.PARAMETER GroupMembershipType
+    Specifies the type of group membership. Valid values are "Direct" or "Dynamic". Defaults to "Direct".
+
+.PARAMETER IsAssignableToRole
+    Indicates whether the group can be assigned to a role. Defaults to $false.
+
+.EXAMPLE
+    Set-EntraIdGroup -DisplayName "Platform Admins" -Description "Admins for the platform" -Members @("alice@contoso.com", "bob@contoso.com") -Owners @("carol@contoso.com")
+    Ensures the group "Platform Admins" exists with the specified description, members, and owners.
+
+.EXAMPLE
+    Set-EntraIdGroup -DisplayName "Dynamic Group" -Description "Dynamic membership group" -GroupMembershipType "Dynamic" -Members @("(user.department -eq 'IT')")
+    Creates or updates a dynamic group with the specified membership rule.
+
+.NOTES
+    Author: Remco Vermeer
+    Date: 10 September 2025
+#>
+function Set-EntraIdGroup {
+    [CmdletBinding(SupportsShouldProcess = $true)]
+    param(
+        [Parameter(Mandatory)]
+        [string]$DisplayName,
+        [Parameter(Mandatory = $false)]
+        [ValidateSet("Direct", "Dynamic")]
+        [string]$GroupMembershipType = "Direct",
+        [Parameter(Mandatory)]
+        [string]$Description,
+        [Parameter(Mandatory = $false)]
+        [array]$Members,
+        [Parameter(Mandatory)]
+        [array]$Owners,
+        [Parameter(Mandatory = $false)]
+        [bool]$IsAssignableToRole = $false
+    )
+
+    process {
+        if ($PSCmdlet.ShouldProcess("Group: $DisplayName", "Set group properties")) {
+            Test-GraphAuth
+
+            Write-Output "Processing Group: '$DisplayName'"
+            Write-Output "Description: '$Description'"
+
+            # Check if group exists
+            $group = Get-MgGroup -Filter "displayName eq '$DisplayName'" | Select-Object -First 1
+            if (-not $group) {
+                # Common group parameters
+                $newGroupParams = @{
+                    DisplayName        = $DisplayName
+                    Description        = $Description
+                    MailEnabled        = $false
+                    MailNickname       = $DisplayName.Replace(' ', '')
+                    SecurityEnabled    = $true
+                    IsAssignableToRole = $IsAssignableToRole
+                }
+                switch ($GroupMembershipType) {
+                    "Direct" {
+                        # No extra params needed
+                    }
+                    "Dynamic" {
+                        Write-Output "Creating dynamic group with rule: $Members[0]"
+                        $newGroupParams.GroupTypes = @("DynamicMembership")
+                        $newGroupParams.MembershipRule = $Members[0] # Assuming Members contains the rule as a string
+                        $newGroupParams.MembershipRuleProcessingState = "On"
+                    }
+                    default {
+                        throw "Unsupported GroupMembershipType: $GroupMembershipType"
+                    }
+                }
+                $group = New-MgGroup @newGroupParams
+                Write-Output "Created group '$DisplayName' ($GroupMembershipType membership)"
+            } else {
+                $updateRequired = $false
+                # Update description if needed
+                if ($group.Description -ne $Description) {
+                    $updateParams = @{
+                        GroupId     = $group.Id
+                        Description = $Description
+                    }
+                    Update-MgGroup @updateParams
+                    $updateRequired = $true
+                    Write-Output "Updated description for group '$DisplayName'"
+                }
+                if ($group.IsAssignableToRole -ne $IsAssignableToRole) {
+                    Write-Warning "IsAssignableToRole cannot be changed after group creation. Please delete and recreate the group if needed."
+                }
+            }
+
+            # Synchronize members only for Direct groups
+            if ($GroupMembershipType -eq "Direct") {
+                # Get current members (UPNs) using the module function
+                $currentMembers = Get-EntraIdGroupMember -GroupDisplayName $group.DisplayName
+
+                # Add missing members
+                if ($Members) {
+                    $toAdd = $Members | Where-Object { $_ -notin $currentMembers }
+                }
+                if ($toAdd.Count -gt 0) {
+                    $updateRequired = $true
+                    Add-EntraIdGroupMember -GroupDisplayName $group.DisplayName -Members $toAdd
+                }
+
+                # Remove extra members
+                if ($Members) {
+                    $toRemove = $currentMembers | Where-Object { $_ -notin $Members }
+                } else {
+                    $toRemove = $currentMembers
+                }
+                if ($toRemove.Count -gt 0) {
+                    $updateRequired = $true
+                    Remove-EntraIdGroupMember -GroupDisplayName $group.DisplayName -Members $toRemove
+                }
+            }
+
+            # Get current owners (UPNs)
+            $currentOwners = Get-EntraIdGroupOwner -GroupDisplayName $group.DisplayName
+
+            # Add missing owners
+            $toAddOwners = $Owners | Where-Object { $_ -notin $currentOwners }
+            if ($toAddOwners.Count -gt 0) {
+                $updateRequired = $true
+                Add-EntraIdGroupOwner -GroupDisplayName $group.DisplayName -Owners $toAddOwners
+            }
+
+            # Remove extra owners
+            $toRemoveOwners = $currentOwners | Where-Object { $_ -notin $Owners }
+            if ($toRemoveOwners.Count -gt 0) {
+                $updateRequired = $true
+                Remove-EntraIdGroupOwner -GroupDisplayName $group.DisplayName -Owners $toRemoveOwners
+            }
+
+            if (-not $updateRequired) {
+                Write-Output "Group '$DisplayName' is already in the desired state."
+            }
+            Write-Output ""
+        }
+    }
+}
