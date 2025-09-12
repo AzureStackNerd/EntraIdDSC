@@ -7,7 +7,9 @@ The `EntraIdDSC` module provides a Desired State Configuration (DSC) solution fo
 ## Features
 
 - **Automated Entra ID Group and User Management**: Define and manage Entra ID Groups and Users (selected fields) using DSC configurations.
-- **Configuration as Code**: Manage Entra ID settings declaratively with PowerShell DSC.
+- **Configuration as Code**: Manage Entra ID settings declaratively.
+- **Non-destructive sync**: Users and Groups removed from the configuration are NOT removed from EntraId; only additions and updates are applied.
+- **Protected users exclusion**: Users listed in the `protectedUsers.jsonc` file are excluded from desired state operations, providing an extra safeguard if an important account is accidentally included in a desired state configuration file.
 - **Extensibility**: Easily extend the module to support additional Entra ID resources in the future.
 
 ## Folder Structure
