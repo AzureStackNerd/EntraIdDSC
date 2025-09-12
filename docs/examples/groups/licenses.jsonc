@@ -10,7 +10,9 @@
             "alex.wilson@contoso.com",
             "emma.jones@contoso.com",
             "liam.smith@contoso.com",
-            "olivia.brown@contoso.com"
+            "olivia.brown@contoso.com",
+            "mohammed.khan@contoso.com",
+            "isabella.garcia@contoso.com"
         ],
         "IsAssignableToRole": false
     },
@@ -25,7 +27,9 @@
             "alex.wilson@contoso.com",
             "emma.jones@contoso.com",
             "liam.smith@contoso.com",
-            "olivia.brown@contoso.com"
+            "olivia.brown@contoso.com",
+            "lucas.martinez@contoso.com",
+            "sophia.lee@contoso.com"
         ],
         "IsAssignableToRole": false
     },
@@ -38,7 +42,9 @@
         "description": "License User Group for Microsoft Entra ID P2",
         "members": [
             "alex.wilson@contoso.com",
-            "emma.jones@contoso.com"
+            "emma.jones@contoso.com",
+            "liam.smith@contoso.com",
+            "isabella.garcia@contoso.com"
         ],
         "IsAssignableToRole": false
     },
@@ -51,7 +57,9 @@
         "description": "License User Group for Microsoft 365 Copilot",
         "members": [
             "emma.jones@contoso.com",
-            "alex.wilson@contoso.com"
+            "alex.wilson@contoso.com",
+            "mohammed.khan@contoso.com",
+            "sophia.lee@contoso.com"
         ],
         "IsAssignableToRole": false
     },
@@ -66,7 +74,9 @@
             "alex.wilson@contoso.com",
             "emma.jones@contoso.com",
             "liam.smith@contoso.com",
-            "olivia.brown@contoso.com"
+            "olivia.brown@contoso.com",
+            "lucas.martinez@contoso.com",
+            "isabella.garcia@contoso.com"
         ],
         "IsAssignableToRole": false
     },

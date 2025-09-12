@@ -8,7 +8,9 @@
     "description": "PIM UserGroup for entraId ExchangeAdmin  role",
     "members": [
       "alex.wilson@contoso.com",
-      "emma.jones@contoso.com"
+      "emma.jones@contoso.com",
+      "liam.smith@contoso.com",
+      "olivia.brown@contoso.com"
     ],
     "IsAssignableToRole": true
   },
@@ -21,7 +23,9 @@
     "description": "PIM UserGroup for entraId GlobalReader role",
     "members": [
       "alex.wilson@contoso.com",
-      "emma.jones@contoso.com"
+      "emma.jones@contoso.com",
+      "liam.smith@contoso.com",
+      "sophia.lee@contoso.com"
     ],
     "IsAssignableToRole": true
   },
@@ -34,7 +38,9 @@
     "description": "PIM UserGroup for entraId ExchangeAdmin Role approvers",
     "members": [
       "alex.wilson@contoso.com",
-      "emma.jones@contoso.com"
+      "emma.jones@contoso.com",
+      "mohammed.khan@contoso.com",
+      "lucas.martinez@contoso.com"
     ],
     "IsAssignableToRole": false
   },
@@ -46,7 +52,10 @@
     ],
     "description": "PIM UserGroup for EntraId PrinterTechnician role",
     "members": [
-      "remco.vermeer@azurestacknerd.com"
+      "alex.wilson@contoso.com",
+      "emma.jones@contoso.com",
+      "liam.smith@contoso.com",
+      "isabella.garcia@contoso.com"
     ],
     "IsAssignableToRole": true
   }
