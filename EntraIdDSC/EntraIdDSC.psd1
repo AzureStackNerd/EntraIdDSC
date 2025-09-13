@@ -3,7 +3,7 @@
     RootModule = 'EntraIdDSC.psm1'
 
     # Version number of this module.
-    ModuleVersion = '0.1.0'
+    ModuleVersion = '0.1.2'
 
     # ID used to uniquely identify this module
     GUID = 'c6cb6bdb-fb65-425b-9579-3d49128a4ebd'
@@ -20,8 +20,17 @@
     # Copyright statement for this module
     Copyright = '(c) 2025 Gridly B.V. All rights reserved.'
 
+    PrivateData = @{
+    PSData = @{
+        Tags = @('Entra', 'DSC', 'AzureAD', 'Identity')
+        LicenseUri = 'https://opensource.org/licenses/MIT'
+        ProjectUri = 'https://github.com/AzureStackNerd/EntraIdDSC/'
+        ReleaseNotes = 'Fix tags in module manifest'
+    }
+}
+
     # Description of the functionality provided by this module
-    Description = 'This module contains functions to maintain EntraId Groups in Desired State.'
+    Description = 'This module contains functions to maintain EntraId Groups and Users (limited fields) in Desired State.'
 
     # Functions to export from this module
     FunctionsToExport = @(
@@ -49,4 +58,5 @@
 
     # Aliases to export from this module
     AliasesToExport = @()
+
 }
