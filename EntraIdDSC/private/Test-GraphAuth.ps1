@@ -11,7 +11,11 @@ function Test-GraphAuth {
         $mgContext = Get-MgContext -ErrorAction Stop
         # Check if the Account property is present (indicating authentication)
         if (-not $mgContext) {
-            throw "No authenticated Microsoft Graph connection found."
+            try {
+                Connect-MgGraph -NoWelcome -ErrorAction Stop
+            } catch {
+                throw "Failed to connect to Microsoft Graph: $($_.Exception.Message)"
+            }
         }
     }
     catch {
