@@ -11,6 +11,7 @@
 .PARAMETER Id
     The object Id (GUID) of the Entra ID group to retrieve.
 
+
 .EXAMPLE
     Get-EntraIdGroup -DisplayName "My Security Group"
     Retrieves the group with the display name 'My Security Group'.
@@ -18,6 +19,10 @@
 .EXAMPLE
     Get-EntraIdGroup -Id "00000000-0000-0000-0000-000000000001"
     Retrieves the group with the specified Id.
+
+.EXAMPLE
+    Get-EntraIdGroup -DisplayNamePattern "UG-PIM-*"
+    Retrieves all groups whose display names match the pattern 'UG-PIM-*'.
 
 .NOTES
     This function requires Microsoft Graph PowerShell SDK to be installed and authenticated.
@@ -28,7 +33,9 @@ function Get-EntraIdGroup {
         [Parameter(Mandatory, ParameterSetName='ById', Position=0, ValueFromPipeline, ValueFromPipelineByPropertyName)]
         [string]$Id,
         [Parameter(Mandatory, ParameterSetName='ByDisplayName', Position=0, ValueFromPipeline, ValueFromPipelineByPropertyName)]
-        [string]$DisplayName
+        [string]$DisplayName,
+    [Parameter(Mandatory = $false, ParameterSetName='ByDisplayNamePattern')]
+    [string]$DisplayNamePattern
     )
 
     process {
@@ -37,7 +44,6 @@ function Get-EntraIdGroup {
 
             switch ($PSCmdlet.ParameterSetName) {
                 'ByDisplayName' {
-                    # Query Microsoft Graph for the group by display name
                     $group = Get-MgGroup -Filter "displayName eq '$DisplayName'"
                     if (-not $group) {
                         Write-Verbose "No group found with display name '$DisplayName'."
@@ -52,6 +58,16 @@ function Get-EntraIdGroup {
                         return $null
                     }
                     return $group
+                }
+                'ByDisplayNamePattern' {
+                    # Support wildcard filtering, e.g., UG-PIM-*
+                    $allGroups = Get-MgGroup -All
+                    $filteredGroups = $allGroups | Where-Object { $_.DisplayName -like $DisplayNamePattern }
+                    if (-not $filteredGroups) {
+                        Write-Verbose "No groups found matching pattern '$DisplayNamePattern'."
+                        return $null
+                    }
+                    return $filteredGroups
                 }
             }
         }
