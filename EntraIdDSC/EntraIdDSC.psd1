@@ -47,7 +47,8 @@
         'Add-EntraIdUser',
         'Set-EntraIdUser',
         'Invoke-EntraIdGroupDesiredState',
-        'Invoke-EntraIdUserDesiredState'
+        'Invoke-EntraIdUserDesiredState',
+        'Remove-EntraIdGroup'
     )
 
     # Cmdlets to export from this module
