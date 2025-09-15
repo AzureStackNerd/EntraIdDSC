@@ -2,12 +2,14 @@
 name: Release PowerShell Module
 
 on:
-  push:
+  pull_request:
     branches:
       - main
+    types: [closed]
 
 jobs:
   release:
+    if: ${{ github.event.pull_request.merged }}
     name: Release PowerShell Module
     runs-on: ubuntu-latest
     permissions:
