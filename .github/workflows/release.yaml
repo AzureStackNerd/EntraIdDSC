@@ -50,8 +50,8 @@ jobs:
       - name: Push Changes to repository
         id: push
         run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "AzureStackNerd"
+          git config --global user.email "remco.vermeer@outlook.com"
           git add .
           git commit -m "chore: bump module version to ${{ env.MODULE_VERSION }}" || echo "No changes to commit"
           # git remote set-url origin https://git:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
