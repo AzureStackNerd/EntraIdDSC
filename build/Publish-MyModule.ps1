@@ -91,7 +91,7 @@ process {
         Write-Host "Committing updated manifest to git repository..."
         git add $manifest.FullName
         git commit -m "chore: bump module version to $newVersion"
-        git push
+
 
         # Publish the module
         Write-Host "Publishing module from path: $Path"
@@ -106,7 +106,7 @@ process {
         # Tag the main branch with the new version number
         Write-Host "Tagging main branch with version $newVersion..."
         git tag "v$newVersion" main
-        git push origin "v$newVersion"
+        # git push origin "v$newVersion"
     }
     catch {
         Write-Error "An error occurred: $_"
