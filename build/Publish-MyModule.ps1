@@ -93,7 +93,7 @@ process {
             NuGetApiKey = $ApiKey
             Repository  = 'PSGallery'
         }
-        # Publish-Module @publishParams
+        Publish-Module @publishParams
         Write-Host "Module published successfully." -ForegroundColor Green
 
         # Tag the main branch with the new version number
