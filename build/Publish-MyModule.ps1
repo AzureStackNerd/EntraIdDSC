@@ -88,7 +88,7 @@ process {
         Write-Host "Committing updated manifest to git repository..."
         git add $manifest.FullName
         git commit -m "chore: bump module version to $newVersion"
-        echo "MODULE_VERSION=$newVersion" >> $GITHUB_ENV
+        echo "MODULE_VERSION=$newVersion" >> $GITHUB_OUTPUT
 
         # Publish the module
         Write-Host "Publishing module from path: $Path"
