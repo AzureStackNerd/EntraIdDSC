@@ -9,6 +9,10 @@ jobs:
   release:
     name: Release PowerShell Module
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
