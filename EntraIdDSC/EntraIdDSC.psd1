@@ -3,6 +3,7 @@
     RootModule = 'EntraIdDSC.psm1'
 
     # Version number of this module.
+
     ModuleVersion = '0.2.0'
 
     # ID used to uniquely identify this module
@@ -61,6 +62,7 @@
     AliasesToExport = @()
 
 }
+
 
 
 
