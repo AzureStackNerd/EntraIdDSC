@@ -13,9 +13,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Install PowerShell
-        uses: actions/setup-powershell@v2
-
       - name: Determine IncrementVersion from PR title
         id: bump
         run: |
@@ -36,5 +33,6 @@ jobs:
           echo "INCREMENT_VERSION=$INCREMENT_VERSION" >> $GITHUB_ENV
 
       - name: Publish PowerShell Module
+        shell: pwsh
         run: |
           pwsh ./build/Publish-MyModule.ps1 -Path "./EntraIdDSC/" -ApiKey "${{ secrets.PSGALLERY_API_KEY }}" -IncrementVersion $INCREMENT_VERSION
