@@ -8,6 +8,7 @@ on:
 
 jobs:
   release:
+    name: Release PowerShell Module
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -36,4 +37,4 @@ jobs:
       - name: Publish PowerShell Module
         shell: pwsh
         run: |
-          pwsh ./build/Publish-MyModule.ps1 -Path "./EntraIdDSC/" -ApiKey "${{ secrets.PSGALLERY_API_KEY }}" -IncrementVersion $INCREMENT_VERSION
+          pwsh ./build/Publish-MyModule.ps1 -Path "./EntraIdDSC/" -ApiKey "${{ secrets.PSGALLERY_API_KEY }}" -IncrementVersion "$INCREMENT_VERSION"
