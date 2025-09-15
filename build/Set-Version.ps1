@@ -45,9 +45,6 @@ process {
             throw "No module manifest (.psd1) file found in the specified path."
         }
 
-        # $manifestObject = Import-PowerShellDataFile -Path $manifest.FullName
-        # $version = $manifestObject.ModuleVersion
-
         $latestRelease = Invoke-RestMethod -Uri "https://api.github.com/repos/$Repo/releases/latest"
         $latestVersion = $latestRelease.tag_name
         $version = $latestVersion.TrimStart('v')
@@ -78,6 +75,8 @@ process {
             }
         }
         $newVersion = "$major.$minor.$patch"
+
+        $manifestObject = Import-PowerShellDataFile -Path $manifest.FullName
         $manifestObject.ModuleVersion = $newVersion
 
         # Write the updated manifest back to the file
