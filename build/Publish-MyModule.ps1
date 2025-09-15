@@ -82,13 +82,7 @@ process {
         Set-Content -Path $manifest.FullName -Value $manifestContent
         Write-Host "Updated module version to $newVersion"
 
-        # Set git user name and email for commit
-        Write-Host "Setting git user name and email..."
-        # Commit the updated manifest file to the repo
-        Write-Host "Committing updated manifest to git repository..."
-        git add $manifest.FullName
-        git commit -m "chore: bump module version to $newVersion"
-        echo "MODULE_VERSION=$newVersion" >> $GITHUB_OUTPUT
+        echo "MODULE_VERSION=$newVersion" >> "$GITHUB_OUTPUT"
 
         # Publish the module
         Write-Host "Publishing module from path: $Path"
