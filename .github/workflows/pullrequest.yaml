@@ -1,0 +1,62 @@
+
+name: Version the PowerShell Module
+
+on:
+  pull_request:
+    branches:
+      - main
+    types: [opened, synchronize, edited]
+
+jobs:
+  pullrequest:
+    name: Release PowerShell Module
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+
+      - name: Determine IncrementVersion from PR title
+        id: bump
+        run: |
+          # Default to Minor
+          INCREMENT_VERSION="Minor"
+          echo "gh pr title: ${{ github.event.pull_request.title }}"
+
+          # Get PR title if available
+          if [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then
+            PR_TITLE="$(jq -r .pull_request.title < $GITHUB_EVENT_PATH)"
+            echo "PR Title: $PR_TITLE"
+            if echo "$PR_TITLE" | grep -iq "MAJOR"; then
+              INCREMENT_VERSION="Major"
+            elif echo "$PR_TITLE" | grep -iq "MINOR"; then
+              INCREMENT_VERSION="Minor"
+            elif echo "$PR_TITLE" | grep -iq "PATCH"; then
+              INCREMENT_VERSION="Patch"
+            fi
+          fi
+          echo "INCREMENT_VERSION=$INCREMENT_VERSION"
+          echo "INCREMENT_VERSION=$INCREMENT_VERSION" >> $GITHUB_ENV
+
+      - name: Set Module Version
+        id: version
+        shell: pwsh
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          pwsh ./build/Set-Version.ps1 -Path "./EntraIdDSC/" -IncrementVersion "${{ env.INCREMENT_VERSION }}" -Repo 'AzureStackNerd/EntraIdDSC'
+
+      - name: Push Changes to repository
+        id: push
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add .
+          git commit -m "chore: bump module version to ${{ env.MODULE_VERSION }}" || echo "No changes to commit"
+          git remote set-url origin https://git:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+          git push origin ${{ github.event.pull_request.head.ref }}
+
