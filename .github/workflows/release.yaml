@@ -57,7 +57,7 @@ jobs:
           # git remote set-url origin https://git:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
 
           # use PAT instead of GITHUB_TOKEN to avoid issues with permissions
-          git remote set-url origin https://AzureStackNerd${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }}
+          git remote set-url origin https://AzureStackNerd:${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }}
           git push origin main --force
 
       - name: Create GitHub Release
