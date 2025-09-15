@@ -49,7 +49,7 @@ jobs:
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git remote set-url origin https://git:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
           # git remote set-url origin https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }}
-          echo "MODULE_VERSION=0.2.0" >> $GITHUB_ENV
+          echo "MODULE_VERSION=${{ env.MODULE_VERSION }}" >> "$GITHUB_OUTPUT"
           git push origin main --force
 
       - name: Create GitHub Release
