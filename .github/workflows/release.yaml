@@ -38,6 +38,7 @@ jobs:
           echo "INCREMENT_VERSION=$INCREMENT_VERSION" >> $GITHUB_ENV
 
       - name: Publish PowerShell Module
+        id: publish
         shell: pwsh
         run: |
           pwsh ./build/Publish-MyModule.ps1 -Path "./EntraIdDSC/" -ApiKey "${{ secrets.PSGALLERY_API_KEY }}" -IncrementVersion "${{ env.INCREMENT_VERSION }}"
@@ -49,13 +50,12 @@ jobs:
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git remote set-url origin https://git:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
           # git remote set-url origin https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }}
-          # echo "MODULE_VERSION=${{ env.MODULE_VERSION }}" >> "$GITHUB_OUTPUT"
           git push origin main --force
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: v${{ steps.push.outputs.MODULE_VERSION }}
-          name: Version ${{ steps.push.outputs.MODULE_VERSION }}
+          tag_name: v${{ steps.publish.outputs.MODULE_VERSION }}
+          name: Version ${{ steps.publish.outputs.MODULE_VERSION }}
           draft: false
           prerelease: false
