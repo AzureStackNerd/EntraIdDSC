@@ -38,25 +38,19 @@ The `EntraIdDSC` module provides a Desired State Configuration (DSC) solution fo
 
 ## Getting Started
 
-1. Clone this repository to your local machine:
+1. Install the module from the PowerShell Gallery:
 
-   ```powershell
-   git clone https://github.com/AzureStackNerd/EntraIdDSC.git
-   ```
+  ```powershell
+  Install-Module EntraIdDSC -Repository PSGallery
+  ```
 
-2. Navigate to the module directory:
+2. Import the module:
 
-   ```powershell
-   cd EntraIdDSC
-   ```
+  ```powershell
+  Import-Module EntraIdDSC
+  ```
 
-3. Import the module:
-
-    ```powershell
-    Import-Module ./EntraIdDSC.psd1
-    ```
-
-4. Add one or more user configuration file(s): e.g. (`users/it-dept.json`):
+3. Add one or more user configuration file(s): e.g. (`users/it-dept.json`):
 
    ```json
    [
@@ -177,7 +171,7 @@ The `EntraIdDSC` module provides a Desired State Configuration (DSC) solution fo
 - Add an owner to an Entra ID group:
 
   ```powershell
-    Add-EntraIdGroupOwner -GroupId "<GroupId>" -Owners @("alex.wilson@contoso.com")
+  Add-EntraIdGroupOwner -GroupId "<GroupId>" -Owners @("alex.wilson@contoso.com")
   ```
 
 - Retrieve the current state of an Entra ID group:
