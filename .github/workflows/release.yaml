@@ -49,6 +49,12 @@ jobs:
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git remote set-url origin https://git:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
           # git remote set-url origin https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }}
-          git tag "v${{ env.MODULE_VERSION }}" main
           git push origin "v${{ env.MODULE_VERSION }}" --force
 
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ env.MODULE_VERSION }}
+          name: Version ${{ env.MODULE_VERSION }}
+          draft: false
+          prerelease: false
