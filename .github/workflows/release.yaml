@@ -22,7 +22,8 @@ jobs:
         run: |
           # Default to Minor
           INCREMENT_VERSION="Minor"
-          echo "GH_eventpath: $GITHUB_EVENT_PATH"
+          echo "gh pr title: ${{ github.event.pull_request.title }}"
+
           # Get PR title if available
           if [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then
             PR_TITLE="$(jq -r .pull_request.title < $GITHUB_EVENT_PATH)"
