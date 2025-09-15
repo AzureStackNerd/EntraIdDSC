@@ -45,6 +45,8 @@ jobs:
       - name: Set Module Version
         id: version
         shell: pwsh
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           pwsh ./build/Set-Version.ps1 -Path "./EntraIdDSC/" -IncrementVersion "${{ env.INCREMENT_VERSION }}" -Repo 'AzureStackNerd/EntraIdDSC'
 
