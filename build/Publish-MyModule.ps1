@@ -84,14 +84,11 @@ process {
 
         # Set git user name and email for commit
         Write-Host "Setting git user name and email..."
-        git config user.name "Remco Vermeer"
-        git config user.email "remco.vermeer@outlook.com"
-
         # Commit the updated manifest file to the repo
         Write-Host "Committing updated manifest to git repository..."
         git add $manifest.FullName
         git commit -m "chore: bump module version to $newVersion"
-
+        echo "MODULE_VERSION=$newVersion" >> $GITHUB_ENV
 
         # Publish the module
         Write-Host "Publishing module from path: $Path"
@@ -104,9 +101,6 @@ process {
         Write-Host "Module published successfully." -ForegroundColor Green
 
         # Tag the main branch with the new version number
-        Write-Host "Tagging main branch with version $newVersion..."
-        git tag "v$newVersion" main
-        # git push origin "v$newVersion"
     }
     catch {
         Write-Error "An error occurred: $_"
