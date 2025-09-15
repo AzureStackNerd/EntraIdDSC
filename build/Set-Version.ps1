@@ -26,7 +26,10 @@ param (
 
     [Parameter(Mandatory = $false)]
     [ValidateSet('Major', 'Minor', 'Patch')]
-    [string]$IncrementVersion = 'Minor'
+    [string]$IncrementVersion = 'Minor',
+
+    [Parameter(Mandatory = $false)]
+    [string]$Repo = 'AzureStackNerd/EntraIdDSC'
 )
 
 process {
@@ -42,8 +45,14 @@ process {
             throw "No module manifest (.psd1) file found in the specified path."
         }
 
-        $manifestObject = Import-PowerShellDataFile -Path $manifest.FullName
-        $version = $manifestObject.ModuleVersion
+        # $manifestObject = Import-PowerShellDataFile -Path $manifest.FullName
+        # $version = $manifestObject.ModuleVersion
+
+        $latestRelease = Invoke-RestMethod -Uri "https://api.github.com/repos/$Repo/releases/latest"
+        $latestVersion = $latestRelease.tag_name
+        $version = $latestVersion.TrimStart('v')
+        Write-Host "Latest release version: $latestVersion"
+
 
         # Increment version based on IncrementVersion parameter (semver: major.minor.patch)
         $versionParts = $version -split '\.'
@@ -76,6 +85,7 @@ process {
         $manifestContent = $manifestContent -replace "ModuleVersion\s*=\s*'[^']+'", "ModuleVersion = '$newVersion'"
         Set-Content -Path $manifest.FullName -Value $manifestContent
         Write-Host "Version updated to $newVersion"
+        Add-Content -Path $env:GITHUB_ENV -Value "MODULE_VERSION=$newVersion"
     }
     catch {
         Write-Error "An error occurred: $_"
