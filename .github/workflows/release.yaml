@@ -30,6 +30,7 @@ jobs:
               INCREMENT_VERSION="Patch"
             fi
           fi
+          echo "INCREMENT_VERSION=$INCREMENT_VERSION"
           echo "INCREMENT_VERSION=$INCREMENT_VERSION" >> $GITHUB_ENV
 
       - name: Publish PowerShell Module
