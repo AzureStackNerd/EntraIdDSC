@@ -1,0 +1,40 @@
+
+name: Release PowerShell Module
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install PowerShell
+        uses: actions/setup-powershell@v2
+
+      - name: Determine IncrementVersion from PR title
+        id: bump
+        run: |
+          # Default to Minor
+          INCREMENT_VERSION="Minor"
+          # Get PR title if available
+          if [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then
+            PR_TITLE="$(jq -r .pull_request.title < $GITHUB_EVENT_PATH)"
+            echo "PR Title: $PR_TITLE"
+            if echo "$PR_TITLE" | grep -iq "MAJOR"; then
+              INCREMENT_VERSION="Major"
+            elif echo "$PR_TITLE" | grep -iq "MINOR"; then
+              INCREMENT_VERSION="Minor"
+            elif echo "$PR_TITLE" | grep -iq "PATCH"; then
+              INCREMENT_VERSION="Patch"
+            fi
+          fi
+          echo "INCREMENT_VERSION=$INCREMENT_VERSION" >> $GITHUB_ENV
+
+      - name: Publish PowerShell Module
+        run: |
+          pwsh ./build/Publish-MyModule.ps1 -Path "./EntraIdDSC/" -ApiKey "${{ secrets.PSGALLERY_API_KEY }}" -IncrementVersion $INCREMENT_VERSION
