@@ -55,6 +55,8 @@ jobs:
           git add .
           git commit -m "chore: bump module version to ${{ env.MODULE_VERSION }}" || echo "No changes to commit"
           # git remote set-url origin https://git:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+
+          # use PAT instead of GITHUB_TOKEN to avoid issues with permissions
           git remote set-url origin https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }}
           git push origin main --force
 
