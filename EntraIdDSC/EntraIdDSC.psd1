@@ -4,7 +4,7 @@
 
     # Version number of this module.
 
-    ModuleVersion = '0.2.9'
+    ModuleVersion = '0.2.10'
 
     # ID used to uniquely identify this module
     GUID = 'c6cb6bdb-fb65-425b-9579-3d49128a4ebd'
@@ -62,6 +62,7 @@
     AliasesToExport = @()
 
 }
+
 
 
 
