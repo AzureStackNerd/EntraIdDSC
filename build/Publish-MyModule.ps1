@@ -83,6 +83,8 @@ process {
         Write-Host "Updated module version to $newVersion"
 
         echo "MODULE_VERSION=$newVersion" >> $env:GITHUB_ENV
+        Add-Content -Path $env:GITHUB_ENV -Value "MODULE_VERSION=$newVersion"
+        # Write-Output "MODULE_VERSION=$newVersion" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 
         # Publish the module
         Write-Host "Publishing module from path: $Path"

@@ -3,7 +3,7 @@
     RootModule = 'EntraIdDSC.psm1'
 
     # Version number of this module.
-    ModuleVersion = '0.6.0'
+    ModuleVersion = '0.2.0'
 
     # ID used to uniquely identify this module
     GUID = 'c6cb6bdb-fb65-425b-9579-3d49128a4ebd'
