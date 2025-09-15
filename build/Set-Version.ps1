@@ -45,7 +45,11 @@ process {
             throw "No module manifest (.psd1) file found in the specified path."
         }
 
-        $latestRelease = Invoke-RestMethod -Uri "https://api.github.com/repos/$Repo/releases/latest"
+        $headers = @{
+            Authorization = "token $env:GITHUB_TOKEN"
+            Accept        = "application/vnd.github.v3+json"
+        }
+        $latestRelease = Invoke-RestMethod -Uri "https://api.github.com/repos/$Repo/releases/latest" -Headers $headers
         $latestVersion = $latestRelease.tag_name
         $version = $latestVersion.TrimStart('v')
         Write-Host "Latest release version: $latestVersion"
