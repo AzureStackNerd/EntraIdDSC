@@ -82,7 +82,7 @@ process {
         Set-Content -Path $manifest.FullName -Value $manifestContent
         Write-Host "Updated module version to $newVersion"
 
-        echo "MODULE_VERSION=$newVersion" >> "$GITHUB_OUTPUT"
+        $env:GITHUB_OUTPUT="MODULE_VERSION=$newVersion"
 
         # Publish the module
         Write-Host "Publishing module from path: $Path"
