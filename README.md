@@ -117,6 +117,10 @@ The `EntraIdDSC` module provides a Desired State Configuration (DSC) solution fo
    Invoke-EntraIdUserDesiredState -Path ./users/
    ```
 
+   Note: Users listed in the `protectedUsers.jsonc` file are excluded from desired state operations.
+   Note: Users removed from the configuration file are NOT removed from EntraId; only additions and updates are applied.
+   Note: Users who do not yet exist in EntraId will be created with a temporary (guid) password that must be changed.
+
 6. Add one or more group configuration file(s): e.g. (`groups/licenses.json`):
 
    ```json
