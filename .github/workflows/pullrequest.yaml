@@ -5,7 +5,10 @@ on:
   pull_request:
     branches:
       - main
+    paths:
+      - 'EntraIdDSC/**'
     types: [opened, synchronize, edited]
+
 
 jobs:
   pullrequest:
