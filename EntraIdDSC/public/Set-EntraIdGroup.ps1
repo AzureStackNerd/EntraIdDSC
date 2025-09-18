@@ -123,27 +123,27 @@ function Set-EntraIdGroup {
 
             # Add missing members
             if ($Members) {
-                [array]$toAdd = $Members | Where-Object { $_ -notin $currentMembers }
+                $toAdd = $Members | Where-Object { $_ -notin $currentMembers }
             }
 
 
             # Remove extra members
             if ($Members) {
-                [array]$toRemove = $currentMembers | Where-Object { $_ -notin $Members }
+                $toRemove = $currentMembers | Where-Object { $_ -notin $Members }
             }
             else {
-                [array]$toRemove = $currentMembers
+                $toRemove = $currentMembers
             }
 
             if ($toAdd.Count -gt 0) {
                 $updateRequired = $true
-                if ($PSCmdlet.ShouldProcess("Group '$DisplayName'", "Add Members $([array]$toAdd | ConvertTo-Json)")) {
+                if ($PSCmdlet.ShouldProcess("Group '$DisplayName'", "Add Members $($toAdd | ConvertTo-Json)")) {
                     Add-EntraIdGroupMember -GroupDisplayName $DisplayName -Members $toAdd
                 }
             }
             if ($toRemove.Count -gt 0) {
                 $updateRequired = $true
-                if ($PSCmdlet.ShouldProcess("Group '$DisplayName'", "Remove Members $([array]$toRemove | ConvertTo-Json)")) {
+                if ($PSCmdlet.ShouldProcess("Group '$DisplayName'", "Remove Members $($toRemove | ConvertTo-Json)")) {
                     Remove-EntraIdGroupMember -GroupDisplayName $DisplayName -Members $toRemove
                 }
             }
@@ -152,19 +152,19 @@ function Set-EntraIdGroup {
         }
 
         # Get current owners (UPNs)
-        [array]$currentOwners = [array](Get-EntraIdGroupOwner -GroupDisplayName $DisplayName)
-        [array]$toAddOwners = [array]($Owners | Where-Object { $_ -notin $currentOwners })
-        [array]$toRemoveOwners = [array]($currentOwners | Where-Object { $_ -notin $Owners })
+        $currentOwners = Get-EntraIdGroupOwner -GroupDisplayName $DisplayName
+        $toAddOwners = $Owners | Where-Object { $_ -notin $currentOwners }
+        $toRemoveOwners = $currentOwners | Where-Object { $_ -notin $Owners }
 
         if ($toAddOwners.Count -gt 0) {
             $updateRequired = $true
-            if ($PSCmdlet.ShouldProcess("Group '$DisplayName'", "Add Owners $([array]$toAddOwners | ConvertTo-Json)")) {
+            if ($PSCmdlet.ShouldProcess("Group '$DisplayName'", "Add Owners $($toAddOwners | ConvertTo-Json)")) {
                 Add-EntraIdGroupOwner -GroupDisplayName $DisplayName -Owners $toAddOwners
             }
         }
         if ($toRemoveOwners.Count -gt 0) {
             $updateRequired = $true
-            if ($PSCmdlet.ShouldProcess("Group '$DisplayName'", "Remove Owners $([array]$toRemoveOwners | ConvertTo-Json)")) {
+            if ($PSCmdlet.ShouldProcess("Group '$DisplayName'", "Remove Owners $($toRemoveOwners | ConvertTo-Json)")) {
                 Remove-EntraIdGroupOwner -GroupDisplayName $DisplayName -Owners $toRemoveOwners
             }
         }
