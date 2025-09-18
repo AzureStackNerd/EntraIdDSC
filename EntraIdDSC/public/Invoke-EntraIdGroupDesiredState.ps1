@@ -58,9 +58,7 @@ function Invoke-EntraIdGroupDesiredState {
                 continue
             }
 
-            if ($PSCmdlet.ShouldProcess("Group: $groupName", "Set desired state")) {
-                Set-EntraIdGroup @params
-            }
+            Set-EntraIdGroup @params
         }
     }
 }
