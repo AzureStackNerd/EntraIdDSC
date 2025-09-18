@@ -53,7 +53,7 @@ function Invoke-EntraIdUserDesiredState {
         # Remove single-line comments (// ...)
         $rawContent = $rawContent -replace '(?m)^\s*//.*$', ''
         # Remove block comments (/* ... */)
-        $rawContent = $rawContent -replace '/\*.*?\*/', ''
+        $rawContent = $rawContent -replace '(?s)/\*.*?\*/', ''
         $json = $rawContent | ConvertFrom-Json
 
         foreach ($user in $json) {
