@@ -29,7 +29,13 @@ function Invoke-EntraIdGroupDesiredState {
 
     foreach ($file in $files) {
         Write-Verbose "Processing file: $($file.FullName)"
-        $json = Get-Content -Path $file.FullName -Raw | ConvertFrom-Json
+        # Read the group object from the JSON/JSONC file, removing comment lines
+        $rawContent = Get-Content -Path $file.FullName -Raw
+        # Remove single-line comments (// ...)
+        $rawContent = $rawContent -replace '(?m)^\s*//.*$', ''
+        # Remove block comments (/* ... */)
+        $rawContent = $rawContent -replace '(?s)/\*.*?\*/', ''
+        $json = $rawContent | ConvertFrom-Json
         foreach ($group in $json) {
             $groupName = $group.Name
             $groupMembershipType = $group.GroupMembershipType
