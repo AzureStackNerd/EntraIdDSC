@@ -26,23 +26,35 @@ function Invoke-EntraIdUserDesiredState {
     Test-GraphAuth
     # Get all JSON configuration files in the specified path
     $files = Get-ChildItem -Path $Path -Include *.json, *.jsonc -File -Recurse | Sort-Object Name
-    $protectedUserFile = $files | Where-Object { $_.Name -eq 'ProtectedUsers.jsonc' -or $_.Name -eq 'ProtectedUsers.json'}
+    $protectedUserFile = $files | Where-Object { $_.Name -eq 'ProtectedUsers.jsonc' -or $_.Name -eq 'ProtectedUsers.json' }
     if ($protectedUserFile.Count -gt 1) {
         Write-Error "Multiple ProtectedUsers files found. Please ensure only one exists."
         return
     }
     if ($protectedUserFile) {
         Write-Verbose "Loading protected users from file: $($protectedUserFile.FullName)"
-        $protectedUsers = Get-Content -Path $protectedUserFile.FullName -Raw | ConvertFrom-Json
+        $protectedRaw = Get-Content -Path $protectedUserFile.FullName -Raw
+        # Remove single-line comments (// ...)
+        $protectedRaw = $protectedRaw -replace '(?m)^\s*//.*$', ''
+        # Remove block comments (/* ... */)
+        $protectedRaw = $protectedRaw -replace '/\*.*?\*/', ''
+        $protectedUsers = $protectedRaw | ConvertFrom-Json
         $files = $files | Where-Object { $_.FullName -ne $protectedUserFile.FullName }
-
-    } else {
+    }
+    else {
         Write-Verbose "No ProtectedUsers file found. Proceeding without protected users."
     }
 
     foreach ($file in $files) {
-        # Read the user object from the JSON file
-        $json = Get-Content -Path $file.FullName -Raw | ConvertFrom-Json
+        Write-Verbose "Processing file: $($file.FullName)"
+
+        # Read the user object from the JSON/JSONC file, removing comment lines
+        $rawContent = Get-Content -Path $file.FullName -Raw
+        # Remove single-line comments (// ...)
+        $rawContent = $rawContent -replace '(?m)^\s*//.*$', ''
+        # Remove block comments (/* ... */)
+        $rawContent = $rawContent -replace '/\*.*?\*/', ''
+        $json = $rawContent | ConvertFrom-Json
 
         foreach ($user in $json) {
             $skipUser = $false
@@ -88,7 +100,8 @@ function Invoke-EntraIdUserDesiredState {
                     AdditionalProperties = $additionalProperties
                 }
                 Add-EntraIdUser @addUserParams
-            } else {
+            }
+            else {
                 # Ensure the user is in the desired state
                 $setUserParams = @{
                     User = $user
