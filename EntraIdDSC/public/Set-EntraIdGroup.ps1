@@ -54,104 +54,125 @@ function Set-EntraIdGroup {
     )
 
     process {
-        if ($PSCmdlet.ShouldProcess("Group: $DisplayName", "Set group properties")) {
-            Test-GraphAuth
+        Test-GraphAuth
 
-            Write-Output "Processing Group: '$DisplayName'"
-            Write-Output "Description: '$Description'"
-
-            # Check if group exists
-            $group = Get-MgGroup -Filter "displayName eq '$DisplayName'" | Select-Object -First 1
-            if (-not $group) {
-                # Common group parameters
-                $newGroupParams = @{
-                    DisplayName        = $DisplayName
-                    Description        = $Description
-                    MailEnabled        = $false
-                    MailNickname       = $DisplayName.Replace(' ', '')
-                    SecurityEnabled    = $true
-                    IsAssignableToRole = $IsAssignableToRole
+        Write-Output "Processing Group: '$DisplayName'"
+        $newGroup = $false
+        $updateRequired = $false
+        # Check if group exists
+        $group = Get-MgGroup -Filter "displayName eq '$DisplayName'" | Select-Object -First 1
+        if (-not $group) {
+            # Common group parameters
+            $newGroupParams = @{
+                DisplayName        = $DisplayName
+                Description        = $Description
+                MailEnabled        = $false
+                MailNickname       = $DisplayName.Replace(' ', '')
+                SecurityEnabled    = $true
+                IsAssignableToRole = $IsAssignableToRole
+            }
+            switch ($GroupMembershipType) {
+                "Direct" {
+                    # No extra params needed
                 }
-                switch ($GroupMembershipType) {
-                    "Direct" {
-                        # No extra params needed
-                    }
-                    "Dynamic" {
-                        Write-Output "Creating dynamic group with rule: $Members[0]"
-                        $newGroupParams.GroupTypes = @("DynamicMembership")
-                        $newGroupParams.MembershipRule = $Members[0] # Assuming Members contains the rule as a string
-                        $newGroupParams.MembershipRuleProcessingState = "On"
-                    }
-                    default {
-                        throw "Unsupported GroupMembershipType: $GroupMembershipType"
-                    }
+                "Dynamic" {
+                    Write-Output "Creating dynamic group with rule: $Members[0]"
+                    $newGroupParams.GroupTypes = @("DynamicMembership")
+                    $newGroupParams.MembershipRule = $Members[0] # Assuming Members contains the rule as a string
+                    $newGroupParams.MembershipRuleProcessingState = "On"
                 }
+                default {
+                    throw "Unsupported GroupMembershipType: $GroupMembershipType"
+                }
+            }
+            $newGroup = $true
+            if ($PSCmdlet.ShouldProcess("Group '$DisplayName'", "Create group with parameters $($newGroupParams | ConvertTo-Json)")) {
                 $group = New-MgGroup @newGroupParams
+                Write-Verbose "Created group with ID: $($group.Id)"
                 Write-Output "Created group '$DisplayName' ($GroupMembershipType membership)"
-            } else {
-                $updateRequired = $false
-                # Update description if needed
-                if ($group.Description -ne $Description) {
-                    $updateParams = @{
-                        GroupId     = $group.Id
-                        Description = $Description
-                    }
+            }
+        }
+        else {
+            $updateRequired = $false
+            # Update description if needed
+            if ($group.Description -ne $Description) {
+                $updateParams = @{
+                    GroupId     = $group.Id
+                    Description = $Description
+                }
+                $updateRequired = $true
+                if ($PSCmdlet.ShouldProcess("Group '$DisplayName'", "Update group description to '$Description'")) {
                     Update-MgGroup @updateParams
-                    $updateRequired = $true
                     Write-Output "Updated description for group '$DisplayName'"
                 }
-                if ($group.IsAssignableToRole -ne $IsAssignableToRole) {
-                    Write-Warning "IsAssignableToRole cannot be changed after group creation. Please delete and recreate the group if needed."
-                }
             }
-
-            # Synchronize members only for Direct groups
-            if ($GroupMembershipType -eq "Direct") {
-                # Get current members (UPNs) using the module function
-                $currentMembers = Get-EntraIdGroupMember -GroupDisplayName $group.DisplayName
-
-                # Add missing members
-                if ($Members) {
-                    $toAdd = $Members | Where-Object { $_ -notin $currentMembers }
-                }
-                if ($toAdd.Count -gt 0) {
-                    $updateRequired = $true
-                    Add-EntraIdGroupMember -GroupDisplayName $group.DisplayName -Members $toAdd
-                }
-
-                # Remove extra members
-                if ($Members) {
-                    $toRemove = $currentMembers | Where-Object { $_ -notin $Members }
-                } else {
-                    $toRemove = $currentMembers
-                }
-                if ($toRemove.Count -gt 0) {
-                    $updateRequired = $true
-                    Remove-EntraIdGroupMember -GroupDisplayName $group.DisplayName -Members $toRemove
-                }
+            if ($group.IsAssignableToRole -ne $IsAssignableToRole) {
+                Write-Warning "IsAssignableToRole cannot be changed after group creation. Please delete and recreate the group if needed."
             }
-
-            # Get current owners (UPNs)
-            $currentOwners = Get-EntraIdGroupOwner -GroupDisplayName $group.DisplayName
-
-            # Add missing owners
-            $toAddOwners = $Owners | Where-Object { $_ -notin $currentOwners }
-            if ($toAddOwners.Count -gt 0) {
-                $updateRequired = $true
-                Add-EntraIdGroupOwner -GroupDisplayName $group.DisplayName -Owners $toAddOwners
-            }
-
-            # Remove extra owners
-            $toRemoveOwners = $currentOwners | Where-Object { $_ -notin $Owners }
-            if ($toRemoveOwners.Count -gt 0) {
-                $updateRequired = $true
-                Remove-EntraIdGroupOwner -GroupDisplayName $group.DisplayName -Owners $toRemoveOwners
-            }
-
-            if (-not $updateRequired) {
-                Write-Output "Group '$DisplayName' is already in the desired state."
-            }
-            Write-Output ""
         }
+
+        # Synchronize members only for Direct groups
+        if ($GroupMembershipType -eq "Direct") {
+            if (-not $newGroup) {
+                $currentMembers = Get-EntraIdGroupMember -GroupDisplayName $DisplayName
+
+            } else {
+                $currentMembers = @()
+            }
+
+
+            # Add missing members
+            if ($Members) {
+                [array]$toAdd = $Members | Where-Object { $_ -notin $currentMembers }
+            }
+
+
+            # Remove extra members
+            if ($Members) {
+                [array]$toRemove = $currentMembers | Where-Object { $_ -notin $Members }
+            }
+            else {
+                [array]$toRemove = $currentMembers
+            }
+
+            if ($toAdd.Count -gt 0) {
+                $updateRequired = $true
+                if ($PSCmdlet.ShouldProcess("Group '$DisplayName'", "Add Members $([array]$toAdd | ConvertTo-Json)")) {
+                    Add-EntraIdGroupMember -GroupDisplayName $DisplayName -Members $toAdd
+                }
+            }
+            if ($toRemove.Count -gt 0) {
+                $updateRequired = $true
+                if ($PSCmdlet.ShouldProcess("Group '$DisplayName'", "Remove Members $([array]$toRemove | ConvertTo-Json)")) {
+                    Remove-EntraIdGroupMember -GroupDisplayName $DisplayName -Members $toRemove
+                }
+            }
+
+
+        }
+
+        # Get current owners (UPNs)
+        [array]$currentOwners = [array](Get-EntraIdGroupOwner -GroupDisplayName $DisplayName)
+        [array]$toAddOwners = [array]($Owners | Where-Object { $_ -notin $currentOwners })
+        [array]$toRemoveOwners = [array]($currentOwners | Where-Object { $_ -notin $Owners })
+
+        if ($toAddOwners.Count -gt 0) {
+            $updateRequired = $true
+            if ($PSCmdlet.ShouldProcess("Group '$DisplayName'", "Add Owners $([array]$toAddOwners | ConvertTo-Json)")) {
+                Add-EntraIdGroupOwner -GroupDisplayName $DisplayName -Owners $toAddOwners
+            }
+        }
+        if ($toRemoveOwners.Count -gt 0) {
+            $updateRequired = $true
+            if ($PSCmdlet.ShouldProcess("Group '$DisplayName'", "Remove Owners $([array]$toRemoveOwners | ConvertTo-Json)")) {
+                Remove-EntraIdGroupOwner -GroupDisplayName $DisplayName -Owners $toRemoveOwners
+            }
+        }
+
+        if (-not $updateRequired) {
+            Write-Output "Group '$DisplayName' is already in the desired state."
+        }
+        Write-Output ""
+
     }
 }
