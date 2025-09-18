@@ -37,7 +37,7 @@ function Invoke-EntraIdUserDesiredState {
         # Remove single-line comments (// ...)
         $protectedRaw = $protectedRaw -replace '(?m)^\s*//.*$', ''
         # Remove block comments (/* ... */)
-        $protectedRaw = $protectedRaw -replace '/\*.*?\*/', ''
+        $protectedRaw = $protectedRaw -replace '(?s)/\*.*?\*/', ''
         $protectedUsers = $protectedRaw | ConvertFrom-Json
         $files = $files | Where-Object { $_.FullName -ne $protectedUserFile.FullName }
     }
