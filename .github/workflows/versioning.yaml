@@ -2,16 +2,17 @@
 name: Version the PowerShell Module
 
 on:
-  pull_request:
+  pull_request_target:
     branches:
       - main
     paths:
       - 'EntraIdDSC/**'
-    types: [opened, synchronize, edited]
+    types: [labeled]
 
 
 jobs:
-  pullrequest:
+  versioning:
+    if: contains(github.event.pull_request.labels.*.name, 'release')
     name: Release PowerShell Module
     runs-on: ubuntu-latest
     permissions:
