@@ -67,7 +67,7 @@ function Get-EntraIdGroupMember {
                 # For groups, return the group Id or display name as appropriate
                 if ($PSCmdlet.ParameterSetName -eq 'ByDisplayName') {
                     $groupObj = Get-EntraIdGroup -Id "$($member.Id)"
-                    if ($groupObj) {
+                    if ($groupObj -and $groupObj.DisplayName) {
                         $results += $groupObj.DisplayName
                     }
                 } else {
