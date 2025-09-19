@@ -28,48 +28,48 @@
     This function requires Microsoft Graph PowerShell SDK to be installed and authenticated.
 #>
 function Get-EntraIdGroup {
-    [CmdletBinding(DefaultParameterSetName='ByDisplayName', SupportsShouldProcess = $true)]
+    [CmdletBinding(DefaultParameterSetName = 'ByDisplayName')]
     param(
-        [Parameter(Mandatory, ParameterSetName='ById', Position=0, ValueFromPipeline, ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, ParameterSetName = 'ById', Position = 0, ValueFromPipeline, ValueFromPipelineByPropertyName)]
         [string]$Id,
-        [Parameter(Mandatory, ParameterSetName='ByDisplayName', Position=0, ValueFromPipeline, ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, ParameterSetName = 'ByDisplayName', Position = 0, ValueFromPipeline, ValueFromPipelineByPropertyName)]
         [string]$DisplayName,
-    [Parameter(Mandatory = $false, ParameterSetName='ByDisplayNamePattern')]
-    [string]$DisplayNamePattern
+        [Parameter(Mandatory = $false, ParameterSetName = 'ByDisplayNamePattern')]
+        [string]$DisplayNamePattern
     )
 
     process {
-        if ($PSCmdlet.ShouldProcess("Retrieving group")) {
-            Test-GraphAuth
+        Test-GraphAuth
 
-            switch ($PSCmdlet.ParameterSetName) {
-                'ByDisplayName' {
-                    $group = Get-MgGroup -Filter "displayName eq '$DisplayName'"
-                    if (-not $group) {
-                        Write-Verbose "No group found with display name '$DisplayName'."
-                        return $null
-                    }
-                    return $group
+        switch ($PSCmdlet.ParameterSetName) {
+            'ByDisplayName' {
+                $group = Get-MgGroup -Filter "displayName eq '$DisplayName'"
+                if (-not $group) {
+                    Write-Verbose "No group found with display name '$DisplayName'."
+                    return $null
                 }
-                'ById' {
-                    $group = Get-MgGroup -GroupId $Id
-                    if (-not $group) {
-                        Write-Verbose "No group found with Id '$Id'."
-                        return $null
-                    }
-                    return $group
+                return $group
+            }
+            'ById' {
+                Write-Verbose "Get-EntraIdGroup: Searching for group with Id '$Id'"
+                $group = Get-MgGroup -GroupId $Id
+                if (-not $group) {
+                    Write-Verbose "No group found with Id '$Id'."
+                    return $null
                 }
-                'ByDisplayNamePattern' {
-                    # Support wildcard filtering, e.g., UG-PIM-*
-                    $allGroups = Get-MgGroup -All
-                    $filteredGroups = $allGroups | Where-Object { $_.DisplayName -like $DisplayNamePattern }
-                    if (-not $filteredGroups) {
-                        Write-Verbose "No groups found matching pattern '$DisplayNamePattern'."
-                        return $null
-                    }
-                    return $filteredGroups
+                return $group
+            }
+            'ByDisplayNamePattern' {
+                # Support wildcard filtering, e.g., UG-PIM-*
+                $allGroups = Get-MgGroup -All
+                $filteredGroups = $allGroups | Where-Object { $_.DisplayName -like $DisplayNamePattern }
+                if (-not $filteredGroups) {
+                    Write-Verbose "No groups found matching pattern '$DisplayNamePattern'."
+                    return $null
                 }
+                return $filteredGroups
             }
         }
+
     }
 }

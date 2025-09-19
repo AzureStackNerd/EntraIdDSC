@@ -115,11 +115,12 @@ function Set-EntraIdGroup {
         if ($GroupMembershipType -eq "Direct") {
             if (-not $newGroup) {
                 $currentMembers = Get-EntraIdGroupMember -GroupDisplayName $DisplayName
+                Write-Verbose "Fetched group: $DisplayName current members. $($currentMembers | ConvertTo-Json -Depth 3)"
 
             } else {
                 $currentMembers = @()
+                Write-Verbose "New group created, no current members."
             }
-
 
             # Add missing members
             if ($Members) {
