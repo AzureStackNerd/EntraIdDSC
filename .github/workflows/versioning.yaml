@@ -38,6 +38,7 @@ jobs:
             INCREMENT_VERSION="Minor"
           elif echo "$PR_TITLE" | grep -iq "PATCH"; then
             INCREMENT_VERSION="Patch"
+          fi
           echo "INCREMENT_VERSION=$INCREMENT_VERSION"
           echo "INCREMENT_VERSION=$INCREMENT_VERSION" >> $GITHUB_ENV
 
