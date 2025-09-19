@@ -5,8 +5,7 @@ on:
   pull_request_target:
     branches:
       - main
-    paths:
-      - 'EntraIdDSC/**'
+    # Note: The paths filter does not apply to the labeled event type.
     types: [labeled]
 
 
