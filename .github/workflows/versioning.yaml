@@ -2,16 +2,16 @@
 name: Version the PowerShell Module
 
 on:
-  pull_request:
+  pull_request_target:
     branches:
       - main
-    paths:
-      - 'EntraIdDSC/**'
-    types: [opened, synchronize, edited]
+    # Note: The paths filter does not apply to the labeled event type.
+    types: [labeled]
 
 
 jobs:
-  pullrequest:
+  versioning:
+    if: github.event.label.name == 'release'
     name: Release PowerShell Module
     runs-on: ubuntu-latest
     permissions:
