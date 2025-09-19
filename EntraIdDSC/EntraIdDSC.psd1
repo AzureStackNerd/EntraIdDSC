@@ -23,7 +23,7 @@
 
     PrivateData = @{
     PSData = @{
-        Tags = @('Entra', 'DSC', 'AzureAD', 'Identity')
+        Tags = @('Entra', 'EntraId', 'DSC', 'AzureAD', 'Identity', 'Desired State')
         LicenseUri = 'https://opensource.org/licenses/MIT'
         ProjectUri = 'https://github.com/AzureStackNerd/EntraIdDSC/'
         ReleaseNotes = 'Fix tags in module manifest'
