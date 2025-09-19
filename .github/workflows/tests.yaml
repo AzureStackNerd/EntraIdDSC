@@ -22,7 +22,13 @@ jobs:
         shell: pwsh
         run: |
             Import-Module ./EntraIdDSC/
-            Invoke-Pester -Path ./tests/ -OutputFile ./TestResults.xml -OutputFormat NUnitXml
+            Import-Module Pester
+            $config = [PesterConfiguration]::Default
+            $config.TestResult.OutputFormat = 'NUnitXml'
+            $config.TestResult.OutputPath = './TestResults.xml'
+            $config.Run.Path = './tests/'
+            $config.Run.PassThru = $true
+            Invoke-Pester -Configuration $config
 
       - name: Publish test results
         if: always()
