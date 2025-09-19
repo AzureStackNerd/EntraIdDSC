@@ -32,7 +32,7 @@ jobs:
 
           # Get PR title if available
           if [ "$GITHUB_EVENT_NAME" = "pull_request_target" ]; then
-            PR_TITLE="$(jq -r .pull_request.title < $GITHUB_EVENT_PATH)"
+            PR_TITLE="${{ github.event.pull_request.title }}"
             echo "PR Title: $PR_TITLE"
             if echo "$PR_TITLE" | grep -iq "MAJOR"; then
               INCREMENT_VERSION="Major"
