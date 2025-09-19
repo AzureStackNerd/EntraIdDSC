@@ -34,6 +34,7 @@ function Get-EntraIdGroupMember {
     process {
         # Resolve group Id if searching by GroupDisplayName
         if ($PSCmdlet.ParameterSetName -eq 'ByDisplayName') {
+            Write-Verbose "Get-EntraIdGroupMember: Searching for group with display name '$GroupDisplayName'"
             $group = Get-MgGroup -Filter "displayName eq '$GroupDisplayName'"
             if (-not $group) {
                 Write-Warning "No group found with display name '$GroupDisplayName'."
@@ -65,8 +66,8 @@ function Get-EntraIdGroupMember {
             } elseif ($odataType -eq '#microsoft.graph.group') {
                 # For groups, return the group Id or display name as appropriate
                 if ($PSCmdlet.ParameterSetName -eq 'ByDisplayName') {
-                    $groupObj = Get-EntraIdGroup -Id $member.Id
-                    if ($groupObj -and $groupObj.DisplayName) {
+                    $groupObj = Get-EntraIdGroup -Id "$($member.Id)"
+                    if ($groupObj) {
                         $results += $groupObj.DisplayName
                     }
                 } else {
