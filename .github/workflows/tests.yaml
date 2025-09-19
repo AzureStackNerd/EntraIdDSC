@@ -17,8 +17,12 @@ jobs:
         run: |
             ls -d ./*
 
-      - name: Run Pester tests
-        run: pwsh -Command "Invoke-Pester -Path ./tests/ -OutputFile ./TestResults.xml -OutputFormat NUnitXml"
+      - name: Pester Tests
+        id: pester
+        shell: pwsh
+        run: |
+            Import-Module ./EntraIdDSC/
+            Invoke-Pester -Path ./tests/ -OutputFile ./TestResults.xml -OutputFormat NUnitXml
 
       - name: Publish test results
         if: always()
