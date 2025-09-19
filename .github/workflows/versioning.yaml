@@ -31,17 +31,17 @@ jobs:
           echo "gh pr title: ${{ github.event.pull_request.title }}"
 
           # Get PR title if available
-          if [ "$GITHUB_EVENT_NAME" = "pull_request_target" ]; then
-            PR_TITLE="${{ github.event.pull_request.title }}"
-            echo "PR Title: $PR_TITLE"
-            if echo "$PR_TITLE" | grep -iq "MAJOR"; then
-              INCREMENT_VERSION="Major"
-            elif echo "$PR_TITLE" | grep -iq "MINOR"; then
-              INCREMENT_VERSION="Minor"
-            elif echo "$PR_TITLE" | grep -iq "PATCH"; then
-              INCREMENT_VERSION="Patch"
-            fi
+
+          PR_TITLE="${{ github.event.pull_request.title }}"
+          echo "PR Title: $PR_TITLE"
+          if echo "$PR_TITLE" | grep -iq "MAJOR"; then
+            INCREMENT_VERSION="Major"
+          elif echo "$PR_TITLE" | grep -iq "MINOR"; then
+            INCREMENT_VERSION="Minor"
+          elif echo "$PR_TITLE" | grep -iq "PATCH"; then
+            INCREMENT_VERSION="Patch"
           fi
+
           echo "INCREMENT_VERSION=$INCREMENT_VERSION"
           echo "INCREMENT_VERSION=$INCREMENT_VERSION" >> $GITHUB_ENV
 
