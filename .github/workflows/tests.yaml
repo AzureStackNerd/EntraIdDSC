@@ -1,0 +1,34 @@
+name: Pester Tests
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  pester:
+    runs-on: ubuntu-latest
+    name: Run Pester Tests
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Pester
+        run: pwsh -Command "Install-Module -Name Pester -Force -SkipPublisherCheck"
+
+      - name: Run Pester tests
+        run: pwsh -Command "Invoke-Pester -Path ./tests -OutputFile ./TestResults.xml -OutputFormat NUnitXml"
+
+      - name: Publish test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Pester-TestResults
+          path: ./TestResults.xml
+
+      - name: Annotate test results
+        if: always()
+        uses: mikepenz/action-junit-report@v4
+        with:
+          report_paths: './TestResults.xml'
+          annotate_only: true
+          fail_on_failure: true
