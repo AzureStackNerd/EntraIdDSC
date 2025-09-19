@@ -1,9 +1,10 @@
 # Pester tests for Get-EntraIdGroupOwner
 # Follows Pester best practices: structure, assertions, mocks
 
-Import-Module "$PSScriptRoot/../EntraIdDSC/"
-
 InModuleScope EntraIdDSC {
+    BeforeAll {
+        Import-Module "$PSScriptRoot/../EntraIdDSC/"
+    }
     Describe 'Get-EntraIdGroupOwner' {
         BeforeAll {
             # Mock external dependencies
