@@ -4,7 +4,7 @@
 
     # Version number of this module.
 
-    ModuleVersion = '0.6.0'
+    ModuleVersion = '0.6.1'
 
     # ID used to uniquely identify this module
     GUID = 'c6cb6bdb-fb65-425b-9579-3d49128a4ebd'
@@ -23,7 +23,7 @@
 
     PrivateData = @{
     PSData = @{
-        Tags = @('Entra', 'EntraId', 'DSC', 'AzureAD', 'Identity', 'Desired State')
+        Tags = @('Entra', 'EntraId', 'DSC', 'AzureAD', 'Identity', 'Desired', 'State')
         LicenseUri = 'https://opensource.org/licenses/MIT'
         ProjectUri = 'https://github.com/AzureStackNerd/EntraIdDSC/'
         ReleaseNotes = 'Fix tags in module manifest'
@@ -62,6 +62,7 @@
     AliasesToExport = @()
 
 }
+
 
 
 
