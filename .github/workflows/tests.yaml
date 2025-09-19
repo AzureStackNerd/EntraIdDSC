@@ -15,7 +15,7 @@ jobs:
       - name: List Directories
         id: bump
         run: |
-            ls -d /*
+            ls -d ./*
 
       - name: Run Pester tests
         run: pwsh -Command "Invoke-Pester -Path ./tests -OutputFile ./TestResults.xml -OutputFormat NUnitXml"
