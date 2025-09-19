@@ -114,8 +114,8 @@ function Set-EntraIdGroup {
         # Synchronize members only for Direct groups
         if ($GroupMembershipType -eq "Direct") {
             if (-not $newGroup) {
-                $currentMembers = Get-EntraIdGroupMember -GroupDisplayName "$($group.DisplayName)"
-                Write-Verbose "Fetched group: $($group.DisplayName) current members. $($currentMembers | ConvertTo-Json -Depth 3)"
+                $currentMembers = Get-EntraIdGroupMember -GroupDisplayName "$DisplayName"
+                Write-Verbose "Fetched group: $DisplayName current members. $($currentMembers | ConvertTo-Json -Depth 3)"
 
             } else {
                 $currentMembers = @()
