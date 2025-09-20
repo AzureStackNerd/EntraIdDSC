@@ -17,8 +17,6 @@ Date: 11 September 2025
 #>
 
 function Invoke-EntraIdGroupDesiredState {
-    # Suppress PSUseShouldProcessForStateChangingFunctions
-    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseShouldProcessForStateChangingFunctions", "")]
     [CmdletBinding(SupportsShouldProcess)]
     param (
         [Parameter(Mandatory)]

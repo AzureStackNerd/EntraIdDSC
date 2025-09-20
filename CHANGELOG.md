@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Released]
 
+## [0.6.2] - 2025-09-18
+
+### Added
+
+- PowerShell Script Analyzer rules to enforce best practices and coding standards.
+- 17 Pester tests.
+- CI/CD pipeline with GitHub Actions for automated testing and publishing of the results.
+- Minor changes and fixes caught from the tests.
+
+## [0.6.1] - 2025-09-18
+
+### Added
+
+- Manifest tags fix.
+
 ## [0.6.0] - 2025-09-18
 
 ### Added
