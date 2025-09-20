@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - PowerShell Script Analyzer rules to enforce best practices and coding standards.
 - 17 Pester tests.
+  - Get-EntraIdGroup
+  - Get-EntraIdGroupMember
+  - Get-EntraIdGroupOwner
+  - Add-EntraIdServicePrincipal
 - CI/CD pipeline with GitHub Actions for automated testing and publishing of the results.
 - Minor changes and fixes caught from the tests.
 
