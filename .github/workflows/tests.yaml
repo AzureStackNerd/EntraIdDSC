@@ -30,7 +30,7 @@ jobs:
             $config.Run.Path = './tests/'
             $config.Run.PassThru = $true
             $config.Run.Throw = $true
-            %config.CodeCoverage.Enabled = $false
+            $config.CodeCoverage.Enabled = $false
             Invoke-Pester -Configuration $config
 
     #   - name: Publish test results
