@@ -25,24 +25,24 @@ jobs:
             Import-Module Pester
             $config = [PesterConfiguration]::Default
             $config.TestResult.OutputFormat = 'NUnitXml'
-            $config.TestResult.OutputPath = 'TestResults.xml'
+            $config.TestResult.OutputPath = 'test-results/TestResults.xml'
             $config.TestResult.Enabled = $true
             $config.Run.Path = './tests/'
             $config.Run.PassThru = $true
             $config.Run.Throw = $true
+            %config.CodeCoverage.Enabled = $false
             Invoke-Pester -Configuration $config
 
-      - name: Publish test results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: Pester-TestResults
-          path: ./TestResults.xml
+    #   - name: Publish test results
+    #     if: always()
+    #     uses: actions/upload-artifact@v4
+    #     with:
+    #       name: Pester-TestResults
+    #       path: ./TestResults.xml
 
-      - name: Annotate test results
-        if: always()
-        uses: mikepenz/action-junit-report@v4
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v2
         with:
-          report_paths: './TestResults.xml'
-          annotate_only: true
-          fail_on_failure: true
+            files: |
+                test-results/*.xml
+
