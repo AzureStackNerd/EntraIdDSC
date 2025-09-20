@@ -64,8 +64,8 @@ function Invoke-EntraIdUserDesiredState {
                 }
             }
             if ($skipUser) {
-                Write-Host "User '$($user.UserPrincipalName)' is protected. Skipping."
-                Write-Host ""
+                Write-Output "User '$($user.UserPrincipalName)' is protected. Skipping."
+                Write-Output ""
                 continue
             }
             $upn = $user.UserPrincipalName

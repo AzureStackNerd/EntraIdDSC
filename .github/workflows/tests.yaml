@@ -6,11 +6,15 @@ on:
 
 jobs:
   pester:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     name: Run Pester Tests
+    permissions:
+      checks: write
+      contents: read
+      pull-requests: write
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: List Directories
         id: bump

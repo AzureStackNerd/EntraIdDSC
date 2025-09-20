@@ -54,7 +54,7 @@ function Invoke-EntraIdGroupDesiredState {
             }
 
             if (!$owners) {
-                Write-Host "Skipping group '$groupName' as it has no owners defined."
+                Write-Output "Skipping group '$groupName' as it has no owners defined."
                 continue
             }
 
