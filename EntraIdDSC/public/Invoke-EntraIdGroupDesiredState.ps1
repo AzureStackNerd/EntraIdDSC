@@ -23,42 +23,44 @@ function Invoke-EntraIdGroupDesiredState {
         [string]$Path
     )
 
-    Test-GraphAuth
-    # Get all JSON configuration files in the specified path
-    $files = Get-ChildItem -Path $Path -Include *.json, *.jsonc -File -Recurse | Sort-Object Name
+    process {
+        Test-GraphAuth
+        # Get all JSON configuration files in the specified path
+        $files = Get-ChildItem -Path $Path -Include *.json, *.jsonc -File -Recurse | Sort-Object Name
 
-    foreach ($file in $files) {
-        Write-Verbose "Processing file: $($file.FullName)"
-        # Read the group object from the JSON/JSONC file, removing comment lines
-        $rawContent = Get-Content -Path $file.FullName -Raw
-        # Remove single-line comments (// ...)
-        $rawContent = $rawContent -replace '(?m)^\s*//.*$', ''
-        # Remove block comments (/* ... */)
-        $rawContent = $rawContent -replace '(?s)/\*.*?\*/', ''
-        $json = $rawContent | ConvertFrom-Json
-        foreach ($group in $json) {
-            $groupName = $group.Name
-            $groupMembershipType = $group.GroupMembershipType
-            $description = $group.description
-            $members = $group.members
-            $owners = $group.owners
-            $isAssignableToRole = $group.IsAssignableToRole
+        foreach ($file in $files) {
+            Write-Verbose "Processing file: $($file.FullName)"
+            # Read the group object from the JSON/JSONC file, removing comment lines
+            $rawContent = Get-Content -Path $file.FullName -Raw
+            # Remove single-line comments (// ...)
+            $rawContent = $rawContent -replace '(?m)^\s*//.*$', ''
+            # Remove block comments (/* ... */)
+            $rawContent = $rawContent -replace '(?s)/\*.*?\*/', ''
+            $json = $rawContent | ConvertFrom-Json
+            foreach ($group in $json) {
+                $groupName = $group.Name
+                $groupMembershipType = $group.GroupMembershipType
+                $description = $group.description
+                $members = $group.members
+                $owners = $group.owners
+                $isAssignableToRole = $group.IsAssignableToRole
 
-            $params = @{
-                DisplayName         = $groupName
-                GroupMembershipType = $groupMembershipType
-                Description         = $description
-                Owners              = $owners
-                IsAssignableToRole  = $isAssignableToRole
-                Members             = $members
+                $params = @{
+                    DisplayName         = $groupName
+                    GroupMembershipType = $groupMembershipType
+                    Description         = $description
+                    Owners              = $owners
+                    IsAssignableToRole  = $isAssignableToRole
+                    Members             = $members
+                }
+
+                if (!$owners) {
+                    Write-Output "Skipping group '$groupName' as it has no owners defined."
+                    continue
+                }
+
+                Set-EntraIdGroup @params
             }
-
-            if (!$owners) {
-                Write-Output "Skipping group '$groupName' as it has no owners defined."
-                continue
-            }
-
-            Set-EntraIdGroup @params
         }
     }
 }
