@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Released]
 
-## [0.6.2] - 2025-09-18
+## [0.6.2] - 2025-09-20
 
 ### Added
 
@@ -16,7 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - CI/CD pipeline with GitHub Actions for automated testing and publishing of the results.
 - Minor changes and fixes caught from the tests.
 
-## [0.6.1] - 2025-09-18
+## [0.6.1] - 2025-09-19
 
 ### Added
 
