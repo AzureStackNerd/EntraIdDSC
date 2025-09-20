@@ -16,11 +16,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v5
 
-      - name: List Directories
-        id: bump
-        run: |
-            ls -d ./*
-
       - name: Pester Tests
         id: pester
         shell: pwsh
