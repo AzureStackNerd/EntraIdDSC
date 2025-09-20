@@ -68,7 +68,7 @@ function Add-EntraIdUser {
             }
 
             # Call Microsoft Graph to create the user
-            $newUser = New-MgUser -BodyParameter $userObject
+            New-MgUser -BodyParameter $userObject
 
             Write-Output "User '$DisplayName' with UPN '$UserPrincipalName' created successfully."
         } catch {

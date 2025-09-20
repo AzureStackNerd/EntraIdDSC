@@ -23,92 +23,94 @@ function Invoke-EntraIdUserDesiredState {
         [string]$Path
     )
 
-    Test-GraphAuth
-    # Get all JSON configuration files in the specified path
-    $files = Get-ChildItem -Path $Path -Include *.json, *.jsonc -File -Recurse | Sort-Object Name
-    $protectedUserFile = $files | Where-Object { $_.Name -eq 'ProtectedUsers.jsonc' -or $_.Name -eq 'ProtectedUsers.json' }
-    if ($protectedUserFile.Count -gt 1) {
-        Write-Error "Multiple ProtectedUsers files found. Please ensure only one exists."
-        return
-    }
-    if ($protectedUserFile) {
-        Write-Verbose "Loading protected users from file: $($protectedUserFile.FullName)"
-        $protectedRaw = Get-Content -Path $protectedUserFile.FullName -Raw
-        # Remove single-line comments (// ...)
-        $protectedRaw = $protectedRaw -replace '(?m)^\s*//.*$', ''
-        # Remove block comments (/* ... */)
-        $protectedRaw = $protectedRaw -replace '(?s)/\*.*?\*/', ''
-        $protectedUsers = $protectedRaw | ConvertFrom-Json
-        $files = $files | Where-Object { $_.FullName -ne $protectedUserFile.FullName }
-    }
-    else {
-        Write-Verbose "No ProtectedUsers file found. Proceeding without protected users."
-    }
+    process {
+        Test-GraphAuth
+        # Get all JSON configuration files in the specified path
+        $files = Get-ChildItem -Path $Path -Include *.json, *.jsonc -File -Recurse | Sort-Object Name
+        $protectedUserFile = $files | Where-Object { $_.Name -eq 'ProtectedUsers.jsonc' -or $_.Name -eq 'ProtectedUsers.json' }
+        if ($protectedUserFile.Count -gt 1) {
+            Write-Error "Multiple ProtectedUsers files found. Please ensure only one exists."
+            return
+        }
+        if ($protectedUserFile) {
+            Write-Verbose "Loading protected users from file: $($protectedUserFile.FullName)"
+            $protectedRaw = Get-Content -Path $protectedUserFile.FullName -Raw
+            # Remove single-line comments (// ...)
+            $protectedRaw = $protectedRaw -replace '(?m)^\s*//.*$', ''
+            # Remove block comments (/* ... */)
+            $protectedRaw = $protectedRaw -replace '(?s)/\*.*?\*/', ''
+            $protectedUsers = $protectedRaw | ConvertFrom-Json
+            $files = $files | Where-Object { $_.FullName -ne $protectedUserFile.FullName }
+        }
+        else {
+            Write-Verbose "No ProtectedUsers file found. Proceeding without protected users."
+        }
 
-    foreach ($file in $files) {
-        Write-Verbose "Processing file: $($file.FullName)"
+        foreach ($file in $files) {
+            Write-Verbose "Processing file: $($file.FullName)"
 
-        # Read the user object from the JSON/JSONC file, removing comment lines
-        $rawContent = Get-Content -Path $file.FullName -Raw
-        # Remove single-line comments (// ...)
-        $rawContent = $rawContent -replace '(?m)^\s*//.*$', ''
-        # Remove block comments (/* ... */)
-        $rawContent = $rawContent -replace '(?s)/\*.*?\*/', ''
-        $json = $rawContent | ConvertFrom-Json
+            # Read the user object from the JSON/JSONC file, removing comment lines
+            $rawContent = Get-Content -Path $file.FullName -Raw
+            # Remove single-line comments (// ...)
+            $rawContent = $rawContent -replace '(?m)^\s*//.*$', ''
+            # Remove block comments (/* ... */)
+            $rawContent = $rawContent -replace '(?s)/\*.*?\*/', ''
+            $json = $rawContent | ConvertFrom-Json
 
-        foreach ($user in $json) {
-            $skipUser = $false
-            foreach ($protectedUser in $protectedUsers) {
-                if ($user.UserPrincipalName -eq $protectedUser.UserPrincipalName) {
-                    $skipUser = $true
+            foreach ($user in $json) {
+                $skipUser = $false
+                foreach ($protectedUser in $protectedUsers) {
+                    if ($user.UserPrincipalName -eq $protectedUser.UserPrincipalName) {
+                        $skipUser = $true
+                    }
                 }
-            }
-            if ($skipUser) {
-                Write-Host "User '$($user.UserPrincipalName)' is protected. Skipping."
-                Write-Host ""
-                continue
-            }
-            $upn = $user.UserPrincipalName
-            # Prepare additional properties
-            $additionalProperties = @{
-                GivenName      = $user.GivenName
-                Surname        = $user.Surname
-                MailNickname   = $user.MailNickname
-                JobTitle       = $user.JobTitle
-                Department     = $user.Department
-                OfficeLocation = $user.OfficeLocation
-                MobilePhone    = $user.MobilePhone
-                UsageLocation  = $user.UsageLocation
-                StreetAddress  = $user.StreetAddress
-                City           = $user.City
-                State          = $user.State
-                PostalCode     = $user.PostalCode
-                Country        = $user.Country
-            }
-
-            # Check if the user already exists
-            $getUserParams = @{
-                UserPrincipalName = $upn
-            }
-            $existingUser = Get-EntraIdUser @getUserParams
-            if (-not $existingUser) {
-                Write-Output "Creating user '$($user.DisplayName)' with UPN '$upn'."
-                # Create the user
-                $addUserParams = @{
-                    DisplayName          = $user.DisplayName
-                    UserPrincipalName    = $upn
-                    AdditionalProperties = $additionalProperties
+                if ($skipUser) {
+                    Write-Output "User '$($user.UserPrincipalName)' is protected. Skipping."
+                    Write-Output ""
+                    continue
                 }
-                Add-EntraIdUser @addUserParams
-            }
-            else {
-                # Ensure the user is in the desired state
-                $setUserParams = @{
-                    User = $user
+                $upn = $user.UserPrincipalName
+                # Prepare additional properties
+                $additionalProperties = @{
+                    GivenName      = $user.GivenName
+                    Surname        = $user.Surname
+                    MailNickname   = $user.MailNickname
+                    JobTitle       = $user.JobTitle
+                    Department     = $user.Department
+                    OfficeLocation = $user.OfficeLocation
+                    MobilePhone    = $user.MobilePhone
+                    UsageLocation  = $user.UsageLocation
+                    StreetAddress  = $user.StreetAddress
+                    City           = $user.City
+                    State          = $user.State
+                    PostalCode     = $user.PostalCode
+                    Country        = $user.Country
                 }
-                Set-EntraIdUser @setUserParams
-            }
 
+                # Check if the user already exists
+                $getUserParams = @{
+                    UserPrincipalName = $upn
+                }
+                $existingUser = Get-EntraIdUser @getUserParams
+                if (-not $existingUser) {
+                    Write-Output "Creating user '$($user.DisplayName)' with UPN '$upn'."
+                    # Create the user
+                    $addUserParams = @{
+                        DisplayName          = $user.DisplayName
+                        UserPrincipalName    = $upn
+                        AdditionalProperties = $additionalProperties
+                    }
+                    Add-EntraIdUser @addUserParams
+                }
+                else {
+                    # Ensure the user is in the desired state
+                    $setUserParams = @{
+                        User = $user
+                    }
+                    Set-EntraIdUser @setUserParams
+                }
+
+            }
         }
     }
 }

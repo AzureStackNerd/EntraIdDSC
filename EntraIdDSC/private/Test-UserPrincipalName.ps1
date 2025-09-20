@@ -19,7 +19,9 @@ Author: AzureStackNerd
 Date: 11 September 2025
 #>
 
+
 function Test-UserPrincipalName {
+    [OutputType([bool])]
     [CmdletBinding()]
     param (
         # The UserPrincipalName to validate

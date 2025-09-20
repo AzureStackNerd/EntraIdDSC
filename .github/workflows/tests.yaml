@@ -1,0 +1,64 @@
+name: Pester Tests
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  pester:
+    runs-on: ubuntu-latest
+    name: Run Pester Tests
+    permissions:
+      checks: write
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Install PSScriptAnalyzer module
+        shell: pwsh
+        run: |
+          Set-PSRepository PSGallery -InstallationPolicy Trusted
+          Install-Module PSScriptAnalyzer -ErrorAction Stop
+      - name: Lint with PSScriptAnalyzer
+        shell: pwsh
+        run: |
+          Invoke-ScriptAnalyzer -Path ./EntraIdDSC/ -Recurse -Outvariable issues
+          $errors   = $issues.Where({$_.Severity -eq 'Error'})
+          $warnings = $issues.Where({$_.Severity -eq 'Warning'})
+          if ($errors) {
+              Write-Error "There were $($errors.Count) errors and $($warnings.Count) warnings total." -ErrorAction Stop
+          } else {
+              Write-Output "There were $($errors.Count) errors and $($warnings.Count) warnings total."
+          }
+
+      - name: Pester Tests
+        id: pester
+        shell: pwsh
+        run: |
+            Import-Module ./EntraIdDSC/
+            Import-Module Pester
+            $config = [PesterConfiguration]::Default
+            $config.TestResult.OutputFormat = 'NUnitXml'
+            $config.TestResult.OutputPath = 'test-results/TestResults.xml'
+            $config.TestResult.Enabled = $true
+            $config.Run.Path = './tests/'
+            $config.Run.PassThru = $true
+            $config.Run.Throw = $true
+            $config.CodeCoverage.Enabled = $false
+            Invoke-Pester -Configuration $config
+
+    #   - name: Publish test results
+    #     if: always()
+    #     uses: actions/upload-artifact@v4
+    #     with:
+    #       name: Pester-TestResults
+    #       path: ./TestResults.xml
+
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        with:
+            files: |
+                test-results/*.xml
+
