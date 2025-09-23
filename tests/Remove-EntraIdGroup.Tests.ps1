@@ -42,7 +42,7 @@ Describe 'Remove-EntraIdGroup' {
             }
             It 'Throws error for non-existent DisplayName' {
                 Mock -CommandName Get-MgGroup -MockWith { $null } -ParameterFilter { $Filter -eq "displayName eq 'MissingGroup'" }
-                { Remove-EntraIdGroup -DisplayName 'MissingGroup' -Confirm:$true} | Should -Throw
+                { Remove-EntraIdGroup -DisplayName 'MissingGroup' -Confirm:$true } | Should -Throw
             }
         }
 
