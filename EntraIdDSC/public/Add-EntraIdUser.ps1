@@ -42,10 +42,11 @@ function Add-EntraIdUser {
     )
 
     process {
-        # Validate the UserPrincipalName format
+        # Validate the DisplayName
         if (-not $DisplayName) {
             throw "DisplayName is required."
         }
+        # Validate the UserPrincipalName
         if (-not $UserPrincipalName) {
             throw "UserPrincipalName is required."
         }
