@@ -11,7 +11,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- ZOMG, 22 years ago my son was born
 - Minor fixes and improvements based on feedback from Pester tests.
 - 33 pester tests now in total.
 
