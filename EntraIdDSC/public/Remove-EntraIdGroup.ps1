@@ -33,13 +33,8 @@ function Remove-EntraIdGroup {
                     Throw "Id cannot be empty."
                 }
                 if ($PSCmdlet.ShouldProcess($Id, "Remove Entra ID group by Id")) {
-                    try {
-                        Remove-MgGroup -GroupId $Id
-                        Write-Verbose "Group with Id '$Id' removed."
-                    }
-                    catch {
-                        Write-Error $_
-                    }
+                    Remove-MgGroup -GroupId $Id -ErrorAction Stop
+                    Write-Verbose "Group with Id '$Id' removed."
                 }
             }
             'ByName' {
@@ -49,13 +44,8 @@ function Remove-EntraIdGroup {
                 $group = Get-MgGroup -Filter "displayName eq '$DisplayName'" -ErrorAction Stop
                 if ($group) {
                     if ($PSCmdlet.ShouldProcess($DisplayName, "Remove Entra ID group by Name")) {
-                        try {
-                            Remove-MgGroup -GroupId $group.Id -ErrorAction Stop
-                            Write-Verbose "Group with Name '$DisplayName' removed."
-                        }
-                        catch {
-                            Write-Error $_
-                        }
+                        Remove-MgGroup -GroupId $group.Id -ErrorAction Stop
+                        Write-Verbose "Group with Name '$DisplayName' removed."
                     }
                 }
                 else {
