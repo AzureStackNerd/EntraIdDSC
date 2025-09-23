@@ -37,6 +37,7 @@ jobs:
         id: pester
         shell: pwsh
         run: |
+          pwsh -NoProfile -Command {
             Import-Module ./EntraIdDSC/
             Import-Module Pester
             $config = [PesterConfiguration]::Default
@@ -51,6 +52,7 @@ jobs:
             $config.CodeCoverage.OutputPath = 'test-results/Coverage.xml'
             $config.Output.Verbosity = 'None'
             Invoke-Pester -Configuration $config
+          }
 
       - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action@v2
