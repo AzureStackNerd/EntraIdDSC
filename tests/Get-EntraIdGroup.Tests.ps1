@@ -1,9 +1,7 @@
 
+Import-Module "$PSScriptRoot/../EntraIdDSC/" -Force
 
 InModuleScope EntraIdDSC {
-    BeforeAll {
-        Import-Module "$PSScriptRoot/../EntraIdDSC/"
-    }
     Describe "Get-EntraIdGroup" {
         Context "ByDisplayName parameter set" {
             It "Returns group when display name exists" {

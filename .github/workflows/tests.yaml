@@ -46,7 +46,9 @@ jobs:
             $config.Run.Path = './tests/'
             $config.Run.PassThru = $true
             $config.Run.Throw = $true
-            $config.CodeCoverage.Enabled = $false
+            $config.CodeCoverage.Enabled = $true
+            $config.CodeCoverage.Path = './EntraIdDSC/'
+            $config.CodeCoverage.OutputPath = 'test-results/Coverage.xml'
             Invoke-Pester -Configuration $config
 
     #   - name: Publish test results

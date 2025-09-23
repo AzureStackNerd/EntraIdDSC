@@ -29,11 +29,11 @@ function Add-EntraIdUser {
     [CmdletBinding(SupportsShouldProcess)]
     param (
         # The display name of the user to add
-        [Parameter(Mandatory, Position = 0)]
+        [Parameter(Position = 0)]
         [string]$DisplayName,
 
         # The user principal name (UPN) of the user to add
-        [Parameter(Mandatory, Position = 1)]
+        [Parameter(Position = 1)]
         [string]$UserPrincipalName,
 
         # Additional properties for the user
@@ -41,38 +41,48 @@ function Add-EntraIdUser {
         [hashtable]$AdditionalProperties
     )
 
-    # Validate the UserPrincipalName format
-    if (-not (Test-UserPrincipalName -UserPrincipalName $UserPrincipalName)) {
-        Write-Error -Message "The UserPrincipalName '$UserPrincipalName' is not in a valid format." -ErrorAction Stop
-    }
+    process {
+        # Validate the UserPrincipalName format
+        if (-not $DisplayName) {
+            throw "DisplayName is required."
+        }
+        if (-not $UserPrincipalName) {
+            throw "UserPrincipalName is required."
+        }
 
-    if ($PSCmdlet.ShouldProcess("UserPrincipalName: $UserPrincipalName", "Add user to Entra ID")) {
-        try {
+        if (-not (Test-UserPrincipalName -UserPrincipalName $UserPrincipalName)) {
+            Write-Error -Message "The UserPrincipalName '$UserPrincipalName' is not in a valid format." -ErrorAction Stop
+        }
 
-            # Ensure Graph authentication is valid
-            Test-GraphAuth
+        if ($PSCmdlet.ShouldProcess("UserPrincipalName: $UserPrincipalName", "Add user to Entra ID")) {
+            try {
 
-            # Generate a random GUID as the password
-            $randomPassword = [Guid]::NewGuid().ToString()
+                # Ensure Graph authentication is valid
+                Test-GraphAuth
 
-            # Construct the user object
-            $userObject = @{
-                DisplayName       = $DisplayName
-                UserPrincipalName = $UserPrincipalName
-                AccountEnabled    = $false
-                PasswordProfile   = @{ Password = $randomPassword; ForceChangePasswordNextSignIn = $true }
+                # Generate a random GUID as the password
+                $randomPassword = [Guid]::NewGuid().ToString()
+
+                # Construct the user object
+                $userObject = @{
+                    DisplayName       = $DisplayName
+                    UserPrincipalName = $UserPrincipalName
+                    AccountEnabled    = $false
+                    PasswordProfile   = @{ Password = $randomPassword; ForceChangePasswordNextSignIn = $true }
+                }
+
+                if ($AdditionalProperties) {
+                    $userObject += $AdditionalProperties
+                }
+
+                # Call Microsoft Graph to create the user
+                New-MgUser -BodyParameter $userObject
+
+                Write-Output "User '$DisplayName' with UPN '$UserPrincipalName' created successfully."
             }
-
-            if ($AdditionalProperties) {
-                $userObject += $AdditionalProperties
+            catch {
+                Write-Error -Message $_.Exception.Message -ErrorAction Stop
             }
-
-            # Call Microsoft Graph to create the user
-            New-MgUser -BodyParameter $userObject
-
-            Write-Output "User '$DisplayName' with UPN '$UserPrincipalName' created successfully."
-        } catch {
-            Write-Error -Message $_.Exception.Message -ErrorAction Stop
         }
     }
 }
