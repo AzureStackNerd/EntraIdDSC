@@ -1,8 +1,9 @@
 
+Import-Module "$PSScriptRoot/../EntraIdDSC/" -Force
 
 InModuleScope EntraIdDSC {
     BeforeAll {
-        Import-Module "$PSScriptRoot/../EntraIdDSC/"
+        Mock Test-GraphAuth { }
     }
     Describe "Get-EntraIdGroup" {
         Context "ByDisplayName parameter set" {

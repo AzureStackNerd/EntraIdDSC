@@ -47,14 +47,10 @@ jobs:
             $config.Run.PassThru = $true
             $config.Run.Throw = $true
             $config.CodeCoverage.Enabled = $false
+            $config.CodeCoverage.Path = './EntraIdDSC/'
+            $config.CodeCoverage.OutputPath = 'test-results/Coverage.xml'
+            $config.Output.Verbosity = 'None'
             Invoke-Pester -Configuration $config
-
-    #   - name: Publish test results
-    #     if: always()
-    #     uses: actions/upload-artifact@v4
-    #     with:
-    #       name: Pester-TestResults
-    #       path: ./TestResults.xml
 
       - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action@v2

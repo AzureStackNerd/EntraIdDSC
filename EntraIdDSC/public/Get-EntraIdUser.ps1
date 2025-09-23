@@ -25,13 +25,27 @@
 function Get-EntraIdUser {
     [CmdletBinding(DefaultParameterSetName='ById')]
     param(
-        [Parameter(Mandatory, ParameterSetName='ById', Position=0, ValueFromPipeline, ValueFromPipelineByPropertyName)]
+        [Parameter(ParameterSetName='ById', Position=0, ValueFromPipeline, ValueFromPipelineByPropertyName)]
         [string]$Id,
-        [Parameter(Mandatory, ParameterSetName='ByUPN', Position=0, ValueFromPipeline, ValueFromPipelineByPropertyName)]
+        [Parameter(ParameterSetName='ByUPN', Position=0, ValueFromPipeline, ValueFromPipelineByPropertyName)]
         [string]$UserPrincipalName
     )
 
     process {
+        # Validate required parameters based on ParameterSetName
+        switch ($PSCmdlet.ParameterSetName) {
+            'ById' {
+                if (-not $Id) {
+                    throw "Parameter 'Id' is required when using the ById parameter set."
+                }
+            }
+            'ByUPN' {
+                if (-not $UserPrincipalName) {
+                    throw "Parameter 'UserPrincipalName' is required when using the ByUPN parameter set."
+                }
+            }
+        }
+
         Test-GraphAuth
         $properties = @(
             'AboutMe'
@@ -172,12 +186,12 @@ function Get-EntraIdUser {
                     Property = $properties
                     ErrorAction = 'SilentlyContinue'
                 }
-                $user = Get-MgUser @getUserParams
-                if (-not $user) {
-                    Write-Verbose "No user found with Id '$Id'."
-                    return $null
-                }
-                return $user
+                    $user = Get-MgUser @getUserParams
+                    if (-not $user -or $user.Count -eq 0) {
+                        Write-Warning "No user found with Id '$Id'."
+                        return $null
+                    }
+                    return $user
             }
             'ByUPN' {
                 # Query Microsoft Graph for the user by UPN
@@ -186,12 +200,12 @@ function Get-EntraIdUser {
                     Property = $properties
                     ErrorAction = 'SilentlyContinue'
                 }
-                $user = Get-MgUser @getUserParams
-                if (-not $user) {
-                    Write-Verbose "No user found with UPN '$UserPrincipalName'."
-                    return $null
-                }
-                return $user
+                    $user = Get-MgUser @getUserParams
+                    if (-not $user -or $user.Count -eq 0) {
+                        Write-Warning "No user found with UPN '$UserPrincipalName'."
+                        return $null
+                    }
+                    return $user
             }
         }
     }

@@ -1,10 +1,8 @@
 # Pester tests for Get-EntraIdServicePrincipal
 # Follows Pester best practices: structure, assertions, mocks
+Import-Module "$PSScriptRoot/../EntraIdDSC/" -Force
 
 InModuleScope EntraIdDSC {
-    BeforeAll {
-        Import-Module "$PSScriptRoot/../EntraIdDSC/"
-    }
     Describe 'Get-EntraIdServicePrincipal' {
         BeforeAll {
             # Mock external dependencies

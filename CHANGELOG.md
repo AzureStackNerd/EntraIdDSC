@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Released]
 
+## [0.6.3] - 2025-09-23
+
+### Added
+
+- Minor fixes and improvements based on feedback from Pester tests.
+- 33 pester tests now in total.
+
 ## [0.6.2] - 2025-09-20
 
 ### Added
