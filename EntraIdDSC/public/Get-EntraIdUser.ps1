@@ -187,7 +187,7 @@ function Get-EntraIdUser {
                     ErrorAction = 'SilentlyContinue'
                 }
                     $user = Get-MgUser @getUserParams
-                    if (-not $user -or ($user -is [array] -and $user.Count -eq 0)) {
+                    if (-not $user -or $user.Count -eq 0) {
                         Write-Warning "No user found with Id '$Id'."
                         return $null
                     }
@@ -201,7 +201,7 @@ function Get-EntraIdUser {
                     ErrorAction = 'SilentlyContinue'
                 }
                     $user = Get-MgUser @getUserParams
-                    if (-not $user -or ($user -is [array] -and $user.Count -eq 0)) {
+                    if (-not $user -or $user.Count -eq 0) {
                         Write-Warning "No user found with UPN '$UserPrincipalName'."
                         return $null
                     }
