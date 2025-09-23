@@ -34,7 +34,7 @@ function Remove-EntraIdGroup {
                 }
                 if ($PSCmdlet.ShouldProcess($Id, "Remove Entra ID group by Id")) {
                     try {
-                        Remove-MgGroup -GroupId $Id -ErrorAction Stop
+                        Remove-MgGroup -GroupId $Id
                         Write-Verbose "Group with Id '$Id' removed."
                     }
                     catch {
