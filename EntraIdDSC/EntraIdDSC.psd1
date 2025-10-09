@@ -10,7 +10,7 @@
     GUID = 'c6cb6bdb-fb65-425b-9579-3d49128a4ebd'
 
     # Required modules for this module to work
-    RequiredModules = @('Microsoft.Graph.Authentication','Microsoft.Graph.Groups','Microsoft.Graph.Users')
+    # RequiredModules = @('Microsoft.Graph.Authentication','Microsoft.Graph.Groups','Microsoft.Graph.Users')
 
     # Author of this module
     Author = 'Remco Vermeer'
