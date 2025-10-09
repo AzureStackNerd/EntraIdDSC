@@ -10,7 +10,16 @@
     GUID = 'c6cb6bdb-fb65-425b-9579-3d49128a4ebd'
 
     # Required modules for this module to work
-    # RequiredModules = @('Microsoft.Graph.Authentication','Microsoft.Graph.Groups','Microsoft.Graph.Users')
+    # The following modules are required for EntraIdDSC to function correctly.
+    # Please install them manually before using this module, as dependencies are not automatically enforced.
+    # Required dependencies (minimum versions):
+    #   - Microsoft.Graph.Authentication (>=1.26.0): Provides authentication capabilities for Microsoft Graph.
+    #   - Microsoft.Graph.Groups (>=1.26.0): Enables management of Microsoft 365 groups via Microsoft Graph.
+    #   - Microsoft.Graph.Users (>=1.26.0): Enables management of users via Microsoft Graph.
+    # You can install these modules using:
+    #   Install-Module Microsoft.Graph.Authentication -MinimumVersion 1.26.0
+    #   Install-Module Microsoft.Graph.Groups -MinimumVersion 1.26.0
+    #   Install-Module Microsoft.Graph.Users -MinimumVersion 1.26.0
 
     # Author of this module
     Author = 'Remco Vermeer'
