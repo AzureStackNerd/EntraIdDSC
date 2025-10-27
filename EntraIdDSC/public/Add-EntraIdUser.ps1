@@ -43,11 +43,11 @@ function Add-EntraIdUser {
 
     process {
         # Validate the DisplayName
-        if (-not $DisplayName) {
+        if ([string]::IsNullOrWhiteSpace($DisplayName)) {
             throw "DisplayName is required."
         }
         # Validate the UserPrincipalName
-        if (-not $UserPrincipalName) {
+        if ([string]::IsNullOrWhiteSpace($UserPrincipalName)) {
             throw "UserPrincipalName is required."
         }
 

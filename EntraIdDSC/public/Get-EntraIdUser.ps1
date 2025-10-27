@@ -35,12 +35,12 @@ function Get-EntraIdUser {
         # Validate required parameters based on ParameterSetName
         switch ($PSCmdlet.ParameterSetName) {
             'ById' {
-                if (-not $Id) {
+                if ([string]::IsNullOrWhiteSpace($Id)) {
                     throw "Parameter 'Id' is required when using the ById parameter set."
                 }
             }
             'ByUPN' {
-                if (-not $UserPrincipalName) {
+                if ([string]::IsNullOrWhiteSpace($UserPrincipalName)) {
                     throw "Parameter 'UserPrincipalName' is required when using the ByUPN parameter set."
                 }
             }

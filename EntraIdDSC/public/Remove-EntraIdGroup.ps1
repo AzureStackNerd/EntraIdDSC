@@ -29,7 +29,7 @@ function Remove-EntraIdGroup {
     process {
         switch ($PSCmdlet.ParameterSetName) {
             'ById' {
-                if (-not $Id) {
+                if ([string]::IsNullOrWhiteSpace($Id)) {
                     Throw "Id cannot be empty."
                 }
                 if ($PSCmdlet.ShouldProcess($Id, "Remove Entra ID group by Id")) {
@@ -38,7 +38,7 @@ function Remove-EntraIdGroup {
                 }
             }
             'ByName' {
-                if (-not $DisplayName) {
+                if ([string]::IsNullOrWhiteSpace($DisplayName)) {
                     Throw "DisplayName cannot be empty."
                 }
                 $group = Get-MgGroup -Filter "displayName eq '$DisplayName'" -ErrorAction Stop

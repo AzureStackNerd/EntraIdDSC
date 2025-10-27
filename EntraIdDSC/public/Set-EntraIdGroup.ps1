@@ -89,10 +89,12 @@ function Set-EntraIdGroup {
             }
             $newGroup = $true
             if ($PSCmdlet.ShouldProcess("Group '$DisplayName'", "Create group with parameters $($newGroupParams | ConvertTo-Json)")) {
-                $group = New-MgGroup @newGroupParams
-                Write-Verbose "Created group with ID: $($group.Id)"
-                Write-Output "Created group '$DisplayName' ($GroupMembershipType membership)"
-                if ($AdministrativeUnit) {
+
+                if ([string]::IsNullOrWhiteSpace($AdministrativeUnit)) {
+                    $group = New-MgGroup @newGroupParams
+                }
+
+                if (-not [string]::IsNullOrWhiteSpace($AdministrativeUnit)) {
                     $adminUnitObj = Get-MgDirectoryAdministrativeUnit -Filter "DisplayName eq '$AdministrativeUnit'" | Select-Object -First 1
                     # $bodyParams = @{
                     #     "@odata.id" = "https://graph.microsoft.com/v1.0/groups/$($group.Id)"
@@ -102,13 +104,14 @@ function Set-EntraIdGroup {
                         "@odata.type"   = "#microsoft.graph.group"
                         description     = "$Description"
                         displayName     = "$DisplayName"
-                        mailEnabled     = $true
-                        mailNickname    = "$DisplayName".Replace(' ', '').ToLower()
-                        securityEnabled = $false
+                        mailEnabled     = $false
+                        mailNickname    = "$DisplayName".Replace(' ', '_').ToLower()
+                        securityEnabled = $true
                     }
-
-                    New-MgDirectoryAdministrativeUnitMember -AdministrativeUnitId $administrativeUnitId -BodyParameter $params
+                    New-MgDirectoryAdministrativeUnitMember -AdministrativeUnitId $adminUnitObj.Id -BodyParameter $bodyParams
                 }
+                Write-Verbose "Created group with ID: $($group.Id)"
+                Write-Output "Created group '$DisplayName' ($GroupMembershipType membership)"
             }
         }
         else {
@@ -125,16 +128,23 @@ function Set-EntraIdGroup {
                     Write-Output "Updated description for group '$Displa$groupyName'"
                 }
             }
-            if ($AdministrativeUnit) {
+            if (-not [string]::IsNullOrWhiteSpace($AdministrativeUnit)) {
                 $adminUnitObj = Get-MgDirectoryAdministrativeUnit -Filter "DisplayName eq '$AdministrativeUnit'" | Select-Object -First 1
+                if (-not $adminUnitObj) {
+                    Throw "Administrative Unit '$AdministrativeUnit' not found."
+                }
                 $administrativeUnitMember = Get-MgDirectoryAdministrativeUnitMember -AdministrativeUnitId $AU.Id | Where-Object { $_.Id -eq $group.Id }
-                if ($null -eq $administrativeUnitMember) {
-                    $updateRequired = $true
-                    $bodyParams = @{
-                        "@odata.id" = "https://graph.microsoft.com/v1.0/groups/$($group.Id)"
-                    }
-                    New-MgDirectoryAdministrativeUnitMemberByRef -AdministrativeUnitId $($adminUnitObj.id) -BodyParameter $bodyParams
-                    Write-Output "Adding group '$DisplayName' to Administrative Unit '$AdministrativeUnit'"
+                if ([string]::IsNullOrWhiteSpace($administrativeUnitMember)) {
+                    # $updateRequired = $true
+                    # $bodyParams = @{
+                    #     "@odata.id" = "https://graph.microsoft.com/v1.0/groups/$($group.Id)"
+                    # }
+                    # New-MgDirectoryAdministrativeUnitMemberByRef -AdministrativeUnitId $($adminUnitObj.id) -BodyParameter $bodyParams
+                    # Write-Output "Adding group '$DisplayName' to Administrative Unit '$AdministrativeUnit'"
+                    Write-Warning "Changing Administrative Unit membership is not yet implemented."
+                    # Permission issues with the current Graph SDK prevent implementation. It needs AdministrativeUnit.ReadWrite.All
+                    # This is a to broad scope if the intention is only to manage group membership in a specific Administrative Unit.
+                    # There is not a particular role available on the administrative unit level to delegate this.
                 }
 
 
