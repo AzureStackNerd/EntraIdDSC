@@ -50,7 +50,9 @@ function Set-EntraIdGroup {
         [Parameter(Mandatory)]
         [array]$Owners,
         [Parameter(Mandatory = $false)]
-        [bool]$IsAssignableToRole = $false
+        [bool]$IsAssignableToRole = $false,
+        [Parameter(Mandatory = $false)]
+        [string]$AdministrativeUnit = $null
     )
 
     process {
@@ -90,6 +92,23 @@ function Set-EntraIdGroup {
                 $group = New-MgGroup @newGroupParams
                 Write-Verbose "Created group with ID: $($group.Id)"
                 Write-Output "Created group '$DisplayName' ($GroupMembershipType membership)"
+                if ($AdministrativeUnit) {
+                    $adminUnitObj = Get-MgDirectoryAdministrativeUnit -Filter "DisplayName eq '$AdministrativeUnit'" | Select-Object -First 1
+                    # $bodyParams = @{
+                    #     "@odata.id" = "https://graph.microsoft.com/v1.0/groups/$($group.Id)"
+                    # }
+                    # New-MgDirectoryAdministrativeUnitMemberByRef -AdministrativeUnitId $($adminUnitObj.id) -BodyParameter $bodyParams
+                    $bodyParams = @{
+                        "@odata.type"   = "#microsoft.graph.group"
+                        description     = "$Description"
+                        displayName     = "$DisplayName"
+                        mailEnabled     = $true
+                        mailNickname    = "$DisplayName".Replace(' ', '').ToLower()
+                        securityEnabled = $false
+                    }
+
+                    New-MgDirectoryAdministrativeUnitMember -AdministrativeUnitId $administrativeUnitId -BodyParameter $params
+                }
             }
         }
         else {
@@ -103,10 +122,24 @@ function Set-EntraIdGroup {
                 $updateRequired = $true
                 if ($PSCmdlet.ShouldProcess("Group '$DisplayName'", "Update group description to '$Description'")) {
                     Update-MgGroup @updateParams
-                    Write-Output "Updated description for group '$DisplayName'"
+                    Write-Output "Updated description for group '$Displa$groupyName'"
                 }
             }
-            if ($group.IsAssignableToRole -ne $IsAssignableToRole) {
+            if ($AdministrativeUnit) {
+                $adminUnitObj = Get-MgDirectoryAdministrativeUnit -Filter "DisplayName eq '$AdministrativeUnit'" | Select-Object -First 1
+                $administrativeUnitMember = Get-MgDirectoryAdministrativeUnitMember -AdministrativeUnitId $AU.Id | Where-Object { $_.Id -eq $group.Id }
+                if ($null -eq $administrativeUnitMember) {
+                    $updateRequired = $true
+                    $bodyParams = @{
+                        "@odata.id" = "https://graph.microsoft.com/v1.0/groups/$($group.Id)"
+                    }
+                    New-MgDirectoryAdministrativeUnitMemberByRef -AdministrativeUnitId $($adminUnitObj.id) -BodyParameter $bodyParams
+                    Write-Output "Adding group '$DisplayName' to Administrative Unit '$AdministrativeUnit'"
+                }
+
+
+            }
+            if ($group.IsAssignableToRole -and $group.IsAssignableToRole -ne $IsAssignableToRole) {
                 Write-Warning "IsAssignableToRole cannot be changed after group creation. Please delete and recreate the group if needed."
             }
         }
@@ -117,7 +150,8 @@ function Set-EntraIdGroup {
                 $currentMembers = Get-EntraIdGroupMember -GroupDisplayName $DisplayName
                 Write-Verbose "Fetched group: $DisplayName current members. $($currentMembers | ConvertTo-Json -Depth 3)"
 
-            } else {
+            }
+            else {
                 $currentMembers = @()
                 Write-Verbose "New group created, no current members."
             }

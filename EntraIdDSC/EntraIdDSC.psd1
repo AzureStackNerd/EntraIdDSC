@@ -40,7 +40,7 @@
 }
 
     # Description of the functionality provided by this module
-    Description = 'This module contains functions to maintain EntraId Groups and Users (limited fields) in Desired State.'
+    Description = 'This module contains functions to maintain EntraId Groups and Users in Desired State.'
 
     # Functions to export from this module
     FunctionsToExport = @(
