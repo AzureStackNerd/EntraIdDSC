@@ -66,13 +66,36 @@ function Add-EntraIdGroupOwner {
             # Add missing owners
             $toAdd = $Owners | Where-Object { $_ -notin $currentOwners }
             foreach ($ownerEntry in $toAdd) {
-                $userObj = Get-EntraIdUser -UserPrincipalName $ownerEntry
-                if ($userObj) {
-                    $userId = $userObj.Id
-                    New-MgGroupOwner -GroupId "$GroupId" -DirectoryObjectId "$userId"
-                    Write-Output "Added owner $ownerEntry to group $GroupDisplayName ($GroupId)."
-                } else {
-                    Write-Warning "User not found: $ownerEntry"
+                if ($ownerEntry -like '*@*') {
+                    $ownerUserObj = Get-EntraIdUser -UserPrincipalName $ownerEntry
+                    if ($ownerUserObj) {
+                        $ownerUserId = $ownerUserObj.Id
+                        New-MgGroupOwner -GroupId "$GroupId" -DirectoryObjectId "$ownerUserId"
+                        Write-Output "Added owner $ownerEntry to group $GroupDisplayName ($GroupId)."
+                    } else {
+                        Write-Warning "User not found: $ownerEntry"
+                    }
+                }
+                else {
+                    # Group
+                    $memberGroupObj = Get-EntraIdGroup -DisplayName $ownerEntry
+                    if ($null -ne $memberGroupObj) {
+                        $memberGroupId = $memberGroupObj.Id
+                        New-MgGroupOwner -GroupId "$GroupId" -DirectoryObjectId "$memberGroupId"
+                        Write-Output "Added group $ownerEntry as owner of group $GroupDisplayName ($GroupId)."
+                    }
+                    else {
+                        # Try as service principal
+                        $memberSpnObj = Get-EntraIdServicePrincipal -DisplayName $ownerEntry
+                        if ($null -ne $memberSpnObj) {
+                            $memberSpnId = $memberSpnObj.Id
+                            New-MgGroupMember -GroupId "$GroupId" -DirectoryObjectId "$memberSpnId"
+                            Write-Output "Added service principal $ownerEntry as owner of group $GroupDisplayName ($GroupId)."
+                        }
+                        else {
+                            Write-Warning "Group or ServicePrincipal not found: $ownerEntry"
+                        }
+                    }
                 }
             }
         }

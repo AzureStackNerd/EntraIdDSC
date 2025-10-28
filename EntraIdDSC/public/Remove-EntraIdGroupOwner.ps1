@@ -65,17 +65,47 @@ function Remove-EntraIdGroupOwner {
 
             # Remove specified owners if present
             $toRemove = $Owners | Where-Object { $_ -in $currentOwners }
-            foreach ($upn in $toRemove) {
-                $user = Get-EntraIdUser -UserPrincipalName $upn
-                if ($user) {
-                    try {
-                        Remove-MgGroupOwnerDirectoryObjectByRef -GroupId $GroupId -DirectoryObjectId $user.Id
-                        Write-Output "Removed owner $upn from group $GroupDisplayName ($GroupId)."
-                    } catch {
-                        Write-Warning "Failed to remove $upn as owner: $($_.Exception.Message)"
+            foreach ($ownerEntry in $toRemove) {
+                if ($ownerEntry -like '*@*') {
+                    # User
+                    $ownerUserObj = Get-EntraIdUser -UserPrincipalName $ownerEntry
+                    if ($null -ne $ownerUserObj) {
+                        try {
+                            $ownerUserId = $ownerUserObj.Id
+                            Remove-MgGroupOwnerDirectoryObjectByRef -GroupId $GroupId -DirectoryObjectId $ownerUserId
+                            Write-Output "Removed user $ownerEntry from group $GroupDisplayName ($GroupId)."
+                        } catch {
+                            Write-Warning "Failed to remove $ownerEntry as owner: $($_.Exception.Message)"
+                        }
+                    } else {
+                        Write-Warning "User not found: $ownerEntry"
                     }
                 } else {
-                    Write-Warning "User not found: $upn"
+                    # Group
+                    $ownerGroupObj = Get-EntraIdGroup -DisplayName $ownerEntry
+                    if ($null -ne $ownerGroupObj) {
+                        try {
+                            $ownerGroupId = $ownerGroupObj.Id
+                            Remove-MgGroupOwnerDirectoryObjectByRef -GroupId $GroupId -DirectoryObjectId $ownerGroupId
+                            Write-Output "Removed group $ownerEntry from group $GroupDisplayName ($GroupId)."
+                        } catch {
+                            Write-Warning "Failed to remove group $ownerEntry as owner: $($_.Exception.Message)"
+                        }
+                    } else {
+                        # Try as service principal
+                        $ownerSpnObj = Get-EntraIdServicePrincipal -DisplayName $ownerEntry
+                        if ($null -ne $ownerSpnObj) {
+                            try {
+                                $ownerSpnId = $ownerSpnObj.Id
+                                Remove-MgGroupOwnerDirectoryObjectByRef -GroupId $GroupId -DirectoryObjectId $ownerSpnId
+                                Write-Output "Removed service principal $ownerEntry from group $GroupDisplayName ($GroupId)."
+                            } catch {
+                                Write-Warning "Failed to remove service principal $ownerEntry as owner: $($_.Exception.Message)"
+                            }
+                        } else {
+                            Write-Warning "Group or ServicePrincipal not found: $ownerEntry"
+                        }
+                    }
                 }
             }
         }
