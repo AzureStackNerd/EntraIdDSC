@@ -44,6 +44,7 @@ function Invoke-EntraIdGroupDesiredState {
                 $members = $group.members
                 $owners = $group.owners
                 $isAssignableToRole = $group.IsAssignableToRole
+                $administrativeUnit = $group.administrativeUnit
 
                 $params = @{
                     DisplayName         = $groupName
@@ -52,6 +53,7 @@ function Invoke-EntraIdGroupDesiredState {
                     Owners              = $owners
                     IsAssignableToRole  = $isAssignableToRole
                     Members             = $members
+                    AdministrativeUnit  = $administrativeUnit
                 }
 
                 if (!$owners) {

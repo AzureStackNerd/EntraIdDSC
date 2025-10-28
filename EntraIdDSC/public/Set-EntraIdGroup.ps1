@@ -141,7 +141,7 @@ function Set-EntraIdGroup {
                     # }
                     # New-MgDirectoryAdministrativeUnitMemberByRef -AdministrativeUnitId $($adminUnitObj.id) -BodyParameter $bodyParams
                     # Write-Output "Adding group '$DisplayName' to Administrative Unit '$AdministrativeUnit'"
-                    Write-Warning "Changing Administrative Unit membership is not yet implemented."
+                    Write-Warning "Changing Administrative Unit membership for existing groups is not (yet) implemented."
                     # Permission issues with the current Graph SDK prevent implementation. It needs AdministrativeUnit.ReadWrite.All
                     # This is a to broad scope if the intention is only to manage group membership in a specific Administrative Unit.
                     # There is not a particular role available on the administrative unit level to delegate this.
@@ -195,7 +195,6 @@ function Set-EntraIdGroup {
 
 
         }
-
         # Get current owners (UPNs)
         $currentOwners = Get-EntraIdGroupOwner -GroupDisplayName $DisplayName
         $toAddOwners = $Owners | Where-Object { $_ -notin $currentOwners }
@@ -218,6 +217,5 @@ function Set-EntraIdGroup {
             Write-Output "Group '$DisplayName' is already in the desired state."
         }
         Write-Output ""
-
     }
 }
