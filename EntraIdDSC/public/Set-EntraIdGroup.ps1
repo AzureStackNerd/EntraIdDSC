@@ -88,33 +88,35 @@ function Set-EntraIdGroup {
                 }
             }
             $newGroup = $true
-            if ($PSCmdlet.ShouldProcess("Group '$DisplayName'", "Create group with parameters $($newGroupParams | ConvertTo-Json)")) {
 
-                if ([string]::IsNullOrWhiteSpace($AdministrativeUnit)) {
+
+            if ([string]::IsNullOrWhiteSpace($AdministrativeUnit)) {
+                if ($PSCmdlet.ShouldProcess("Group '$DisplayName'", "Create group with parameters $($newGroupParams | ConvertTo-Json)")) {
                     $group = New-MgGroup @newGroupParams
                 }
-
-                if (-not [string]::IsNullOrWhiteSpace($AdministrativeUnit)) {
-                    $adminUnitObj = Get-MgDirectoryAdministrativeUnit -Filter "DisplayName eq '$AdministrativeUnit'" | Select-Object -First 1
-                    # $bodyParams = @{
-                    #     "@odata.id" = "https://graph.microsoft.com/v1.0/groups/$($group.Id)"
-                    # }
-                    # New-MgDirectoryAdministrativeUnitMemberByRef -AdministrativeUnitId $($adminUnitObj.id) -BodyParameter $bodyParams
-                    $bodyParams = @{
-                        "@odata.type"   = "#microsoft.graph.group"
-                        description     = "$Description"
-                        displayName     = "$DisplayName"
-                        mailEnabled     = $false
-                        mailNickname    = "$DisplayName".Replace(' ', '_').ToLower()
-                        securityEnabled = $true
-                    }
-                    if ($PSCmdlet.ShouldProcess("Group '$DisplayName'", "Create group in Administrative Unit '$AdministrativeUnit' with parameters $($bodyParams | ConvertTo-Json)")) {
-                        New-MgDirectoryAdministrativeUnitMember -AdministrativeUnitId $adminUnitObj.Id -BodyParameter $bodyParams
-                    }
-                }
-                Write-Verbose "Created group with ID: $($group.Id)"
-                Write-Output "Created group '$DisplayName' ($GroupMembershipType membership)"
             }
+
+            if (-not [string]::IsNullOrWhiteSpace($AdministrativeUnit)) {
+                $adminUnitObj = Get-MgDirectoryAdministrativeUnit -Filter "DisplayName eq '$AdministrativeUnit'" | Select-Object -First 1
+                # $bodyParams = @{
+                #     "@odata.id" = "https://graph.microsoft.com/v1.0/groups/$($group.Id)"
+                # }
+                # New-MgDirectoryAdministrativeUnitMemberByRef -AdministrativeUnitId $($adminUnitObj.id) -BodyParameter $bodyParams
+                $bodyParams = @{
+                    "@odata.type"   = "#microsoft.graph.group"
+                    description     = "$Description"
+                    displayName     = "$DisplayName"
+                    mailEnabled     = $false
+                    mailNickname    = "$DisplayName".Replace(' ', '_').ToLower()
+                    securityEnabled = $true
+                }
+                if ($PSCmdlet.ShouldProcess("Group '$DisplayName'", "Create group in Administrative Unit '$AdministrativeUnit' with parameters $($bodyParams | ConvertTo-Json)")) {
+                    New-MgDirectoryAdministrativeUnitMember -AdministrativeUnitId $adminUnitObj.Id -BodyParameter $bodyParams
+                }
+            }
+            Write-Verbose "Created group with ID: $($group.Id)"
+            Write-Output "Created group '$DisplayName' ($GroupMembershipType membership)"
+
         }
         else {
             $updateRequired = $false
