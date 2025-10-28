@@ -89,7 +89,7 @@ function Add-EntraIdGroupOwner {
                         $memberSpnObj = Get-EntraIdServicePrincipal -DisplayName $ownerEntry
                         if ($null -ne $memberSpnObj) {
                             $memberSpnId = $memberSpnObj.Id
-                            New-MgGroupMember -GroupId "$GroupId" -DirectoryObjectId "$memberSpnId"
+                            New-MgGroupOwner -GroupId "$GroupId" -DirectoryObjectId "$memberSpnId"
                             Write-Output "Added service principal $ownerEntry as owner of group $GroupDisplayName ($GroupId)."
                         }
                         else {
