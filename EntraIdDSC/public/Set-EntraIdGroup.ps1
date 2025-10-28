@@ -134,10 +134,11 @@ function Set-EntraIdGroup {
             }
             if (-not [string]::IsNullOrWhiteSpace($AdministrativeUnit)) {
                 $adminUnitObj = Get-MgDirectoryAdministrativeUnit -Filter "DisplayName eq '$AdministrativeUnit'" | Select-Object -First 1
-                if (-not $adminUnitObj) {
+                if ($null -eq $adminUnitObj) {
                     Throw "Administrative Unit '$AdministrativeUnit' not found."
                 }
-                $administrativeUnitMember = Get-MgDirectoryAdministrativeUnitMember -AdministrativeUnitId $AU.Id | Where-Object { $_.Id -eq $group.Id }
+                $adminUnitId = $adminUnitObj.Id
+                $administrativeUnitMember = Get-MgDirectoryAdministrativeUnitMember -AdministrativeUnitId $adminUnitId | Where-Object { $_.Id -eq $group.Id }
                 if ([string]::IsNullOrWhiteSpace($administrativeUnitMember)) {
                     # $updateRequired = $true
                     # $bodyParams = @{
