@@ -34,6 +34,7 @@ function Get-EntraIdGroupOwner {
     process {
         # Resolve group Id if searching by GroupDisplayName
         if ($PSCmdlet.ParameterSetName -eq 'ByDisplayName') {
+            Write-Verbose "Get-EntraIdGroupOwner: Searching for group with display name '$GroupDisplayName'"
             $group = Get-MgGroup -Filter "displayName eq '$GroupDisplayName'"
             if (-not $group) {
                 Write-Warning "No group found with display name '$GroupDisplayName'."
@@ -42,22 +43,47 @@ function Get-EntraIdGroupOwner {
             $GroupId = $group.Id
         }
 
-        # Get group owners
+        # Get group Owners
         $owners = Get-MgGroupOwner -GroupId $GroupId -All
         if (-not $owners) {
             Write-Warning "No owners found for group Id '$GroupId'."
             return $null
         }
 
-        $upns = @()
+        $results = @()
         foreach ($owner in $owners) {
-            if ($owner.AdditionalProperties['@odata.type'] -eq '#microsoft.graph.user') {
-                $user = Get-EntraIdUser -Id $owner.Id
-                if ($user -and $user.UserPrincipalName) {
-                    $upns += $user.UserPrincipalName
+            # Process user and group objects
+            $odataType = $owner.AdditionalProperties['@odata.type']
+            if ($odataType -eq '#microsoft.graph.user') {
+                if ($PSCmdlet.ParameterSetName -eq 'ByDisplayName') {
+                    $user = Get-EntraIdUser -Id $owner.Id
+                    if ($user -and $user.UserPrincipalName) {
+                        $results += $user.UserPrincipalName
+                    }
+                } else {
+                    $results += $owner.Id
+                }
+            } elseif ($odataType -eq '#microsoft.graph.group') {
+                # For groups, return the group Id or display name as appropriate
+                if ($PSCmdlet.ParameterSetName -eq 'ByDisplayName') {
+                    $groupObj = Get-EntraIdGroup -Id "$($owner.Id)"
+                    if ($groupObj -and $groupObj.DisplayName) {
+                        $results += $groupObj.DisplayName
+                    }
+                } else {
+                    $results += $owner.Id
+                }
+            } elseif ($odataType -eq '#microsoft.graph.servicePrincipal') {
+                if ($PSCmdlet.ParameterSetName -eq 'ByDisplayName') {
+                    $spnObj = Get-EntraIdServicePrincipal -Id $owner.Id
+                    if ($spnObj -and $spnObj.DisplayName) {
+                        $results += $spnObj.DisplayName
+                    }
+                } else {
+                    $results += $owner.Id
                 }
             }
         }
-        return $upns
+        return $results
     }
 }
