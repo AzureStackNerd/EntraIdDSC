@@ -38,12 +38,12 @@ function Invoke-EntraIdGroupDesiredState {
             $rawContent = $rawContent -replace '(?s)/\*.*?\*/', ''
             $json = $rawContent | ConvertFrom-Json
             foreach ($group in $json) {
-                $groupName = $group.Name
-                $groupMembershipType = $group.GroupMembershipType
+                $groupName = $group.name
+                $groupMembershipType = $group.groupMembershipType
                 $description = $group.description
                 $members = $group.members
                 $owners = $group.owners
-                $isAssignableToRole = $group.IsAssignableToRole
+                $isAssignableToRole = $group.isAssignableToRole
                 $administrativeUnit = $group.administrativeUnit
 
                 $params = @{
