@@ -108,7 +108,9 @@ function Set-EntraIdGroup {
                         mailNickname    = "$DisplayName".Replace(' ', '_').ToLower()
                         securityEnabled = $true
                     }
-                    New-MgDirectoryAdministrativeUnitMember -AdministrativeUnitId $adminUnitObj.Id -BodyParameter $bodyParams
+                    if ($PSCmdlet.ShouldProcess("Group '$DisplayName'", "Create group in Administrative Unit '$AdministrativeUnit' with parameters $($bodyParams | ConvertTo-Json)")) {
+                        New-MgDirectoryAdministrativeUnitMember -AdministrativeUnitId $adminUnitObj.Id -BodyParameter $bodyParams
+                    }
                 }
                 Write-Verbose "Created group with ID: $($group.Id)"
                 Write-Output "Created group '$DisplayName' ($GroupMembershipType membership)"
