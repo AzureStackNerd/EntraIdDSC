@@ -35,7 +35,10 @@ function Get-EntraIdGroupMember {
         # Resolve group Id if searching by GroupDisplayName
         if ($PSCmdlet.ParameterSetName -eq 'ByDisplayName') {
             Write-Verbose "Get-EntraIdGroupMember: Searching for group with display name '$GroupDisplayName'"
-            $group = Get-MgGroup -Filter "displayName eq '$GroupDisplayName'"
+            $groupParams = @{
+                Filter = "displayName eq '$GroupDisplayName'"
+            }
+            $group = Get-MgGroup @groupParams
             if (-not $group) {
                 Write-Warning "No group found with display name '$GroupDisplayName'."
                 return $null
@@ -44,7 +47,13 @@ function Get-EntraIdGroupMember {
         }
 
         # Get group members
-        $members = Get-MgGroupMember -GroupId $GroupId -All -ConsistencyLevel "eventual" -CountVariable Members
+        $membersParams = @{
+            GroupId = $GroupId
+            All = $true
+            ConsistencyLevel = "eventual"
+            CountVariable = "Members"
+        }
+        $members = Get-MgGroupMember @membersParams
         if (-not $members) {
             Write-Warning "No members found for group Id '$GroupId'."
             return $null
@@ -56,7 +65,10 @@ function Get-EntraIdGroupMember {
             $odataType = $member.AdditionalProperties['@odata.type']
             if ($odataType -eq '#microsoft.graph.user') {
                 if ($PSCmdlet.ParameterSetName -eq 'ByDisplayName') {
-                    $user = Get-EntraIdUser -Id $member.Id
+                    $userParams = @{
+                        Id = $member.Id
+                    }
+                    $user = Get-EntraIdUser @userParams
                     if ($user -and $user.UserPrincipalName) {
                         $results += $user.UserPrincipalName
                     }
@@ -66,7 +78,10 @@ function Get-EntraIdGroupMember {
             } elseif ($odataType -eq '#microsoft.graph.group') {
                 # For groups, return the group Id or display name as appropriate
                 if ($PSCmdlet.ParameterSetName -eq 'ByDisplayName') {
-                    $groupObj = Get-EntraIdGroup -Id "$($member.Id)"
+                    $groupObjParams = @{
+                        Id = "$($member.Id)"
+                    }
+                    $groupObj = Get-EntraIdGroup @groupObjParams
                     if ($groupObj -and $groupObj.DisplayName) {
                         $results += $groupObj.DisplayName
                     }
@@ -76,7 +91,10 @@ function Get-EntraIdGroupMember {
             } elseif ($odataType -eq '#microsoft.graph.servicePrincipal') {
                 # Handle other directory object types (e.g., service principals)
                 if ($PSCmdlet.ParameterSetName -eq 'ByDisplayName') {
-                    $spnObj = Get-EntraIdServicePrincipal -ServicePrincipalId $member.Id
+                    $spnObjParams = @{
+                        ServicePrincipalId = $member.Id
+                    }
+                    $spnObj = Get-EntraIdServicePrincipal @spnObjParams
                     if ($spnObj -and $spnObj.DisplayName) {
                         $results += $spnObj.DisplayName
                     }
