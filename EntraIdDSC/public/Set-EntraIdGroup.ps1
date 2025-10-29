@@ -72,7 +72,7 @@ function Set-EntraIdGroup {
                 DisplayName        = $DisplayName
                 Description        = $Description
                 MailEnabled        = $false
-                MailNickname       = $DisplayName.Replace(' ', '')
+                MailNickname       = $DisplayName.Replace(' ', '').ToLower()
                 SecurityEnabled    = $true
                 IsAssignableToRole = $IsAssignableToRole
             }
@@ -98,33 +98,29 @@ function Set-EntraIdGroup {
                     $group = New-MgGroup @newGroupParams
                 }
             }
-
-            if (![string]::IsNullOrWhiteSpace($AdministrativeUnit)) {
+            else {
                 $adminUnitParams = @{
                     Filter = "DisplayName eq '$AdministrativeUnit'"
                 }
                 $adminUnitObj = Get-MgDirectoryAdministrativeUnit @adminUnitParams | Select-Object -First 1
+                if (!$adminUnitObj) {
+                    throw "Administrative Unit '$AdministrativeUnit' not found. Cannot create group in a non-existent Administrative Unit."
+                }
                 # $bodyParams = @{
                 #     "@odata.id" = "https://graph.microsoft.com/v1.0/groups/$($group.Id)"
                 # }
                 # New-MgDirectoryAdministrativeUnitMemberByRef -AdministrativeUnitId $($adminUnitObj.id) -BodyParameter $bodyParams
-                $bodyParams = @{
-                    "@odata.type"   = "#microsoft.graph.group"
-                    description     = "$Description"
-                    displayName     = "$DisplayName"
-                    mailEnabled     = $false
-                    mailNickname    = "$DisplayName".Replace(' ', '_').ToLower()
-                    securityEnabled = $true
-                }
+                $bodyParams = @{}
+                $newGroupParams.Keys | ForEach-Object { $bodyParams[$_] = $newGroupParams[$_] }
+                $bodyParams['@odata.type'] = '#microsoft.graph.group'
                 if ($PSCmdlet.ShouldProcess("Group '$DisplayName'", "Create group in Administrative Unit '$AdministrativeUnit' with parameters $($bodyParams | ConvertTo-Json)")) {
                     $addMemberParams = @{
                         AdministrativeUnitId = $adminUnitObj.Id
-                        BodyParameter = $bodyParams
+                        BodyParameter        = $bodyParams
                     }
                     New-MgDirectoryAdministrativeUnitMember @addMemberParams
                 }
             }
-            Write-Verbose "Created group with ID: $($group.Id)"
             Write-Output "Created group '$DisplayName' ($GroupMembershipType membership)"
 
         }

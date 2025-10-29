@@ -25,6 +25,7 @@ The `EntraIdDSC` module provides a Desired State Configuration (DSC) solution fo
   - Get-EntraIdUser
   - Invoke-EntraIdGroupDesiredState
   - Invoke-EntraIdUserDesiredState
+  - Remove-EntraIdGroup
   - Remove-EntraIdGroupMember
   - Remove-EntraIdGroupOwner
   - Set-EntraIdGroup
@@ -127,7 +128,7 @@ The `EntraIdDSC` module provides a Desired State Configuration (DSC) solution fo
    [
      {
        "Name": "UG-LIC-DynamicsBusinessCentralPremium",
-       "GroupMembershipType": "Direct",
+       "groupMembershipType": "Direct",
        "owners": ["alex.wilson@contoso.com"],
        "description": "License User Group for Microsoft Dynamics Business Central Premium",
        "members": [
@@ -135,7 +136,8 @@ The `EntraIdDSC` module provides a Desired State Configuration (DSC) solution fo
          "emma.jones@contoso.com",
          "liam.smith@contoso.com"
        ],
-       "IsAssignableToRole": false
+       "isAssignableToRole": false,
+       "administrativeUnit": null
      }
    ]
    ```
