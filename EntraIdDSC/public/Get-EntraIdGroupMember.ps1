@@ -44,7 +44,7 @@ function Get-EntraIdGroupMember {
         }
 
         # Get group members
-        $members = Get-MgGroupMember -GroupId $GroupId -All
+        $members = Get-MgGroupMember -GroupId $GroupId -All -ConsistencyLevel "eventual" -CountVariable Members
         if (-not $members) {
             Write-Warning "No members found for group Id '$GroupId'."
             return $null

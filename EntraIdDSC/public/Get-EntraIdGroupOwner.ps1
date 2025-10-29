@@ -44,7 +44,7 @@ function Get-EntraIdGroupOwner {
         }
 
         # Get group Owners
-        $owners = Get-MgGroupOwner -GroupId $GroupId -All
+        $owners = Get-MgGroupOwner -GroupId $GroupId -All -ConsistencyLevel "eventual" -CountVariable Owners
         if (-not $owners) {
             Write-Warning "No owners found for group Id '$GroupId'."
             return $null
