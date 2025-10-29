@@ -139,7 +139,7 @@ function Set-EntraIdGroup {
                 $updateRequired = $true
                 if ($PSCmdlet.ShouldProcess("Group '$DisplayName'", "Update group description to '$Description'")) {
                     Update-MgGroup @updateParams
-                    Write-Output "Updated description for group '$Displa$groupyName'"
+                    Write-Output "Updated description for group '$DisplayName'"
                 }
             }
             if (![string]::IsNullOrWhiteSpace($AdministrativeUnit)) {

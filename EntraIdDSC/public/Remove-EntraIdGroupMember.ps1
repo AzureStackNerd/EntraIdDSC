@@ -85,7 +85,7 @@ function Remove-EntraIdGroupMember {
                             Remove-MgGroupMemberDirectoryObjectByRef @removeParams
                             Write-Output "Removed Member (user) $memberEntry from group $GroupDisplayName ($GroupId)."
                         } catch {
-                            Write-Warning "Failed to remove Member (user) $memberEntry from group $GroupDisplayName ($GroupId).: $($_.Exception.Message)"
+                            Write-Warning "Failed to remove Member (user) $memberEntry from group $GroupDisplayName ($GroupId): $($_.Exception.Message)"
                         }
                     } else {
                         Write-Warning "User not found: $memberEntry"
