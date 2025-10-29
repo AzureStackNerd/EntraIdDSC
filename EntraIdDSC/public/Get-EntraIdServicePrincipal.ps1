@@ -23,12 +23,12 @@
     This function requires Microsoft Graph PowerShell SDK to be installed and authenticated.
 #>
 function Get-EntraIdServicePrincipal {
-    [CmdletBinding(DefaultParameterSetName='ByDisplayName')]
+    [CmdletBinding(DefaultParameterSetName = 'ByDisplayName')]
     param(
-        [Parameter(Mandatory, ParameterSetName='ByDisplayName', Position=0, ValueFromPipeline, ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, ParameterSetName = 'ByDisplayName', Position = 0, ValueFromPipeline, ValueFromPipelineByPropertyName)]
         [string]$DisplayName,
-    [Parameter(Mandatory, ParameterSetName='ByServicePrincipalId', Position=0, ValueFromPipeline, ValueFromPipelineByPropertyName)]
-    [string]$ServicePrincipalId
+        [Parameter(Mandatory, ParameterSetName = 'ByServicePrincipalId', Position = 0, ValueFromPipeline, ValueFromPipelineByPropertyName)]
+        [string]$ServicePrincipalId
     )
 
     process {
@@ -36,13 +36,25 @@ function Get-EntraIdServicePrincipal {
 
         switch ($PSCmdlet.ParameterSetName) {
             'ByDisplayName' {
-                $sp = Get-MgServicePrincipal -Filter "displayName eq '$DisplayName'" -ErrorAction SilentlyContinue | Select-Object -First 1
-                if ($sp) { return $sp }
+                $spParams = @{
+                    Filter      = "displayName eq '$DisplayName'"
+                    ErrorAction = 'SilentlyContinue'
+                }
+                $sp = Get-MgServicePrincipal @spParams | Select-Object -First 1
+                if ($sp) {
+                    return $sp
+                }
                 Write-Verbose "No Service Principal found with display name '$DisplayName'."
             }
             'ByServicePrincipalId' {
-                $sp = Get-MgServicePrincipal -ServicePrincipalId "$ServicePrincipalId" -ErrorAction SilentlyContinue | Select-Object -First 1
-                if ($sp) { return $sp }
+                $spParams = @{
+                    ServicePrincipalId = "$ServicePrincipalId"
+                    ErrorAction        = 'SilentlyContinue'
+                }
+                $sp = Get-MgServicePrincipal @spParams | Select-Object -First 1
+                if ($sp) {
+                    return $sp
+                }
                 Write-Verbose "No Service Principal found with ServicePrincipalId '$ServicePrincipalId'."
             }
         }

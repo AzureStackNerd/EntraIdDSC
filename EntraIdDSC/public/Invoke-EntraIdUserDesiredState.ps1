@@ -26,7 +26,13 @@ function Invoke-EntraIdUserDesiredState {
     process {
         Test-GraphAuth
         # Get all JSON configuration files in the specified path
-        $files = Get-ChildItem -Path $Path -Include *.json, *.jsonc -File -Recurse | Sort-Object Name
+        $filesParams = @{
+            Path = $Path
+            Include = "*.json", "*.jsonc"
+            File = $true
+            Recurse = $true
+        }
+        $files = Get-ChildItem @filesParams | Sort-Object Name
         $protectedUserFile = $files | Where-Object { $_.Name -eq 'ProtectedUsers.jsonc' -or $_.Name -eq 'ProtectedUsers.json' }
         if ($protectedUserFile.Count -gt 1) {
             Write-Error "Multiple ProtectedUsers files found. Please ensure only one exists."
@@ -34,7 +40,11 @@ function Invoke-EntraIdUserDesiredState {
         }
         if ($protectedUserFile) {
             Write-Verbose "Loading protected users from file: $($protectedUserFile.FullName)"
-            $protectedRaw = Get-Content -Path $protectedUserFile.FullName -Raw
+            $protectedContentParams = @{
+                Path = $protectedUserFile.FullName
+                Raw = $true
+            }
+            $protectedRaw = Get-Content @protectedContentParams
             # Remove single-line comments (// ...)
             $protectedRaw = $protectedRaw -replace '(?m)^\s*//.*$', ''
             # Remove block comments (/* ... */)
@@ -50,7 +60,11 @@ function Invoke-EntraIdUserDesiredState {
             Write-Verbose "Processing file: $($file.FullName)"
 
             # Read the user object from the JSON/JSONC file, removing comment lines
-            $rawContent = Get-Content -Path $file.FullName -Raw
+            $contentParams = @{
+                Path = $file.FullName
+                Raw = $true
+            }
+            $rawContent = Get-Content @contentParams
             # Remove single-line comments (// ...)
             $rawContent = $rawContent -replace '(?m)^\s*//.*$', ''
             # Remove block comments (/* ... */)
@@ -92,7 +106,7 @@ function Invoke-EntraIdUserDesiredState {
                     UserPrincipalName = $upn
                 }
                 $existingUser = Get-EntraIdUser @getUserParams
-                if (-not $existingUser) {
+                if (!$existingUser) {
                     Write-Output "Creating user '$($user.DisplayName)' with UPN '$upn'."
                     # Create the user
                     $addUserParams = @{

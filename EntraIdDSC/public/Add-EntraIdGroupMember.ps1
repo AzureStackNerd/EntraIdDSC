@@ -26,11 +26,11 @@
     This function requires Microsoft Graph PowerShell SDK to be installed and authenticated.
 #>
 function Add-EntraIdGroupMember {
-    [CmdletBinding(DefaultParameterSetName='ById', SupportsShouldProcess = $true)]
+    [CmdletBinding(DefaultParameterSetName = 'ById', SupportsShouldProcess = $true)]
     param(
-        [Parameter(Mandatory, ParameterSetName='ById', Position=0, ValueFromPipeline, ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, ParameterSetName = 'ById', Position = 0, ValueFromPipeline, ValueFromPipelineByPropertyName)]
         [string]$GroupId,
-        [Parameter(Mandatory, ParameterSetName='ByDisplayName', Position=0, ValueFromPipeline, ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory, ParameterSetName = 'ByDisplayName', Position = 0, ValueFromPipeline, ValueFromPipelineByPropertyName)]
         [string]$GroupDisplayName,
         [Parameter(Mandatory)]
         [array]$Members
@@ -43,16 +43,22 @@ function Add-EntraIdGroupMember {
             # Resolve group Id or group display name based on parameter set
             switch ($PSCmdlet.ParameterSetName) {
                 'ByDisplayName' {
-                    $group = Get-MgGroup -Filter "displayName eq '$GroupDisplayName'" | Select-Object -First 1
-                    if (-not $group) {
+                    $groupParams = @{
+                        Filter = "displayName eq '$GroupDisplayName'"
+                    }
+                    $group = Get-MgGroup @groupParams | Select-Object -First 1
+                    if (!$group) {
                         Write-Warning "No group found with display name '$GroupDisplayName'."
                         return
                     }
                     $GroupId = $group.Id
                 }
                 'ById' {
-                    $group = Get-MgGroup -GroupId $GroupId
-                    if (-not $group) {
+                    $groupParams = @{
+                        GroupId = $GroupId
+                    }
+                    $group = Get-MgGroup @groupParams
+                    if (!$group) {
                         Write-Warning "No group found with Id '$GroupId'."
                         return
                     }
@@ -61,30 +67,66 @@ function Add-EntraIdGroupMember {
             }
 
             # Get current members (UPNs)
-            $currentMembers = Get-EntraIdGroupMember -GroupDisplayName $GroupDisplayName
+            $groupMemberParams = @{
+                GroupDisplayName = $GroupDisplayName
+            }
+            $currentMembers = Get-EntraIdGroupMember @groupMemberParams
 
             # Add missing members
             $toAdd = $Members | Where-Object { $_ -notin $currentMembers }
             foreach ($memberEntry in $toAdd) {
                 if ($memberEntry -like '*@*') {
                     # User
-                    $userObj = Get-EntraIdUser -UserPrincipalName $memberEntry
-                    if ($userObj) {
-                        $userId = $userObj.Id
-                        New-MgGroupMember -GroupId "$GroupId" -DirectoryObjectId "$userId"
-                        Write-Output "Added user $memberEntry as member of group $GroupDisplayName ($GroupId)."
-                    } else {
+                    $memberUserParams = @{
+                        UserPrincipalName = $memberEntry
+                    }
+                    $memberUserObj = Get-EntraIdUser @memberUserParams
+                    if ($null -ne $memberUserObj) {
+                        $memberUserId = $memberUserObj.Id
+                        $addMemberParams = @{
+                            GroupId = $GroupId
+                            DirectoryObjectId = $memberUserId
+                        }
+                        New-MgGroupMember @addMemberParams
+                        Write-Output "Added Member (user) $memberEntry to group $GroupDisplayName ($GroupId)."
+                    }
+                    else {
                         Write-Warning "User not found: $memberEntry"
                     }
-                } else {
+                }
+                else {
                     # Group
-                    $groupMemberObj = Get-EntraIdGroup -DisplayName $memberEntry
-                    if ($groupMemberObj) {
-                        $groupMemberId = $groupMemberObj.Id
-                        New-MgGroupMember -GroupId "$GroupId" -DirectoryObjectId "$groupMemberId"
-                        Write-Output "Added group $memberEntry as member of group $GroupDisplayName ($GroupId)."
-                    } else {
-                        Write-Warning "Group not found: $memberEntry"
+                    $memberGroupParams = @{
+                        DisplayName = $memberEntry
+                    }
+                    $memberGroupObj = Get-EntraIdGroup @memberGroupParams
+                    if ($null -ne $memberGroupObj) {
+                        $memberGroupId = $memberGroupObj.Id
+                        $addMemberParams = @{
+                            GroupId = $GroupId
+                            DirectoryObjectId = $memberGroupId
+                        }
+                        New-MgGroupMember @addMemberParams
+                        Write-Output "Added Member (group) $memberEntry to group $GroupDisplayName ($GroupId)."
+                    }
+                    else {
+                        # Try as service principal
+                        $memberSpnParams = @{
+                            DisplayName = $memberEntry
+                        }
+                        $memberSpnObj = Get-EntraIdServicePrincipal @memberSpnParams
+                        if ($null -ne $memberSpnObj) {
+                            $memberSpnId = $memberSpnObj.Id
+                            $addMemberParams = @{
+                                GroupId = $GroupId
+                                DirectoryObjectId = $memberSpnId
+                            }
+                            New-MgGroupMember @addMemberParams
+                            Write-Output "Added Member (service principal) $memberEntry to group $GroupDisplayName ($GroupId)."
+                        }
+                        else {
+                            Write-Warning "Group or ServicePrincipal not found: $memberEntry"
+                        }
                     }
                 }
             }

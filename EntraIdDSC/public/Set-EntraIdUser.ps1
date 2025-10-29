@@ -39,7 +39,10 @@ function Set-EntraIdUser {
         Test-GraphAuth
 
         # Check if the user already exists
-        $existingUser = Get-EntraIdUser -UserPrincipalName $User.UserPrincipalName
+        $getUserParams = @{
+            UserPrincipalName = $User.UserPrincipalName
+        }
+        $existingUser = Get-EntraIdUser @getUserParams
 
         if ($existingUser) {
 
@@ -60,7 +63,11 @@ function Set-EntraIdUser {
             if ($updateRequired) {
                 Write-Output "Updating user '$($User.DisplayName)' to match desired state."
                 if ($PSCmdlet.ShouldProcess("User '$($User.UserPrincipalName)'", "Update user properties $($updateParams | ConvertTo-Json)")) {
-                    Update-MgUser -UserId $existingUser.UserPrincipalName -BodyParameter $updateParams
+                    $updateUserParams = @{
+                        UserId = $existingUser.UserPrincipalName
+                        BodyParameter = $updateParams
+                    }
+                    Update-MgUser @updateUserParams
                 }
             } else {
                 Write-Output "User '$($User.DisplayName)' is already in the desired state."

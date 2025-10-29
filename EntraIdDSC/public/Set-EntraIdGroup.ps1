@@ -62,8 +62,11 @@ function Set-EntraIdGroup {
         $newGroup = $false
         $updateRequired = $false
         # Check if group exists
-        $group = Get-MgGroup -Filter "displayName eq '$DisplayName'" | Select-Object -First 1
-        if (-not $group) {
+        $groupParams = @{
+            Filter = "displayName eq '$DisplayName'"
+        }
+        $group = Get-MgGroup @groupParams | Select-Object -First 1
+        if (!$group) {
             # Common group parameters
             $newGroupParams = @{
                 DisplayName        = $DisplayName
@@ -88,31 +91,42 @@ function Set-EntraIdGroup {
                 }
             }
             $newGroup = $true
-            if ($PSCmdlet.ShouldProcess("Group '$DisplayName'", "Create group with parameters $($newGroupParams | ConvertTo-Json)")) {
 
-                if ([string]::IsNullOrWhiteSpace($AdministrativeUnit)) {
+
+            if ([string]::IsNullOrWhiteSpace($AdministrativeUnit)) {
+                if ($PSCmdlet.ShouldProcess("Group '$DisplayName'", "Create group with parameters $($newGroupParams | ConvertTo-Json)")) {
                     $group = New-MgGroup @newGroupParams
                 }
-
-                if (-not [string]::IsNullOrWhiteSpace($AdministrativeUnit)) {
-                    $adminUnitObj = Get-MgDirectoryAdministrativeUnit -Filter "DisplayName eq '$AdministrativeUnit'" | Select-Object -First 1
-                    # $bodyParams = @{
-                    #     "@odata.id" = "https://graph.microsoft.com/v1.0/groups/$($group.Id)"
-                    # }
-                    # New-MgDirectoryAdministrativeUnitMemberByRef -AdministrativeUnitId $($adminUnitObj.id) -BodyParameter $bodyParams
-                    $bodyParams = @{
-                        "@odata.type"   = "#microsoft.graph.group"
-                        description     = "$Description"
-                        displayName     = "$DisplayName"
-                        mailEnabled     = $false
-                        mailNickname    = "$DisplayName".Replace(' ', '_').ToLower()
-                        securityEnabled = $true
-                    }
-                    New-MgDirectoryAdministrativeUnitMember -AdministrativeUnitId $adminUnitObj.Id -BodyParameter $bodyParams
-                }
-                Write-Verbose "Created group with ID: $($group.Id)"
-                Write-Output "Created group '$DisplayName' ($GroupMembershipType membership)"
             }
+
+            if (![string]::IsNullOrWhiteSpace($AdministrativeUnit)) {
+                $adminUnitParams = @{
+                    Filter = "DisplayName eq '$AdministrativeUnit'"
+                }
+                $adminUnitObj = Get-MgDirectoryAdministrativeUnit @adminUnitParams | Select-Object -First 1
+                # $bodyParams = @{
+                #     "@odata.id" = "https://graph.microsoft.com/v1.0/groups/$($group.Id)"
+                # }
+                # New-MgDirectoryAdministrativeUnitMemberByRef -AdministrativeUnitId $($adminUnitObj.id) -BodyParameter $bodyParams
+                $bodyParams = @{
+                    "@odata.type"   = "#microsoft.graph.group"
+                    description     = "$Description"
+                    displayName     = "$DisplayName"
+                    mailEnabled     = $false
+                    mailNickname    = "$DisplayName".Replace(' ', '_').ToLower()
+                    securityEnabled = $true
+                }
+                if ($PSCmdlet.ShouldProcess("Group '$DisplayName'", "Create group in Administrative Unit '$AdministrativeUnit' with parameters $($bodyParams | ConvertTo-Json)")) {
+                    $addMemberParams = @{
+                        AdministrativeUnitId = $adminUnitObj.Id
+                        BodyParameter = $bodyParams
+                    }
+                    New-MgDirectoryAdministrativeUnitMember @addMemberParams
+                }
+            }
+            Write-Verbose "Created group with ID: $($group.Id)"
+            Write-Output "Created group '$DisplayName' ($GroupMembershipType membership)"
+
         }
         else {
             $updateRequired = $false
@@ -128,12 +142,16 @@ function Set-EntraIdGroup {
                     Write-Output "Updated description for group '$Displa$groupyName'"
                 }
             }
-            if (-not [string]::IsNullOrWhiteSpace($AdministrativeUnit)) {
-                $adminUnitObj = Get-MgDirectoryAdministrativeUnit -Filter "DisplayName eq '$AdministrativeUnit'" | Select-Object -First 1
-                if (-not $adminUnitObj) {
+            if (![string]::IsNullOrWhiteSpace($AdministrativeUnit)) {
+                $adminUnitParams = @{
+                    Filter = "DisplayName eq '$AdministrativeUnit'"
+                }
+                $adminUnitObj = Get-MgDirectoryAdministrativeUnit @adminUnitParams | Select-Object -First 1
+                if ($null -eq $adminUnitObj) {
                     Throw "Administrative Unit '$AdministrativeUnit' not found."
                 }
-                $administrativeUnitMember = Get-MgDirectoryAdministrativeUnitMember -AdministrativeUnitId $AU.Id | Where-Object { $_.Id -eq $group.Id }
+                $adminUnitId = $adminUnitObj.Id
+                $administrativeUnitMember = Get-MgDirectoryAdministrativeUnitMember -AdministrativeUnitId $adminUnitId | Where-Object { $_.Id -eq $group.Id }
                 if ([string]::IsNullOrWhiteSpace($administrativeUnitMember)) {
                     # $updateRequired = $true
                     # $bodyParams = @{
@@ -156,7 +174,7 @@ function Set-EntraIdGroup {
 
         # Synchronize members only for Direct groups
         if ($GroupMembershipType -eq "Direct") {
-            if (-not $newGroup) {
+            if (!$newGroup) {
                 $currentMembers = Get-EntraIdGroupMember -GroupDisplayName $DisplayName
                 Write-Verbose "Fetched group: $DisplayName current members. $($currentMembers | ConvertTo-Json -Depth 3)"
 
@@ -213,7 +231,7 @@ function Set-EntraIdGroup {
             }
         }
 
-        if (-not $updateRequired) {
+        if (!$updateRequired) {
             Write-Output "Group '$DisplayName' is already in the desired state."
         }
         Write-Output ""
