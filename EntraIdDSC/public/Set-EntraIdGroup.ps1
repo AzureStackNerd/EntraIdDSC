@@ -62,7 +62,10 @@ function Set-EntraIdGroup {
         $newGroup = $false
         $updateRequired = $false
         # Check if group exists
-        $group = Get-MgGroup -Filter "displayName eq '$DisplayName'" | Select-Object -First 1
+        $groupParams = @{
+            Filter = "displayName eq '$DisplayName'"
+        }
+        $group = Get-MgGroup @groupParams | Select-Object -First 1
         if (!$group) {
             # Common group parameters
             $newGroupParams = @{
@@ -97,7 +100,10 @@ function Set-EntraIdGroup {
             }
 
             if (![string]::IsNullOrWhiteSpace($AdministrativeUnit)) {
-                $adminUnitObj = Get-MgDirectoryAdministrativeUnit -Filter "DisplayName eq '$AdministrativeUnit'" | Select-Object -First 1
+                $adminUnitParams = @{
+                    Filter = "DisplayName eq '$AdministrativeUnit'"
+                }
+                $adminUnitObj = Get-MgDirectoryAdministrativeUnit @adminUnitParams | Select-Object -First 1
                 # $bodyParams = @{
                 #     "@odata.id" = "https://graph.microsoft.com/v1.0/groups/$($group.Id)"
                 # }
@@ -111,7 +117,11 @@ function Set-EntraIdGroup {
                     securityEnabled = $true
                 }
                 if ($PSCmdlet.ShouldProcess("Group '$DisplayName'", "Create group in Administrative Unit '$AdministrativeUnit' with parameters $($bodyParams | ConvertTo-Json)")) {
-                    New-MgDirectoryAdministrativeUnitMember -AdministrativeUnitId $adminUnitObj.Id -BodyParameter $bodyParams
+                    $addMemberParams = @{
+                        AdministrativeUnitId = $adminUnitObj.Id
+                        BodyParameter = $bodyParams
+                    }
+                    New-MgDirectoryAdministrativeUnitMember @addMemberParams
                 }
             }
             Write-Verbose "Created group with ID: $($group.Id)"
@@ -133,7 +143,10 @@ function Set-EntraIdGroup {
                 }
             }
             if (![string]::IsNullOrWhiteSpace($AdministrativeUnit)) {
-                $adminUnitObj = Get-MgDirectoryAdministrativeUnit -Filter "DisplayName eq '$AdministrativeUnit'" | Select-Object -First 1
+                $adminUnitParams = @{
+                    Filter = "DisplayName eq '$AdministrativeUnit'"
+                }
+                $adminUnitObj = Get-MgDirectoryAdministrativeUnit @adminUnitParams | Select-Object -First 1
                 if ($null -eq $adminUnitObj) {
                     Throw "Administrative Unit '$AdministrativeUnit' not found."
                 }
