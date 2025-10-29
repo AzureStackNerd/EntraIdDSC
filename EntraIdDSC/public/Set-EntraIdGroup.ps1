@@ -164,7 +164,7 @@ function Set-EntraIdGroup {
 
 
             }
-            if ($group.IsAssignableToRole -and $group.IsAssignableToRole -ne $IsAssignableToRole) {
+            if (![string]::IsNullOrWhiteSpace($group.IsAssignableToRole) -and $group.IsAssignableToRole -ne $IsAssignableToRole) {
                 Write-Warning "IsAssignableToRole cannot be changed after group creation. Please delete and recreate the group if needed."
             }
         }
