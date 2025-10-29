@@ -43,7 +43,10 @@ function Add-EntraIdGroupOwner {
             # Resolve group Id or group display name based on parameter set
             switch ($PSCmdlet.ParameterSetName) {
                 'ByDisplayName' {
-                    $group = Get-MgGroup -Filter "displayName eq '$GroupDisplayName'" | Select-Object -First 1
+                    $groupParams = @{
+                        Filter = "displayName eq '$GroupDisplayName'"
+                    }
+                    $group = Get-MgGroup @groupParams | Select-Object -First 1
                     if (-not $group) {
                         Write-Warning "No group found with display name '$GroupDisplayName'."
                         return
@@ -51,7 +54,10 @@ function Add-EntraIdGroupOwner {
                     $GroupId = $group.Id
                 }
                 'ById' {
-                    $group = Get-MgGroup -GroupId $GroupId
+                    $groupParams = @{
+                        GroupId = $GroupId
+                    }
+                    $group = Get-MgGroup @groupParams
                     if (-not $group) {
                         Write-Warning "No group found with Id '$GroupId'."
                         return
@@ -61,16 +67,26 @@ function Add-EntraIdGroupOwner {
             }
 
             # Get current owners (UPNs)
-            $currentOwners = Get-EntraIdGroupOwner -GroupDisplayName $GroupDisplayName
+            $groupOwnerParams = @{
+                GroupDisplayName = $GroupDisplayName
+            }
+            $currentOwners = Get-EntraIdGroupOwner @groupOwnerParams
 
             # Add missing owners
             $toAdd = $Owners | Where-Object { $_ -notin $currentOwners }
             foreach ($ownerEntry in $toAdd) {
                 if ($ownerEntry -like '*@*') {
-                    $ownerUserObj = Get-EntraIdUser -UserPrincipalName $ownerEntry
+                    $ownerUserParams = @{
+                        UserPrincipalName = $ownerEntry
+                    }
+                    $ownerUserObj = Get-EntraIdUser @ownerUserParams
                     if ($ownerUserObj) {
                         $ownerUserId = $ownerUserObj.Id
-                        New-MgGroupOwner -GroupId "$GroupId" -DirectoryObjectId "$ownerUserId"
+                        $addOwnerParams = @{
+                            GroupId = $GroupId
+                            DirectoryObjectId = $ownerUserId
+                        }
+                        New-MgGroupOwner @addOwnerParams
                         Write-Output "Added owner $ownerEntry to group $GroupDisplayName ($GroupId)."
                     } else {
                         Write-Warning "User not found: $ownerEntry"
@@ -78,18 +94,32 @@ function Add-EntraIdGroupOwner {
                 }
                 else {
                     # Group
-                    $memberGroupObj = Get-EntraIdGroup -DisplayName $ownerEntry
+                    $memberGroupParams = @{
+                        DisplayName = $ownerEntry
+                    }
+                    $memberGroupObj = Get-EntraIdGroup @memberGroupParams
                     if ($null -ne $memberGroupObj) {
                         $memberGroupId = $memberGroupObj.Id
-                        New-MgGroupOwner -GroupId "$GroupId" -DirectoryObjectId "$memberGroupId"
+                        $addOwnerParams = @{
+                            GroupId = $GroupId
+                            DirectoryObjectId = $memberGroupId
+                        }
+                        New-MgGroupOwner @addOwnerParams
                         Write-Output "Added group $ownerEntry as owner of group $GroupDisplayName ($GroupId)."
                     }
                     else {
                         # Try as service principal
-                        $memberSpnObj = Get-EntraIdServicePrincipal -DisplayName $ownerEntry
+                        $memberSpnParams = @{
+                            DisplayName = $ownerEntry
+                        }
+                        $memberSpnObj = Get-EntraIdServicePrincipal @memberSpnParams
                         if ($null -ne $memberSpnObj) {
                             $memberSpnId = $memberSpnObj.Id
-                            New-MgGroupOwner -GroupId "$GroupId" -DirectoryObjectId "$memberSpnId"
+                            $addOwnerParams = @{
+                                GroupId = $GroupId
+                                DirectoryObjectId = $memberSpnId
+                            }
+                            New-MgGroupOwner @addOwnerParams
                             Write-Output "Added service principal $ownerEntry as owner of group $GroupDisplayName ($GroupId)."
                         }
                         else {
