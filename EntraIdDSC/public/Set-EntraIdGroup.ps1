@@ -63,9 +63,9 @@ function Set-EntraIdGroup {
         $updateRequired = $false
         # Check if group exists
         $groupParams = @{
-            Filter = "displayName eq '$DisplayName'"
+            DisplayName = "$DisplayName"
         }
-        $group = Get-MgGroup @groupParams | Select-Object -First 1
+        $group = Get-EntraIdGroup @groupParams
         if (!$group) {
             # Common group parameters
             $newGroupParams = @{
@@ -119,6 +119,7 @@ function Set-EntraIdGroup {
                         BodyParameter        = $bodyParams
                     }
                     New-MgDirectoryAdministrativeUnitMember @addMemberParams
+
                 }
             }
             Write-Output "Created group '$DisplayName' ($GroupMembershipType membership)"
