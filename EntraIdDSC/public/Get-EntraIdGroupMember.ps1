@@ -36,9 +36,9 @@ function Get-EntraIdGroupMember {
         if ($PSCmdlet.ParameterSetName -eq 'ByDisplayName') {
             Write-Verbose "Get-EntraIdGroupMember: Searching for group with display name '$GroupDisplayName'"
             $groupParams = @{
-                Filter = "displayName eq '$GroupDisplayName'"
+                DisplayName = "$GroupDisplayName"
             }
-            $group = Get-MgGroup @groupParams
+            $group = Get-EntraIdGroup @groupParams
             if (!$group) {
                 Write-Warning "No group found with display name '$GroupDisplayName'."
                 return $null

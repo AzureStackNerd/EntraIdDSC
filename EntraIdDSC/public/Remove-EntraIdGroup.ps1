@@ -32,13 +32,22 @@ function Remove-EntraIdGroup {
                 if ([string]::IsNullOrWhiteSpace($Id)) {
                     Throw "Id cannot be empty."
                 }
-                if ($PSCmdlet.ShouldProcess($Id, "Remove Entra ID group by Id")) {
-                    $removeGroupParams = @{
-                        GroupId = $Id
-                        ErrorAction = 'Stop'
+                $groupParams = @{
+                    Id = "$Id"
+                }
+                $group = Get-EntraIdGroup @groupParams
+                if ($group) {
+                    if ($PSCmdlet.ShouldProcess($Id, "Remove Entra ID group by Id")) {
+                        $removeGroupParams = @{
+                            GroupId     = $Id
+                            ErrorAction = 'Stop'
+                        }
+                        Remove-MgGroup @removeGroupParams
+                        Write-Verbose "Group with Id '$Id' removed."
                     }
-                    Remove-MgGroup @removeGroupParams
-                    Write-Verbose "Group with Id '$Id' removed."
+                }
+                else {
+                    Throw "Group with Id '$Id' not found."
                 }
             }
             'ByName' {
@@ -46,14 +55,13 @@ function Remove-EntraIdGroup {
                     Throw "DisplayName cannot be empty."
                 }
                 $groupParams = @{
-                    Filter = "displayName eq '$DisplayName'"
-                    ErrorAction = 'Stop'
+                    DisplayName = "$DisplayName"
                 }
-                $group = Get-MgGroup @groupParams
+                $group = Get-EntraIdGroup @groupParams
                 if ($group) {
                     if ($PSCmdlet.ShouldProcess($DisplayName, "Remove Entra ID group by Name")) {
                         $removeGroupParams = @{
-                            GroupId = $group.Id
+                            GroupId     = $group.Id
                             ErrorAction = 'Stop'
                         }
                         Remove-MgGroup @removeGroupParams
@@ -68,6 +76,5 @@ function Remove-EntraIdGroup {
                 Throw "You must specify either Id or DisplayName."
             }
         }
-
     }
 }
