@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Released]
 
+## [1.0.0] - 2025-10-29
+
+### Added
+
+- Added support for creating Groups in Administrative Units
+  - The Principal used to run the module needs to have the necessary permissions to create groups in Administrative Units.
+  - The Administrative Unit must already exist and the Principal must have AdministrativeUnit.Read.All permissions (in order to get the Admin Units Id).
+  - _Note: Removing Groups from Administrative Units is not supported yet._
+  - _Note: Adding existing Groups to Administrative Units is not supported yet._
+  - _Note: Above limitations are due to a wacky implementation of Administrative Units and it would need AdministrativeUnit.ReadWrite.All permissions to manage them properly._
+- Added support for using ServicePrincipals as Group Owners in Add-EntraIdGroupOwner and Remove-EntraIdGroupOwner functions.
+- Added support for using ServicePrincipals as Group Members in Add-EntraIdGroupMember and Remove-EntraIdGroupMember functions.
+- Code quality updates
+
 ## [0.6.3] - 2025-09-23
 
 ### Added
