@@ -26,12 +26,22 @@ function Invoke-EntraIdGroupDesiredState {
     process {
         Test-GraphAuth
         # Get all JSON configuration files in the specified path
-        $files = Get-ChildItem -Path $Path -Include *.json, *.jsonc -File -Recurse | Sort-Object Name
+        $filesParams = @{
+            Path = $Path
+            Include = "*.json", "*.jsonc"
+            File = $true
+            Recurse = $true
+        }
+        $files = Get-ChildItem @filesParams | Sort-Object Name
 
         foreach ($file in $files) {
             Write-Verbose "Processing file: $($file.FullName)"
             # Read the group object from the JSON/JSONC file, removing comment lines
-            $rawContent = Get-Content -Path $file.FullName -Raw
+            $contentParams = @{
+                Path = $file.FullName
+                Raw = $true
+            }
+            $rawContent = Get-Content @contentParams
             # Remove single-line comments (// ...)
             $rawContent = $rawContent -replace '(?m)^\s*//.*$', ''
             # Remove block comments (/* ... */)
