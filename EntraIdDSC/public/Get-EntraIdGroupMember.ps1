@@ -76,7 +76,7 @@ function Get-EntraIdGroupMember {
             } elseif ($odataType -eq '#microsoft.graph.servicePrincipal') {
                 # Handle other directory object types (e.g., service principals)
                 if ($PSCmdlet.ParameterSetName -eq 'ByDisplayName') {
-                    $spnObj = Get-EntraIdServicePrincipal -Id $member.Id
+                    $spnObj = Get-EntraIdServicePrincipal -ServicePrincipalId $member.Id
                     if ($spnObj -and $spnObj.DisplayName) {
                         $results += $spnObj.DisplayName
                     }

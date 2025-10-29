@@ -75,7 +75,7 @@ function Get-EntraIdGroupOwner {
                 }
             } elseif ($odataType -eq '#microsoft.graph.servicePrincipal') {
                 if ($PSCmdlet.ParameterSetName -eq 'ByDisplayName') {
-                    $spnObj = Get-EntraIdServicePrincipal -Id $owner.Id
+                    $spnObj = Get-EntraIdServicePrincipal -ServicePrincipalId $owner.Id
                     if ($spnObj -and $spnObj.DisplayName) {
                         $results += $spnObj.DisplayName
                     }
