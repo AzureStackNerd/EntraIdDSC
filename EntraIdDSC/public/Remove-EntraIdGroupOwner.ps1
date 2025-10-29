@@ -73,9 +73,9 @@ function Remove-EntraIdGroupOwner {
                         try {
                             $ownerUserId = $ownerUserObj.Id
                             Remove-MgGroupOwnerDirectoryObjectByRef -GroupId $GroupId -DirectoryObjectId $ownerUserId
-                            Write-Output "Removed user $ownerEntry from group $GroupDisplayName ($GroupId)."
+                            Write-Output "Removed Owner (user) $ownerEntry from group $GroupDisplayName ($GroupId)."
                         } catch {
-                            Write-Warning "Failed to remove $ownerEntry as owner: $($_.Exception.Message)"
+                            Write-Warning "Failed to remove Owner (user) $ownerEntry from group $GroupDisplayName ($GroupId): $($_.Exception.Message)"
                         }
                     } else {
                         Write-Warning "User not found: $ownerEntry"
@@ -87,9 +87,9 @@ function Remove-EntraIdGroupOwner {
                         try {
                             $ownerGroupId = $ownerGroupObj.Id
                             Remove-MgGroupOwnerDirectoryObjectByRef -GroupId $GroupId -DirectoryObjectId $ownerGroupId
-                            Write-Output "Removed group $ownerEntry from group $GroupDisplayName ($GroupId)."
+                            Write-Output "Removed Owner (group) $ownerEntry from group $GroupDisplayName ($GroupId)."
                         } catch {
-                            Write-Warning "Failed to remove group $ownerEntry as owner: $($_.Exception.Message)"
+                            Write-Warning "Failed to remove Owner (group) $ownerEntry from group $GroupDisplayName ($GroupId): $($_.Exception.Message)"
                         }
                     } else {
                         # Try as service principal
@@ -98,9 +98,9 @@ function Remove-EntraIdGroupOwner {
                             try {
                                 $ownerSpnId = $ownerSpnObj.Id
                                 Remove-MgGroupOwnerDirectoryObjectByRef -GroupId $GroupId -DirectoryObjectId $ownerSpnId
-                                Write-Output "Removed service principal $ownerEntry from group $GroupDisplayName ($GroupId)."
+                                Write-Output "Removed Owner (service principal) $ownerEntry from group $GroupDisplayName ($GroupId)."
                             } catch {
-                                Write-Warning "Failed to remove service principal $ownerEntry as owner: $($_.Exception.Message)"
+                                Write-Warning "Failed to remove Owner (service principal) $ownerEntry from group $GroupDisplayName ($GroupId): $($_.Exception.Message)"
                             }
                         } else {
                             Write-Warning "Group or ServicePrincipal not found: $ownerEntry"

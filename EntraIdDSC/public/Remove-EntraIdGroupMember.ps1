@@ -73,9 +73,9 @@ function Remove-EntraIdGroupMember {
                         try {
                             $memberUserId = $memberUserObj.Id
                             Remove-MgGroupMemberDirectoryObjectByRef -GroupId $GroupId -DirectoryObjectId $memberUserId
-                            Write-Output "Removed user $memberEntry from group $GroupDisplayName ($GroupId)."
+                            Write-Output "Removed Member (user) $memberEntry from group $GroupDisplayName ($GroupId)."
                         } catch {
-                            Write-Warning "Failed to remove $memberEntry as member: $($_.Exception.Message)"
+                            Write-Warning "Failed to remove Member (user) $memberEntry from group $GroupDisplayName ($GroupId).: $($_.Exception.Message)"
                         }
                     } else {
                         Write-Warning "User not found: $memberEntry"
@@ -87,9 +87,9 @@ function Remove-EntraIdGroupMember {
                         try {
                             $memberGroupId = $memberGroupObj.Id
                             Remove-MgGroupMemberDirectoryObjectByRef -GroupId $GroupId -DirectoryObjectId $memberGroupId
-                            Write-Output "Removed group $memberEntry from group $GroupDisplayName ($GroupId)."
+                            Write-Output "Removed Member (group) $memberEntry from group $GroupDisplayName ($GroupId)."
                         } catch {
-                            Write-Warning "Failed to remove group $memberEntry as member: $($_.Exception.Message)"
+                            Write-Warning "Failed to remove Member (group) $memberEntry from group $GroupDisplayName ($GroupId): $($_.Exception.Message)"
                         }
                     } else {
                         # Try as service principal
@@ -98,9 +98,9 @@ function Remove-EntraIdGroupMember {
                             try {
                                 $memberSpnId = $memberSpnObj.Id
                                 Remove-MgGroupMemberDirectoryObjectByRef -GroupId $GroupId -DirectoryObjectId $memberSpnId
-                                Write-Output "Removed service principal $memberEntry from group $GroupDisplayName ($GroupId)."
+                                Write-Output "Removed Member (service principal) $memberEntry from group $GroupDisplayName ($GroupId)."
                             } catch {
-                                Write-Warning "Failed to remove service principal $memberEntry as member: $($_.Exception.Message)"
+                                Write-Warning "Failed to remove Member (service principal) $memberEntry from group $GroupDisplayName ($GroupId): $($_.Exception.Message)"
                             }
                         } else {
                             Write-Warning "Group or ServicePrincipal not found: $memberEntry"
