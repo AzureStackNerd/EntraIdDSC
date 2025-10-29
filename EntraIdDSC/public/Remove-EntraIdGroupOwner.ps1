@@ -44,7 +44,7 @@ function Remove-EntraIdGroupOwner {
             switch ($PSCmdlet.ParameterSetName) {
                 'ByDisplayName' {
                     $group = Get-MgGroup -Filter "displayName eq '$GroupDisplayName'" | Select-Object -First 1
-                    if (-not $group) {
+                    if (!$group) {
                         Write-Warning "No group found with display name '$GroupDisplayName'."
                         return
                     }
@@ -52,7 +52,7 @@ function Remove-EntraIdGroupOwner {
                 }
                 'ById' {
                     $group = Get-MgGroup -GroupId $GroupId
-                    if (-not $group) {
+                    if (!$group) {
                         Write-Warning "No group found with Id '$GroupId'."
                         return
                     }

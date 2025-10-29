@@ -47,7 +47,7 @@ function Add-EntraIdGroupOwner {
                         Filter = "displayName eq '$GroupDisplayName'"
                     }
                     $group = Get-MgGroup @groupParams | Select-Object -First 1
-                    if (-not $group) {
+                    if (!$group) {
                         Write-Warning "No group found with display name '$GroupDisplayName'."
                         return
                     }
@@ -58,7 +58,7 @@ function Add-EntraIdGroupOwner {
                         GroupId = $GroupId
                     }
                     $group = Get-MgGroup @groupParams
-                    if (-not $group) {
+                    if (!$group) {
                         Write-Warning "No group found with Id '$GroupId'."
                         return
                     }

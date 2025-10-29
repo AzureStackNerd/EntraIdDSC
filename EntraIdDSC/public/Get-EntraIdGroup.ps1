@@ -47,7 +47,7 @@ function Get-EntraIdGroup {
                     Filter = "displayName eq '$DisplayName'"
                 }
                 $group = Get-MgGroup @groupParams
-                if (-not $group) {
+                if (!$group) {
                     Write-Verbose "No group found with display name '$DisplayName'."
                     return $null
                 }
@@ -59,7 +59,7 @@ function Get-EntraIdGroup {
                     GroupId = $Id
                 }
                 $group = Get-MgGroup @groupParams
-                if (-not $group) {
+                if (!$group) {
                     Write-Verbose "No group found with Id '$Id'."
                     return $null
                 }
@@ -72,7 +72,7 @@ function Get-EntraIdGroup {
                 }
                 $allGroups = Get-MgGroup @allGroupsParams
                 $filteredGroups = $allGroups | Where-Object { $_.DisplayName -like $DisplayNamePattern }
-                if (-not $filteredGroups) {
+                if (!$filteredGroups) {
                     Write-Verbose "No groups found matching pattern '$DisplayNamePattern'."
                     return $null
                 }

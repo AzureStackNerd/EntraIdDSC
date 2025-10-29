@@ -54,7 +54,7 @@ function Add-EntraIdUser {
         $testUPNParams = @{
             UserPrincipalName = $UserPrincipalName
         }
-        if (-not (Test-UserPrincipalName @testUPNParams)) {
+        if (!(Test-UserPrincipalName @testUPNParams)) {
             Write-Error -Message "The UserPrincipalName '$UserPrincipalName' is not in a valid format." -ErrorAction Stop
         }
 

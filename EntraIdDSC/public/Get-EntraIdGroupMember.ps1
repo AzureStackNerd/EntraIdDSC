@@ -39,7 +39,7 @@ function Get-EntraIdGroupMember {
                 Filter = "displayName eq '$GroupDisplayName'"
             }
             $group = Get-MgGroup @groupParams
-            if (-not $group) {
+            if (!$group) {
                 Write-Warning "No group found with display name '$GroupDisplayName'."
                 return $null
             }
@@ -54,7 +54,7 @@ function Get-EntraIdGroupMember {
             CountVariable = "Members"
         }
         $members = Get-MgGroupMember @membersParams
-        if (-not $members) {
+        if (!$members) {
             Write-Warning "No members found for group Id '$GroupId'."
             return $null
         }

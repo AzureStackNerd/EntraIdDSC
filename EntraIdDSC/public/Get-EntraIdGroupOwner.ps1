@@ -39,7 +39,7 @@ function Get-EntraIdGroupOwner {
                 Filter = "displayName eq '$GroupDisplayName'"
             }
             $group = Get-MgGroup @groupParams
-            if (-not $group) {
+            if (!$group) {
                 Write-Warning "No group found with display name '$GroupDisplayName'."
                 return $null
             }
@@ -54,7 +54,7 @@ function Get-EntraIdGroupOwner {
             CountVariable = "Owners"
         }
         $owners = Get-MgGroupOwner @ownersParams
-        if (-not $owners) {
+        if (!$owners) {
             Write-Warning "No owners found for group Id '$GroupId'."
             return $null
         }

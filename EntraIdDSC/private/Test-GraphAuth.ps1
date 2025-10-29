@@ -13,7 +13,7 @@ function Test-GraphAuth {
         }
         $mgContext = Get-MgContext @getContextParams
         # Check if the Account property is present (indicating authentication)
-        if (-not $mgContext) {
+        if (!$mgContext) {
             try {
                 $connectParams = @{
                     NoWelcome = $true
