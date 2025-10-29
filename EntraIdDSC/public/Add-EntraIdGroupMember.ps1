@@ -43,7 +43,10 @@ function Add-EntraIdGroupMember {
             # Resolve group Id or group display name based on parameter set
             switch ($PSCmdlet.ParameterSetName) {
                 'ByDisplayName' {
-                    $group = Get-MgGroup -Filter "displayName eq '$GroupDisplayName'" | Select-Object -First 1
+                    $groupParams = @{
+                        Filter = "displayName eq '$GroupDisplayName'"
+                    }
+                    $group = Get-MgGroup @groupParams | Select-Object -First 1
                     if (-not $group) {
                         Write-Warning "No group found with display name '$GroupDisplayName'."
                         return
@@ -51,7 +54,10 @@ function Add-EntraIdGroupMember {
                     $GroupId = $group.Id
                 }
                 'ById' {
-                    $group = Get-MgGroup -GroupId $GroupId
+                    $groupParams = @{
+                        GroupId = $GroupId
+                    }
+                    $group = Get-MgGroup @groupParams
                     if (-not $group) {
                         Write-Warning "No group found with Id '$GroupId'."
                         return
@@ -61,18 +67,28 @@ function Add-EntraIdGroupMember {
             }
 
             # Get current members (UPNs)
-            $currentMembers = Get-EntraIdGroupMember -GroupDisplayName $GroupDisplayName
+            $groupMemberParams = @{
+                GroupDisplayName = $GroupDisplayName
+            }
+            $currentMembers = Get-EntraIdGroupMember @groupMemberParams
 
             # Add missing members
             $toAdd = $Members | Where-Object { $_ -notin $currentMembers }
             foreach ($memberEntry in $toAdd) {
                 if ($memberEntry -like '*@*') {
                     # User
-                    $memberUserObj = Get-EntraIdUser -UserPrincipalName $memberEntry
+                    $memberUserParams = @{
+                        UserPrincipalName = $memberEntry
+                    }
+                    $memberUserObj = Get-EntraIdUser @memberUserParams
                     if ($null -ne $memberUserObj) {
                         $memberUserId = $memberUserObj.Id
-                        New-MgGroupMember -GroupId "$GroupId" -DirectoryObjectId "$memberUserId"
-                        Write-Output "Added user $memberEntry as member of group $GroupDisplayName ($GroupId)."
+                        $addMemberParams = @{
+                            GroupId = $GroupId
+                            DirectoryObjectId = $memberUserId
+                        }
+                        New-MgGroupMember @addMemberParams
+                        Write-Output "Added Member (user) $memberEntry to group $GroupDisplayName ($GroupId)."
                     }
                     else {
                         Write-Warning "User not found: $memberEntry"
@@ -80,19 +96,33 @@ function Add-EntraIdGroupMember {
                 }
                 else {
                     # Group
-                    $memberGroupObj = Get-EntraIdGroup -DisplayName $memberEntry
+                    $memberGroupParams = @{
+                        DisplayName = $memberEntry
+                    }
+                    $memberGroupObj = Get-EntraIdGroup @memberGroupParams
                     if ($null -ne $memberGroupObj) {
                         $memberGroupId = $memberGroupObj.Id
-                        New-MgGroupMember -GroupId "$GroupId" -DirectoryObjectId "$memberGroupId"
-                        Write-Output "Added group $memberEntry as member of group $GroupDisplayName ($GroupId)."
+                        $addMemberParams = @{
+                            GroupId = $GroupId
+                            DirectoryObjectId = $memberGroupId
+                        }
+                        New-MgGroupMember @addMemberParams
+                        Write-Output "Added Member (group) $memberEntry to group $GroupDisplayName ($GroupId)."
                     }
                     else {
                         # Try as service principal
-                        $memberSpnObj = Get-EntraIdServicePrincipal -DisplayName $memberEntry
+                        $memberSpnParams = @{
+                            DisplayName = $memberEntry
+                        }
+                        $memberSpnObj = Get-EntraIdServicePrincipal @memberSpnParams
                         if ($null -ne $memberSpnObj) {
                             $memberSpnId = $memberSpnObj.Id
-                            New-MgGroupMember -GroupId "$GroupId" -DirectoryObjectId "$memberSpnId"
-                            Write-Output "Added service principal $memberEntry as member of group $GroupDisplayName ($GroupId)."
+                            $addMemberParams = @{
+                                GroupId = $GroupId
+                                DirectoryObjectId = $memberSpnId
+                            }
+                            New-MgGroupMember @addMemberParams
+                            Write-Output "Added Member (service principal) $memberEntry to group $GroupDisplayName ($GroupId)."
                         }
                         else {
                             Write-Warning "Group or ServicePrincipal not found: $memberEntry"
