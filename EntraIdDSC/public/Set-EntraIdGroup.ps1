@@ -249,14 +249,9 @@ function Set-EntraIdGroup {
             Write-Verbose "New group created, no current members."
         }
 
-        # Add missing members
+        # Figure out what to add and remove
         if ($Owners) {
             $toAddOwners = $Owners | Where-Object { $_ -notin $currentOwners }
-        }
-
-
-        # Remove extra members
-        if ($Owners) {
             $toRemoveOwners = $currentOwners | Where-Object { $_ -notin $Owners }
         }
         else {
