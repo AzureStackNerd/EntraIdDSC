@@ -206,36 +206,31 @@ function Set-EntraIdGroup {
                 Write-Verbose "New group created, no current members."
             }
 
-            # Add missing members
+            # Figure out what to add and remove
             if ($Members) {
-                $toAdd = $Members | Where-Object { $_ -notin $currentMembers }
-            }
-
-
-            # Remove extra members
-            if ($Members) {
-                $toRemove = $currentMembers | Where-Object { $_ -notin $Members }
+                $toAddMembers = $Members | Where-Object { $_ -notin $currentMembers }
+                $toRemoveMembers = $currentMembers | Where-Object { $_ -notin $Members }
             }
             else {
-                $toRemove = $currentMembers
+                $toRemoveMembers = $currentMembers
             }
 
-            if ($toAdd.Count -gt 0) {
+            if ($toAddMembers.Count -gt 0) {
                 $updateRequired = $true
-                if ($PSCmdlet.ShouldProcess("Group '$DisplayName'", "Add Members $($toAdd | ConvertTo-Json)")) {
+                if ($PSCmdlet.ShouldProcess("Group '$DisplayName'", "Add Members $($toAddMembers | ConvertTo-Json)")) {
                     $groupMemberParams = @{
                         GroupDisplayName = $DisplayName
-                        Members          = $toAdd
+                        Members          = $toAddMembers
                     }
                     Add-EntraIdGroupMember @groupMemberParams
                 }
             }
-            if ($toRemove.Count -gt 0) {
+            if ($toRemoveMembers.Count -gt 0) {
                 $updateRequired = $true
-                if ($PSCmdlet.ShouldProcess("Group '$DisplayName'", "Remove Members $($toRemove | ConvertTo-Json)")) {
+                if ($PSCmdlet.ShouldProcess("Group '$DisplayName'", "Remove Members $($toRemoveMembers | ConvertTo-Json)")) {
                     $groupMemberParams = @{
                         GroupDisplayName = $DisplayName
-                        Members          = $toRemove
+                        Members          = $toRemoveMembers
                     }
                     Remove-EntraIdGroupMember @groupMemberParams
                 }
@@ -244,9 +239,29 @@ function Set-EntraIdGroup {
 
         }
         # Get current owners (UPNs)
-        $currentOwners = Get-EntraIdGroupOwner -GroupDisplayName $DisplayName
-        $toAddOwners = $Owners | Where-Object { $_ -notin $currentOwners }
-        $toRemoveOwners = $currentOwners | Where-Object { $_ -notin $Owners }
+        if (!$newGroup) {
+            $currentOwners = Get-EntraIdGroupOwner -GroupDisplayName $DisplayName
+            Write-Verbose "Fetched group: $DisplayName current Owners. $($currentMembers | ConvertTo-Json -Depth 3)"
+
+        }
+        else {
+            $currentOwners = @()
+            Write-Verbose "New group created, no current members."
+        }
+
+        # Add missing members
+        if ($Owners) {
+            $toAddOwners = $Owners | Where-Object { $_ -notin $currentOwners }
+        }
+
+
+        # Remove extra members
+        if ($Owners) {
+            $toRemoveOwners = $currentOwners | Where-Object { $_ -notin $Owners }
+        }
+        else {
+            $toRemoveOwners = $currentOwners
+        }
 
         if ($toAddOwners.Count -gt 0) {
             $updateRequired = $true
