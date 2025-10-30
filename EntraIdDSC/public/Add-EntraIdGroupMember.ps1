@@ -66,15 +66,8 @@ function Add-EntraIdGroupMember {
                 }
             }
 
-            # Get current members (UPNs)
-            $groupMemberParams = @{
-                GroupDisplayName = $GroupDisplayName
-            }
-            $currentMembers = Get-EntraIdGroupMember @groupMemberParams
-
-            # Add missing members
-            $toAdd = $Members | Where-Object { $_ -notin $currentMembers }
-            foreach ($memberEntry in $toAdd) {
+            # Add all provided members directly
+            foreach ($memberEntry in $Members) {
                 if ($memberEntry -like '*@*') {
                     # User
                     $memberUserParams = @{
@@ -87,8 +80,16 @@ function Add-EntraIdGroupMember {
                             GroupId = $GroupId
                             DirectoryObjectId = $memberUserId
                         }
-                        New-MgGroupMember @addMemberParams
-                        Write-Output "Added Member (user) $memberEntry to group $GroupDisplayName ($GroupId)."
+                        try {
+                            New-MgGroupMember @addMemberParams
+                            Write-Output "Added Member (user) $memberEntry to group $GroupDisplayName ($GroupId)."
+                        } catch {
+                            if ($_.Exception.Message -match "already a member") {
+                                Write-Warning "Member $memberEntry is already in the group. Skipping."
+                            } else {
+                                throw
+                            }
+                        }
                     }
                     else {
                         Write-Warning "User not found: $memberEntry"
@@ -106,8 +107,16 @@ function Add-EntraIdGroupMember {
                             GroupId = $GroupId
                             DirectoryObjectId = $memberGroupId
                         }
-                        New-MgGroupMember @addMemberParams
-                        Write-Output "Added Member (group) $memberEntry to group $GroupDisplayName ($GroupId)."
+                        try {
+                            New-MgGroupMember @addMemberParams
+                            Write-Output "Added Member (group) $memberEntry to group $GroupDisplayName ($GroupId)."
+                        } catch {
+                            if ($_.Exception.Message -match "already a member") {
+                                Write-Warning "Member $memberEntry is already in the group. Skipping."
+                            } else {
+                                throw
+                            }
+                        }
                     }
                     else {
                         # Try as service principal
@@ -121,8 +130,16 @@ function Add-EntraIdGroupMember {
                                 GroupId = $GroupId
                                 DirectoryObjectId = $memberSpnId
                             }
-                            New-MgGroupMember @addMemberParams
-                            Write-Output "Added Member (service principal) $memberEntry to group $GroupDisplayName ($GroupId)."
+                            try {
+                                New-MgGroupMember @addMemberParams
+                                Write-Output "Added Member (service principal) $memberEntry to group $GroupDisplayName ($GroupId)."
+                            } catch {
+                                if ($_.Exception.Message -match "already a member") {
+                                    Write-Warning "Member $memberEntry is already in the group. Skipping."
+                                } else {
+                                    throw
+                                }
+                            }
                         }
                         else {
                             Write-Warning "Group or ServicePrincipal not found: $memberEntry"

@@ -34,7 +34,7 @@ function Get-EntraIdGroupMember {
     process {
         # Resolve group Id if searching by GroupDisplayName
         if ($PSCmdlet.ParameterSetName -eq 'ByDisplayName') {
-            Write-Verbose "Get-EntraIdGroupMember: Searching for group with display name '$GroupDisplayName'"
+            Write-Verbose "Get-EntraIdGroupMember: Getting group with display name '$GroupDisplayName'"
             $groupParams = @{
                 DisplayName = "$GroupDisplayName"
             }

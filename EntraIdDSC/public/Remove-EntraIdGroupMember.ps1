@@ -66,12 +66,8 @@ function Remove-EntraIdGroupMember {
                 }
             }
 
-            # Get current members (UPNs)
-            $currentMembers = Get-EntraIdGroupMember -GroupDisplayName $GroupDisplayName
-
-            # Remove specified members if present
-            $toRemove = $Members | Where-Object { $_ -in $currentMembers }
-            foreach ($memberEntry in $toRemove) {
+            # Remove all provided members directly
+            foreach ($memberEntry in $Members) {
                 if ($memberEntry -like '*@*') {
                     # User
                     $memberUserObj = Get-EntraIdUser -UserPrincipalName $memberEntry
