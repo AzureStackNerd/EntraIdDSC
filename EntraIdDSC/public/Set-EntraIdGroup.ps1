@@ -178,7 +178,7 @@ function Set-EntraIdGroup {
                 $group = $null
                 foreach ($delay in $retries) {
                     if ($delay -gt 0) {
-                        Write-Warning "Waiting $delay seconds before checking group creation..."
+                        Write-Verbose "Waiting $delay seconds before checking group creation..."
                         Start-Sleep -Seconds $delay
                     }
                     $group = Get-EntraIdGroup @groupParams
