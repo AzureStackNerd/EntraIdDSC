@@ -246,7 +246,7 @@ function Set-EntraIdGroup {
         }
         else {
             $currentOwners = @()
-            Write-Verbose "New group created, no current members."
+            Write-Verbose "New group created, no current owners."
         }
 
         # Figure out what to add and remove
