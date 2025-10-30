@@ -1,7 +1,7 @@
 [
   {
-    "Name": "UG-PIM-EntraId-ExchangeAdmin",
-    "GroupMembershipType": "Direct",
+    "name": "UG-PIM-EntraId-ExchangeAdmin",
+    "groupMembershipType": "Direct",
     "owners": [
       "alex.wilson@contoso.com"
     ],
@@ -12,11 +12,12 @@
       "liam.smith@contoso.com",
       "olivia.brown@contoso.com"
     ],
-    "IsAssignableToRole": true
+    "isAssignableToRole": true,
+    "administrativeUnit": "AU-NorthAmerica"
   },
   {
-    "Name": "UG-PIM-EntraId-GlobalReader",
-    "GroupMembershipType": "Direct",
+    "name": "UG-PIM-EntraId-GlobalReader",
+    "groupMembershipType": "Direct",
     "owners": [
       "alex.wilson@contoso.com"
     ],
@@ -27,11 +28,12 @@
       "liam.smith@contoso.com",
       "sophia.lee@contoso.com"
     ],
-    "IsAssignableToRole": true
+    "isAssignableToRole": true,
+    "administrativeUnit": "AU-NorthAmerica"
   },
   {
-    "Name": "UG-PIM-EntraId-HighSecurity-Approvers",
-    "GroupMembershipType": "Direct",
+    "name": "UG-PIM-EntraId-HighSecurity-Approvers",
+    "groupMembershipType": "Direct",
     "owners": [
       "alex.wilson@contoso.com"
     ],
@@ -42,11 +44,12 @@
       "mohammed.khan@contoso.com",
       "lucas.martinez@contoso.com"
     ],
-    "IsAssignableToRole": false
+    "isAssignableToRole": false,
+    "administrativeUnit": null
   },
   {
-    "Name": "UG-PIM-EntraId-PrinterTechnician",
-    "GroupMembershipType": "Direct",
+    "name": "UG-PIM-EntraId-PrinterTechnician",
+    "groupMembershipType": "Direct",
     "owners": [
       "alex.wilson@contoso.com"
     ],
@@ -57,6 +60,7 @@
       "liam.smith@contoso.com",
       "isabella.garcia@contoso.com"
     ],
-    "IsAssignableToRole": true
+    "isAssignableToRole": true,
+    "administrativeUnit": null
   }
 ]

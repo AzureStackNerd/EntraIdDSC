@@ -4,7 +4,7 @@
 
     # Version number of this module.
 
-    ModuleVersion = '0.6.4'
+    ModuleVersion = '1.0.0'
 
     # ID used to uniquely identify this module
     GUID = 'c6cb6bdb-fb65-425b-9579-3d49128a4ebd'
@@ -40,7 +40,7 @@
 }
 
     # Description of the functionality provided by this module
-    Description = 'This module contains functions to maintain EntraId Groups and Users (limited fields) in Desired State.'
+    Description = 'This module contains functions to maintain EntraId Groups and Users in Desired State.'
 
     # Functions to export from this module
     FunctionsToExport = @(
@@ -71,6 +71,7 @@
     AliasesToExport = @()
 
 }
+
 
 
 

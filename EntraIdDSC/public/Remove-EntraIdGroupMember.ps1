@@ -43,16 +43,22 @@ function Remove-EntraIdGroupMember {
             # Resolve group Id or group display name based on parameter set
             switch ($PSCmdlet.ParameterSetName) {
                 'ByDisplayName' {
-                    $group = Get-MgGroup -Filter "displayName eq '$GroupDisplayName'" | Select-Object -First 1
-                    if (-not $group) {
+                    $groupParams = @{
+                        DisplayName = "$GroupDisplayName"
+                    }
+                    $group = Get-EntraIdGroup @groupParams
+                    if (!$group) {
                         Write-Warning "No group found with display name '$GroupDisplayName'."
                         return
                     }
                     $GroupId = $group.Id
                 }
                 'ById' {
-                    $group = Get-MgGroup -GroupId $GroupId
-                    if (-not $group) {
+                    $groupParams = @{
+                        Id = $GroupId
+                    }
+                    $group = Get-EntraIdGroup @groupParams
+                    if (!$group) {
                         Write-Warning "No group found with Id '$GroupId'."
                         return
                     }
@@ -68,29 +74,55 @@ function Remove-EntraIdGroupMember {
             foreach ($memberEntry in $toRemove) {
                 if ($memberEntry -like '*@*') {
                     # User
-                    $userObj = Get-EntraIdUser -UserPrincipalName $memberEntry
-                    if ($userObj) {
+                    $memberUserObj = Get-EntraIdUser -UserPrincipalName $memberEntry
+                    if ($null -ne $memberUserObj) {
                         try {
-                            Remove-MgGroupMemberDirectoryObjectByRef -GroupId $GroupId -DirectoryObjectId $userObj.Id
-                            Write-Output "Removed user $memberEntry from group $GroupDisplayName ($GroupId)."
+                            $memberUserId = $memberUserObj.Id
+                            $removeParams = @{
+                                GroupId = $GroupId
+                                DirectoryObjectId = $memberUserId
+                            }
+                            Remove-MgGroupMemberDirectoryObjectByRef @removeParams
+                            Write-Output "Removed Member (user) $memberEntry from group $GroupDisplayName ($GroupId)."
                         } catch {
-                            Write-Warning "Failed to remove $memberEntry as member: $($_.Exception.Message)"
+                            Write-Warning "Failed to remove Member (user) $memberEntry from group $GroupDisplayName ($GroupId): $($_.Exception.Message)"
                         }
                     } else {
                         Write-Warning "User not found: $memberEntry"
                     }
                 } else {
                     # Group
-                    $groupMemberObj = Get-EntraIdGroup -DisplayName $memberEntry
-                    if ($groupMemberObj) {
+                    $memberGroupObj = Get-EntraIdGroup -DisplayName $memberEntry
+                    if ($null -ne $memberGroupObj) {
                         try {
-                            Remove-MgGroupMemberDirectoryObjectByRef -GroupId $GroupId -DirectoryObjectId $groupMemberObj.Id
-                            Write-Output "Removed group $memberEntry from group $GroupDisplayName ($GroupId)."
+                            $memberGroupId = $memberGroupObj.Id
+                            $removeParams = @{
+                                GroupId = $GroupId
+                                DirectoryObjectId = $memberGroupId
+                            }
+                            Remove-MgGroupMemberDirectoryObjectByRef @removeParams
+                            Write-Output "Removed Member (group) $memberEntry from group $GroupDisplayName ($GroupId)."
                         } catch {
-                            Write-Warning "Failed to remove group $memberEntry as member: $($_.Exception.Message)"
+                            Write-Warning "Failed to remove Member (group) $memberEntry from group $GroupDisplayName ($GroupId): $($_.Exception.Message)"
                         }
                     } else {
-                        Write-Warning "Group not found: $memberEntry"
+                        # Try as service principal
+                        $memberSpnObj = Get-EntraIdServicePrincipal -DisplayName $memberEntry
+                        if ($null -ne $memberSpnObj) {
+                            try {
+                                $memberSpnId = $memberSpnObj.Id
+                                $removeParams = @{
+                                    GroupId = $GroupId
+                                    DirectoryObjectId = $memberSpnId
+                                }
+                                Remove-MgGroupMemberDirectoryObjectByRef @removeParams
+                                Write-Output "Removed Member (service principal) $memberEntry from group $GroupDisplayName ($GroupId)."
+                            } catch {
+                                Write-Warning "Failed to remove Member (service principal) $memberEntry from group $GroupDisplayName ($GroupId): $($_.Exception.Message)"
+                            }
+                        } else {
+                            Write-Warning "Group or ServicePrincipal not found: $memberEntry"
+                        }
                     }
                 }
             }

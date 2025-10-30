@@ -43,15 +43,18 @@ function Add-EntraIdUser {
 
     process {
         # Validate the DisplayName
-        if (-not $DisplayName) {
+        if ([string]::IsNullOrWhiteSpace($DisplayName)) {
             throw "DisplayName is required."
         }
         # Validate the UserPrincipalName
-        if (-not $UserPrincipalName) {
+        if ([string]::IsNullOrWhiteSpace($UserPrincipalName)) {
             throw "UserPrincipalName is required."
         }
 
-        if (-not (Test-UserPrincipalName -UserPrincipalName $UserPrincipalName)) {
+        $testUPNParams = @{
+            UserPrincipalName = $UserPrincipalName
+        }
+        if (!(Test-UserPrincipalName @testUPNParams)) {
             Write-Error -Message "The UserPrincipalName '$UserPrincipalName' is not in a valid format." -ErrorAction Stop
         }
 
@@ -77,7 +80,10 @@ function Add-EntraIdUser {
                 }
 
                 # Call Microsoft Graph to create the user
-                New-MgUser -BodyParameter $userObject
+                $newUserParams = @{
+                    BodyParameter = $userObject
+                }
+                New-MgUser @newUserParams
 
                 Write-Output "User '$DisplayName' with UPN '$UserPrincipalName' created successfully."
             }

@@ -21,17 +21,29 @@ function Get-ObjectType {
 
     # Check if Name is a UPN (contains '@' and looks like an email)
     if ($Name -match '^[^@]+@[^@]+\.[^@]+$') {
-        $user = Get-MgUser -Filter "userPrincipalName eq '$Name'" -ErrorAction SilentlyContinue | Select-Object -First 1
+        $userParams = @{
+            Filter = "userPrincipalName eq '$Name'"
+            ErrorAction = 'SilentlyContinue'
+        }
+        $user = Get-MgUser @userParams | Select-Object -First 1
         if ($user) {
             return 'User'
         }
     } else {
         # try to get it as sp
-        $sp = Get-MgServicePrincipal -Filter "displayName eq '$Name'" -ErrorAction SilentlyContinue | Select-Object -First 1
+        $spParams = @{
+            Filter = "displayName eq '$Name'"
+            ErrorAction = 'SilentlyContinue'
+        }
+        $sp = Get-MgServicePrincipal @spParams | Select-Object -First 1
         if ($sp) {
             return 'ServicePrincipal'
         }
-        $group = Get-MgGroup -Filter "displayName eq '$Name'" -ErrorAction SilentlyContinue | Select-Object -First 1
+        $groupParams = @{
+            Filter = "displayName eq '$Name'"
+            ErrorAction = 'SilentlyContinue'
+        }
+        $group = Get-MgGroup @groupParams | Select-Object -First 1
         if ($group) {
             return 'Group'
         }

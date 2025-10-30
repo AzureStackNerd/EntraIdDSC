@@ -1,7 +1,7 @@
 [
     {
-        "Name": "UG-LIC-DynamicsBusinessCentralPremium",
-        "GroupMembershipType": "Direct",
+        "name": "UG-LIC-DynamicsBusinessCentralPremium",
+        "groupMembershipType": "Direct",
         "owners": [
             "alex.wilson@contoso.com"
         ],
@@ -14,11 +14,11 @@
             "mohammed.khan@contoso.com",
             "isabella.garcia@contoso.com"
         ],
-        "IsAssignableToRole": false
+        "isAssignableToRole": false
     },
     {
-        "Name": "UG-LIC-DynamicsSalesEnt",
-        "GroupMembershipType": "Direct",
+        "name": "UG-LIC-DynamicsSalesEnt",
+        "groupMembershipType": "Direct",
         "owners": [
             "alex.wilson@contoso.com"
         ],
@@ -31,11 +31,11 @@
             "lucas.martinez@contoso.com",
             "sophia.lee@contoso.com"
         ],
-        "IsAssignableToRole": false
+        "isAssignableToRole": false
     },
     {
-        "Name": "UG-LIC-EntraId-P2",
-        "GroupMembershipType": "Direct",
+        "name": "UG-LIC-EntraId-P2",
+        "groupMembershipType": "Direct",
         "owners": [
             "alex.wilson@contoso.com"
         ],
@@ -46,11 +46,11 @@
             "liam.smith@contoso.com",
             "isabella.garcia@contoso.com"
         ],
-        "IsAssignableToRole": false
+        "isAssignableToRole": false
     },
     {
-        "Name": "UG-LIC-M365COPILOT",
-        "GroupMembershipType": "Direct",
+        "name": "UG-LIC-M365COPILOT",
+        "groupMembershipType": "Direct",
         "owners": [
             "alex.wilson@contoso.com"
         ],
@@ -61,11 +61,11 @@
             "mohammed.khan@contoso.com",
             "sophia.lee@contoso.com"
         ],
-        "IsAssignableToRole": false
+        "isAssignableToRole": false
     },
     {
-        "Name": "UG-LIC-OfficePremium",
-        "GroupMembershipType": "Direct",
+        "name": "UG-LIC-OfficePremium",
+        "groupMembershipType": "Direct",
         "owners": [
             "alex.wilson@contoso.com"
         ],
@@ -78,11 +78,11 @@
             "lucas.martinez@contoso.com",
             "isabella.garcia@contoso.com"
         ],
-        "IsAssignableToRole": false
+        "isAssignableToRole": false
     },
     {
-        "Name": "UG-LIC-PowerAppsPremium",
-        "GroupMembershipType": "Direct",
+        "name": "UG-LIC-PowerAppsPremium",
+        "groupMembershipType": "Direct",
         "owners": [
             "alex.wilson@contoso.com"
         ],
@@ -90,6 +90,6 @@
         "members": [
             "alex.wilson@contoso.com"
         ],
-        "IsAssignableToRole": false
+        "isAssignableToRole": false
     }
 ]

@@ -50,7 +50,9 @@ function Set-EntraIdGroup {
         [Parameter(Mandatory)]
         [array]$Owners,
         [Parameter(Mandatory = $false)]
-        [bool]$IsAssignableToRole = $false
+        [bool]$IsAssignableToRole = $false,
+        [Parameter(Mandatory = $false)]
+        [string]$AdministrativeUnit = $null
     )
 
     process {
@@ -60,14 +62,17 @@ function Set-EntraIdGroup {
         $newGroup = $false
         $updateRequired = $false
         # Check if group exists
-        $group = Get-MgGroup -Filter "displayName eq '$DisplayName'" | Select-Object -First 1
-        if (-not $group) {
+        $groupParams = @{
+            DisplayName = "$DisplayName"
+        }
+        $group = Get-EntraIdGroup @groupParams
+        if (!$group) {
             # Common group parameters
             $newGroupParams = @{
                 DisplayName        = $DisplayName
                 Description        = $Description
                 MailEnabled        = $false
-                MailNickname       = $DisplayName.Replace(' ', '')
+                MailNickname       = $DisplayName.Replace(' ', '').ToLower()
                 SecurityEnabled    = $true
                 IsAssignableToRole = $IsAssignableToRole
             }
@@ -86,11 +91,39 @@ function Set-EntraIdGroup {
                 }
             }
             $newGroup = $true
-            if ($PSCmdlet.ShouldProcess("Group '$DisplayName'", "Create group with parameters $($newGroupParams | ConvertTo-Json)")) {
-                $group = New-MgGroup @newGroupParams
-                Write-Verbose "Created group with ID: $($group.Id)"
-                Write-Output "Created group '$DisplayName' ($GroupMembershipType membership)"
+
+
+            if ([string]::IsNullOrWhiteSpace($AdministrativeUnit)) {
+                if ($PSCmdlet.ShouldProcess("Group '$DisplayName'", "Create group with parameters $($newGroupParams | ConvertTo-Json)")) {
+                    $group = New-MgGroup @newGroupParams
+                }
             }
+            else {
+                $adminUnitParams = @{
+                    Filter = "DisplayName eq '$AdministrativeUnit'"
+                }
+                $adminUnitObj = Get-MgDirectoryAdministrativeUnit @adminUnitParams | Select-Object -First 1
+                if (!$adminUnitObj) {
+                    throw "Administrative Unit '$AdministrativeUnit' not found. Cannot create group in a non-existent Administrative Unit."
+                }
+                # $bodyParams = @{
+                #     "@odata.id" = "https://graph.microsoft.com/v1.0/groups/$($group.Id)"
+                # }
+                # New-MgDirectoryAdministrativeUnitMemberByRef -AdministrativeUnitId $($adminUnitObj.id) -BodyParameter $bodyParams
+                $bodyParams = @{}
+                $newGroupParams.Keys | ForEach-Object { $bodyParams[$_] = $newGroupParams[$_] }
+                $bodyParams['@odata.type'] = '#microsoft.graph.group'
+                if ($PSCmdlet.ShouldProcess("Group '$DisplayName'", "Create group in Administrative Unit '$AdministrativeUnit' with parameters $($bodyParams | ConvertTo-Json)")) {
+                    $addMemberParams = @{
+                        AdministrativeUnitId = $adminUnitObj.Id
+                        BodyParameter        = $bodyParams
+                    }
+                    New-MgDirectoryAdministrativeUnitMember @addMemberParams
+
+                }
+            }
+            Write-Output "Created group '$DisplayName' ($GroupMembershipType membership)"
+
         }
         else {
             $updateRequired = $false
@@ -106,18 +139,44 @@ function Set-EntraIdGroup {
                     Write-Output "Updated description for group '$DisplayName'"
                 }
             }
-            if ($group.IsAssignableToRole -ne $IsAssignableToRole) {
+            if (![string]::IsNullOrWhiteSpace($AdministrativeUnit)) {
+                $adminUnitParams = @{
+                    Filter = "DisplayName eq '$AdministrativeUnit'"
+                }
+                $adminUnitObj = Get-MgDirectoryAdministrativeUnit @adminUnitParams | Select-Object -First 1
+                if ($null -eq $adminUnitObj) {
+                    Throw "Administrative Unit '$AdministrativeUnit' not found."
+                }
+                $adminUnitId = $adminUnitObj.Id
+                $administrativeUnitMember = Get-MgDirectoryAdministrativeUnitMember -AdministrativeUnitId $adminUnitId | Where-Object { $_.Id -eq $group.Id }
+                if ([string]::IsNullOrWhiteSpace($administrativeUnitMember)) {
+                    # $updateRequired = $true
+                    # $bodyParams = @{
+                    #     "@odata.id" = "https://graph.microsoft.com/v1.0/groups/$($group.Id)"
+                    # }
+                    # New-MgDirectoryAdministrativeUnitMemberByRef -AdministrativeUnitId $($adminUnitObj.id) -BodyParameter $bodyParams
+                    # Write-Output "Adding group '$DisplayName' to Administrative Unit '$AdministrativeUnit'"
+                    Write-Warning "Changing Administrative Unit membership for existing groups is not (yet) implemented."
+                    # Permission issues with the current Graph SDK prevent implementation. It needs AdministrativeUnit.ReadWrite.All
+                    # This is a to broad scope if the intention is only to manage group membership in a specific Administrative Unit.
+                    # There is not a particular role available on the administrative unit level to delegate this.
+                }
+
+
+            }
+            if ($null -ne $group.IsAssignableToRole -and $group.IsAssignableToRole -ne $IsAssignableToRole) {
                 Write-Warning "IsAssignableToRole cannot be changed after group creation. Please delete and recreate the group if needed."
             }
         }
 
         # Synchronize members only for Direct groups
         if ($GroupMembershipType -eq "Direct") {
-            if (-not $newGroup) {
+            if (!$newGroup) {
                 $currentMembers = Get-EntraIdGroupMember -GroupDisplayName $DisplayName
                 Write-Verbose "Fetched group: $DisplayName current members. $($currentMembers | ConvertTo-Json -Depth 3)"
 
-            } else {
+            }
+            else {
                 $currentMembers = @()
                 Write-Verbose "New group created, no current members."
             }
@@ -151,7 +210,6 @@ function Set-EntraIdGroup {
 
 
         }
-
         # Get current owners (UPNs)
         $currentOwners = Get-EntraIdGroupOwner -GroupDisplayName $DisplayName
         $toAddOwners = $Owners | Where-Object { $_ -notin $currentOwners }
@@ -170,10 +228,9 @@ function Set-EntraIdGroup {
             }
         }
 
-        if (-not $updateRequired) {
+        if (!$updateRequired) {
             Write-Output "Group '$DisplayName' is already in the desired state."
         }
         Write-Output ""
-
     }
 }

@@ -26,24 +26,35 @@ function Invoke-EntraIdGroupDesiredState {
     process {
         Test-GraphAuth
         # Get all JSON configuration files in the specified path
-        $files = Get-ChildItem -Path $Path -Include *.json, *.jsonc -File -Recurse | Sort-Object Name
+        $filesParams = @{
+            Path = $Path
+            Include = "*.json", "*.jsonc"
+            File = $true
+            Recurse = $true
+        }
+        $files = Get-ChildItem @filesParams | Sort-Object Name
 
         foreach ($file in $files) {
             Write-Verbose "Processing file: $($file.FullName)"
             # Read the group object from the JSON/JSONC file, removing comment lines
-            $rawContent = Get-Content -Path $file.FullName -Raw
+            $contentParams = @{
+                Path = $file.FullName
+                Raw = $true
+            }
+            $rawContent = Get-Content @contentParams
             # Remove single-line comments (// ...)
             $rawContent = $rawContent -replace '(?m)^\s*//.*$', ''
             # Remove block comments (/* ... */)
             $rawContent = $rawContent -replace '(?s)/\*.*?\*/', ''
             $json = $rawContent | ConvertFrom-Json
             foreach ($group in $json) {
-                $groupName = $group.Name
-                $groupMembershipType = $group.GroupMembershipType
+                $groupName = $group.name
+                $groupMembershipType = $group.groupMembershipType
                 $description = $group.description
                 $members = $group.members
                 $owners = $group.owners
-                $isAssignableToRole = $group.IsAssignableToRole
+                $isAssignableToRole = $group.isAssignableToRole
+                $administrativeUnit = $group.administrativeUnit
 
                 $params = @{
                     DisplayName         = $groupName
@@ -52,6 +63,7 @@ function Invoke-EntraIdGroupDesiredState {
                     Owners              = $owners
                     IsAssignableToRole  = $isAssignableToRole
                     Members             = $members
+                    AdministrativeUnit  = $administrativeUnit
                 }
 
                 if (!$owners) {

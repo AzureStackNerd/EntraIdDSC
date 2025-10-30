@@ -35,12 +35,12 @@ function Get-EntraIdUser {
         # Validate required parameters based on ParameterSetName
         switch ($PSCmdlet.ParameterSetName) {
             'ById' {
-                if (-not $Id) {
+                if ([string]::IsNullOrWhiteSpace($Id)) {
                     throw "Parameter 'Id' is required when using the ById parameter set."
                 }
             }
             'ByUPN' {
-                if (-not $UserPrincipalName) {
+                if ([string]::IsNullOrWhiteSpace($UserPrincipalName)) {
                     throw "Parameter 'UserPrincipalName' is required when using the ByUPN parameter set."
                 }
             }
@@ -187,7 +187,7 @@ function Get-EntraIdUser {
                     ErrorAction = 'SilentlyContinue'
                 }
                     $user = Get-MgUser @getUserParams
-                    if (-not $user -or $user.Count -eq 0) {
+                    if (!$user -or $user.Count -eq 0) {
                         Write-Warning "No user found with Id '$Id'."
                         return $null
                     }
@@ -201,7 +201,7 @@ function Get-EntraIdUser {
                     ErrorAction = 'SilentlyContinue'
                 }
                     $user = Get-MgUser @getUserParams
-                    if (-not $user -or $user.Count -eq 0) {
+                    if (!$user -or $user.Count -eq 0) {
                         Write-Warning "No user found with UPN '$UserPrincipalName'."
                         return $null
                     }

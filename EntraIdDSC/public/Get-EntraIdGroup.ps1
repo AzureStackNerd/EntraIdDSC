@@ -43,8 +43,11 @@ function Get-EntraIdGroup {
 
         switch ($PSCmdlet.ParameterSetName) {
             'ByDisplayName' {
-                $group = Get-MgGroup -Filter "displayName eq '$DisplayName'"
-                if (-not $group) {
+                $groupParams = @{
+                    Filter = "displayName eq '$DisplayName'"
+                }
+                $group = Get-MgGroup @groupParams
+                if (!$group) {
                     Write-Verbose "No group found with display name '$DisplayName'."
                     return $null
                 }
@@ -52,8 +55,11 @@ function Get-EntraIdGroup {
             }
             'ById' {
                 Write-Verbose "Get-EntraIdGroup: Searching for group with Id '$Id'"
-                $group = Get-MgGroup -GroupId $Id
-                if (-not $group) {
+                $groupParams = @{
+                    GroupId = $Id
+                }
+                $group = Get-MgGroup @groupParams
+                if (!$group) {
                     Write-Verbose "No group found with Id '$Id'."
                     return $null
                 }
@@ -61,9 +67,12 @@ function Get-EntraIdGroup {
             }
             'ByDisplayNamePattern' {
                 # Support wildcard filtering, e.g., UG-PIM-*
-                $allGroups = Get-MgGroup -All
+                $allGroupsParams = @{
+                    All = $true
+                }
+                $allGroups = Get-MgGroup @allGroupsParams
                 $filteredGroups = $allGroups | Where-Object { $_.DisplayName -like $DisplayNamePattern }
-                if (-not $filteredGroups) {
+                if (!$filteredGroups) {
                     Write-Verbose "No groups found matching pattern '$DisplayNamePattern'."
                     return $null
                 }
