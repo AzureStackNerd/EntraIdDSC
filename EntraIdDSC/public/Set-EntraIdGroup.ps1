@@ -123,7 +123,6 @@ function Set-EntraIdGroup {
                 }
             }
             Write-Output "Created group '$DisplayName' ($GroupMembershipType membership)"
-
         }
         else {
             $updateRequired = $false
@@ -169,28 +168,31 @@ function Set-EntraIdGroup {
             }
         }
 
-        if ($newGroup) {
-            # Check if the group was created successfully with retry mechanism
-            $groupParams = @{
-                DisplayName = "$DisplayName"
-            }
-            $retries = @(1, 5, 15, 30)
-            $group = $null
-            foreach ($delay in $retries) {
-                if ($delay -gt 0) {
-                    Write-Verbose "Waiting $delay seconds before checking group creation..."
-                    Start-Sleep -Seconds $delay
+        if ($PSCmdlet.ShouldProcess("Group '$DisplayName'", "Check group creation status")) {
+            if ($newGroup) {
+                # Check if the group was created successfully with retry mechanism
+                $groupParams = @{
+                    DisplayName = "$DisplayName"
                 }
-                $group = Get-EntraIdGroup @groupParams
-                if ($group) {
-                    break
+                $retries = @(1, 5, 15, 30)
+                $group = $null
+                foreach ($delay in $retries) {
+                    if ($delay -gt 0) {
+                        Write-Verbose "Waiting $delay seconds before checking group creation..."
+                        Start-Sleep -Seconds $delay
+                    }
+                    $group = Get-EntraIdGroup @groupParams
+                    if ($group) {
+                        break
+                    }
+                }
+                if (!$group) {
+                    $retryCount = $retries.Count
+                    $totalWaitTime = ($retries | Measure-Object -Sum).Sum
+                    throw "Group '$DisplayName' creation check failed after $retryCount retry attempts ($totalWaitTime seconds total wait time)."
                 }
             }
-            if (!$group) {
-                $retryCount = $retries.Count
-                $totalWaitTime = ($retries | Measure-Object -Sum).Sum
-                throw "Group '$DisplayName' creation check failed after $retryCount retry attempts ($totalWaitTime seconds total wait time)."
-            }
+
         }
         # Synchronize members only for Direct groups
         if ($GroupMembershipType -eq "Direct") {
