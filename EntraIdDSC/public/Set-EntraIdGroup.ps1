@@ -174,7 +174,7 @@ function Set-EntraIdGroup {
             $groupParams = @{
                 DisplayName = "$DisplayName"
             }
-            $retries = @(0, 5, 15, 30)
+            $retries = @(1, 5, 15, 30)
             $group = $null
             foreach ($delay in $retries) {
                 if ($delay -gt 0) {
