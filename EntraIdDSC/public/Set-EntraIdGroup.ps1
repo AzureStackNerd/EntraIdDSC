@@ -169,6 +169,29 @@ function Set-EntraIdGroup {
             }
         }
 
+        if ($newGroup) {
+            # Check if the group was created successfully with retry mechanism
+            $groupParams = @{
+                DisplayName = "$DisplayName"
+            }
+            $retries = @(1, 5, 15, 30)
+            $group = $null
+            foreach ($delay in $retries) {
+                if ($delay -gt 0) {
+                    Write-Verbose "Waiting $delay seconds before checking group creation..."
+                    Start-Sleep -Seconds $delay
+                }
+                $group = Get-EntraIdGroup @groupParams
+                if ($group) {
+                    break
+                }
+            }
+            if (!$group) {
+                $retryCount = $retries.Count
+                $totalWaitTime = ($retries | Measure-Object -Sum).Sum
+                throw "Group '$DisplayName' creation check failed after $retryCount retry attempts ($totalWaitTime seconds total wait time)."
+            }
+        }
         # Synchronize members only for Direct groups
         if ($GroupMembershipType -eq "Direct") {
             if (!$newGroup) {
@@ -198,13 +221,21 @@ function Set-EntraIdGroup {
             if ($toAdd.Count -gt 0) {
                 $updateRequired = $true
                 if ($PSCmdlet.ShouldProcess("Group '$DisplayName'", "Add Members $($toAdd | ConvertTo-Json)")) {
-                    Add-EntraIdGroupMember -GroupDisplayName $DisplayName -Members $toAdd
+                    $groupMemberParams = @{
+                        GroupDisplayName = $DisplayName
+                        Members          = $toAdd
+                    }
+                    Add-EntraIdGroupMember @groupMemberParams
                 }
             }
             if ($toRemove.Count -gt 0) {
                 $updateRequired = $true
                 if ($PSCmdlet.ShouldProcess("Group '$DisplayName'", "Remove Members $($toRemove | ConvertTo-Json)")) {
-                    Remove-EntraIdGroupMember -GroupDisplayName $DisplayName -Members $toRemove
+                    $groupMemberParams = @{
+                        GroupDisplayName = $DisplayName
+                        Members          = $toRemove
+                    }
+                    Remove-EntraIdGroupMember @groupMemberParams
                 }
             }
 
@@ -218,13 +249,21 @@ function Set-EntraIdGroup {
         if ($toAddOwners.Count -gt 0) {
             $updateRequired = $true
             if ($PSCmdlet.ShouldProcess("Group '$DisplayName'", "Add Owners $($toAddOwners | ConvertTo-Json)")) {
-                Add-EntraIdGroupOwner -GroupDisplayName $DisplayName -Owners $toAddOwners
+                $groupOwnerParams = @{
+                    GroupDisplayName = $DisplayName
+                    Owners           = $toAddOwners
+                }
+                Add-EntraIdGroupOwner @groupOwnerParams
             }
         }
         if ($toRemoveOwners.Count -gt 0) {
             $updateRequired = $true
             if ($PSCmdlet.ShouldProcess("Group '$DisplayName'", "Remove Owners $($toRemoveOwners | ConvertTo-Json)")) {
-                Remove-EntraIdGroupOwner -GroupDisplayName $DisplayName -Owners $toRemoveOwners
+                $groupOwnerParams = @{
+                    GroupDisplayName = $DisplayName
+                    Owners           = $toRemoveOwners
+                }
+                Remove-EntraIdGroupOwner @groupOwnerParams
             }
         }
 
