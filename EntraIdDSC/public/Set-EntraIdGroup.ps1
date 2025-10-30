@@ -241,7 +241,7 @@ function Set-EntraIdGroup {
         # Get current owners (UPNs)
         if (!$newGroup) {
             $currentOwners = Get-EntraIdGroupOwner -GroupDisplayName $DisplayName
-            Write-Verbose "Fetched group: $DisplayName current Owners. $($currentMembers | ConvertTo-Json -Depth 3)"
+            Write-Verbose "Fetched group: $DisplayName current Owners. $($currentOwners | ConvertTo-Json -Depth 3)"
 
         }
         else {
