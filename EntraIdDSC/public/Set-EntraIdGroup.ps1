@@ -187,7 +187,9 @@ function Set-EntraIdGroup {
                 }
             }
             if (!$group) {
-                throw "Group '$DisplayName' creation check failed after retries."
+                $retryCount = $retries.Count
+                $totalWaitTime = ($retries | Measure-Object -Sum).Sum
+                throw "Group '$DisplayName' creation check failed after $retryCount retry attempts ($totalWaitTime seconds total wait time)."
             }
         }
         # Synchronize members only for Direct groups
