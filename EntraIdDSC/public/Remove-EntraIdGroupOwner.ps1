@@ -66,12 +66,8 @@ function Remove-EntraIdGroupOwner {
                 }
             }
 
-            # Get current owners (UPNs)
-            $currentOwners = Get-EntraIdGroupOwner -GroupDisplayName $GroupDisplayName
-
-            # Remove specified owners if present
-            $toRemove = $Owners | Where-Object { $_ -in $currentOwners }
-            foreach ($ownerEntry in $toRemove) {
+            # Remove all provided owners directly
+            foreach ($ownerEntry in $Owners) {
                 if ($ownerEntry -like '*@*') {
                     # User
                     $ownerUserObj = Get-EntraIdUser -UserPrincipalName $ownerEntry
