@@ -77,16 +77,18 @@ function Add-EntraIdGroupMember {
                     if ($null -ne $memberUserObj) {
                         $memberUserId = $memberUserObj.Id
                         $addMemberParams = @{
-                            GroupId = $GroupId
+                            GroupId           = $GroupId
                             DirectoryObjectId = $memberUserId
                         }
                         try {
                             New-MgGroupMember @addMemberParams
                             Write-Output "Added Member (user) $memberEntry to group $GroupDisplayName ($GroupId)."
-                        } catch {
+                        }
+                        catch {
                             if ($_.Exception.Message -match "already a member") {
                                 Write-Warning "Member $memberEntry is already in the group. Skipping."
-                            } else {
+                            }
+                            else {
                                 throw
                             }
                         }
@@ -104,16 +106,18 @@ function Add-EntraIdGroupMember {
                     if ($null -ne $memberGroupObj) {
                         $memberGroupId = $memberGroupObj.Id
                         $addMemberParams = @{
-                            GroupId = $GroupId
+                            GroupId           = $GroupId
                             DirectoryObjectId = $memberGroupId
                         }
                         try {
                             New-MgGroupMember @addMemberParams
                             Write-Output "Added Member (group) $memberEntry to group $GroupDisplayName ($GroupId)."
-                        } catch {
+                        }
+                        catch {
                             if ($_.Exception.Message -match "already a member") {
                                 Write-Warning "Member $memberEntry is already in the group. Skipping."
-                            } else {
+                            }
+                            else {
                                 throw
                             }
                         }
@@ -127,16 +131,18 @@ function Add-EntraIdGroupMember {
                         if ($null -ne $memberSpnObj) {
                             $memberSpnId = $memberSpnObj.Id
                             $addMemberParams = @{
-                                GroupId = $GroupId
+                                GroupId           = $GroupId
                                 DirectoryObjectId = $memberSpnId
                             }
                             try {
                                 New-MgGroupMember @addMemberParams
                                 Write-Output "Added Member (service principal) $memberEntry to group $GroupDisplayName ($GroupId)."
-                            } catch {
+                            }
+                            catch {
                                 if ($_.Exception.Message -match "already a member") {
                                     Write-Warning "Member $memberEntry is already in the group. Skipping."
-                                } else {
+                                }
+                                else {
                                     throw
                                 }
                             }
