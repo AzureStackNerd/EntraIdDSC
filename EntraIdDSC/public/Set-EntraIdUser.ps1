@@ -45,8 +45,7 @@ function Set-EntraIdUser {
         $existingUser = Get-EntraIdUser @getUserParams
 
         if ($existingUser) {
-
-            Write-Output "User '$($User.DisplayName)' exists. Checking for updates."
+            Write-Debug "User '$($User.DisplayName)' exists. Checking for updates."
 
             # Compare and update properties if necessary
             $updateRequired = $false
@@ -56,7 +55,6 @@ function Set-EntraIdUser {
                 if ($key -ne "UserPrincipalName" -and $existingUser.$key -ne $User.$key) {
                     $updateRequired = $true
                     $updateParams[$key] = $User.$key
-                    # Write-Output "Property '$key' differs. Current: '$($existingUser.$key)', Desired: '$($User.$key)'. Marking for update."
                 }
             }
 

@@ -58,7 +58,7 @@ function Set-EntraIdGroup {
     process {
         Test-GraphAuth
 
-        Write-Output "Processing Group: '$DisplayName'"
+        Write-Debug "Processing Group: '$DisplayName'"
         $newGroup = $false
         $updateRequired = $false
         # Check if group exists
