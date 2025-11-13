@@ -107,7 +107,7 @@ function Invoke-EntraIdUserDesiredState {
                 }
                 $existingUser = Get-EntraIdUser @getUserParams
                 if (!$existingUser) {
-                    Write-Output "Creating user '$($user.DisplayName)' with UPN '$upn'."
+                    Write-Debug "Creating user '$($user.DisplayName)' with UPN '$upn'."
                     # Create the user
                     $addUserParams = @{
                         DisplayName          = $user.DisplayName

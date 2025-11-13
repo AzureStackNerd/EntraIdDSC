@@ -25,8 +25,10 @@
 function Get-EntraIdUser {
     [CmdletBinding(DefaultParameterSetName='ById')]
     param(
+        # TODO: Consider adding validation for GUID format
         [Parameter(ParameterSetName='ById', Position=0, ValueFromPipeline, ValueFromPipelineByPropertyName)]
         [string]$Id,
+        # TODO: Consider adding validation for UPN format
         [Parameter(ParameterSetName='ByUPN', Position=0, ValueFromPipeline, ValueFromPipelineByPropertyName)]
         [string]$UserPrincipalName
     )
