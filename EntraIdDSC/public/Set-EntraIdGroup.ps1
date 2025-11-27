@@ -96,6 +96,7 @@ function Set-EntraIdGroup {
             if ([string]::IsNullOrWhiteSpace($AdministrativeUnit)) {
                 if ($PSCmdlet.ShouldProcess("Group '$DisplayName'", "Create group with parameters $($newGroupParams | ConvertTo-Json)")) {
                     $group = New-MgGroup @newGroupParams
+                    Write-Output "Created group '$DisplayName' ($GroupMembershipType membership)"
                 }
             }
             else {
@@ -119,10 +120,9 @@ function Set-EntraIdGroup {
                         BodyParameter        = $bodyParams
                     }
                     New-MgDirectoryAdministrativeUnitMember @addMemberParams
-
+                    Write-Output "Created group '$DisplayName' ($GroupMembershipType membership)"
                 }
             }
-            Write-Output "Created group '$DisplayName' ($GroupMembershipType membership)"
         }
         else {
             $updateRequired = $false
