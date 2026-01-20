@@ -1,0 +1,516 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<test-results xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="nunit_schema_2.5.xsd" name="Pester" total="175" errors="0" failures="0" not-run="0" inconclusive="0" ignored="0" skipped="0" invalid="0" date="2026-01-20" time="13:54:55">
+  <environment cwd="C:\CODE\GitHub\AzureStackNerd\EntraIdDSC" user-domain="AzureAD" user="RemcoVermeer" platform="Microsoft Windows 11 Enterprise|C:\WINDOWS|\Device\Harddisk0\Partition3" nunit-version="2.5.8.0" os-version="10.0.26200" clr-version="9.0.10" machine-name="GRI-VM-11-DEVBO" />
+  <culture-info current-culture="en-NL" current-uiculture="en-US" />
+  <test-suite type="TestFixture" name="Pester" executed="True" result="Success" success="True" time="4.113" asserts="0" description="Pester">
+    <results>
+      <test-suite type="TestFixture" name="C:\CODE\GitHub\AzureStackNerd\EntraIdDSC\tests\Add-EntraIdUser.Tests.ps1" executed="True" result="Success" success="True" time="0.2398" asserts="0" description="C:\CODE\GitHub\AzureStackNerd\EntraIdDSC\tests\Add-EntraIdUser.Tests.ps1">
+        <results>
+          <test-suite type="TestFixture" name="Add-EntraIdUser" executed="True" result="Success" success="True" time="0.0498" asserts="0" description="Add-EntraIdUser">
+            <results>
+              <test-suite type="TestFixture" name="Add-EntraIdUser.Valid input scenarios" executed="True" result="Success" success="True" time="0.0104" asserts="0" description="Add-EntraIdUser.Valid input scenarios">
+                <results>
+                  <test-case description="Creates a user with valid parameters" name="Add-EntraIdUser.Valid input scenarios.Creates a user with valid parameters" time="0.0057" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Add-EntraIdUser.Invalid input scenarios" executed="True" result="Success" success="True" time="0.0197" asserts="0" description="Add-EntraIdUser.Invalid input scenarios">
+                <results>
+                  <test-case description="Throws when UserPrincipalName is missing" name="Add-EntraIdUser.Invalid input scenarios.Throws when UserPrincipalName is missing" time="0.0022" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Throws when DisplayName is missing" name="Add-EntraIdUser.Invalid input scenarios.Throws when DisplayName is missing" time="0.0019" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Add-EntraIdUser.Edge cases" executed="True" result="Success" success="True" time="0.031" asserts="0" description="Add-EntraIdUser.Edge cases">
+                <results>
+                  <test-case description="Handles empty AdditionalProperties" name="Add-EntraIdUser.Edge cases.Handles empty AdditionalProperties" time="0.0035" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Handles minimal valid input" name="Add-EntraIdUser.Edge cases.Handles minimal valid input" time="0.0034" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+      <test-suite type="TestFixture" name="C:\CODE\GitHub\AzureStackNerd\EntraIdDSC\tests\Get-EntraIdGroup.Tests.ps1" executed="True" result="Success" success="True" time="0.2572" asserts="0" description="C:\CODE\GitHub\AzureStackNerd\EntraIdDSC\tests\Get-EntraIdGroup.Tests.ps1">
+        <results>
+          <test-suite type="TestFixture" name="Get-EntraIdGroup" executed="True" result="Success" success="True" time="0.0828" asserts="0" description="Get-EntraIdGroup">
+            <results>
+              <test-suite type="TestFixture" name="Get-EntraIdGroup.ByDisplayName parameter set" executed="True" result="Success" success="True" time="0.0199" asserts="0" description="Get-EntraIdGroup.ByDisplayName parameter set">
+                <results>
+                  <test-case description="Returns group when display name exists" name="Get-EntraIdGroup.ByDisplayName parameter set.Returns group when display name exists" time="0.0084" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Returns null when display name does not exist" name="Get-EntraIdGroup.ByDisplayName parameter set.Returns null when display name does not exist" time="0.007" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Get-EntraIdGroup.ById parameter set" executed="True" result="Success" success="True" time="0.0554" asserts="0" description="Get-EntraIdGroup.ById parameter set">
+                <results>
+                  <test-case description="Returns group when Id exists" name="Get-EntraIdGroup.ById parameter set.Returns group when Id exists" time="0.0071" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Returns group with correct DisplayName when called by Id" name="Get-EntraIdGroup.ById parameter set.Returns group with correct DisplayName when called by Id" time="0.0068" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Returns null when Id does not exist" name="Get-EntraIdGroup.ById parameter set.Returns null when Id does not exist" time="0.0084" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Get-EntraIdGroup.ByDisplayNamePattern parameter set" executed="True" result="Success" success="True" time="0.078" asserts="0" description="Get-EntraIdGroup.ByDisplayNamePattern parameter set">
+                <results>
+                  <test-case description="Returns groups matching pattern" name="Get-EntraIdGroup.ByDisplayNamePattern parameter set.Returns groups matching pattern" time="0.0091" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Returns null when no groups match pattern" name="Get-EntraIdGroup.ByDisplayNamePattern parameter set.Returns null when no groups match pattern" time="0.0086" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+      <test-suite type="TestFixture" name="C:\CODE\GitHub\AzureStackNerd\EntraIdDSC\tests\Get-EntraIdGroupMember.Tests.ps1" executed="True" result="Success" success="True" time="0.2124" asserts="0" description="C:\CODE\GitHub\AzureStackNerd\EntraIdDSC\tests\Get-EntraIdGroupMember.Tests.ps1">
+        <results>
+          <test-suite type="TestFixture" name="Get-EntraIdGroupMember" executed="True" result="Success" success="True" time="0.0446" asserts="0" description="Get-EntraIdGroupMember">
+            <results>
+              <test-suite type="TestFixture" name="Get-EntraIdGroupMember.Valid input scenarios" executed="True" result="Success" success="True" time="0.0224" asserts="0" description="Get-EntraIdGroupMember.Valid input scenarios">
+                <results>
+                  <test-case description="Returns group members for valid group Id" name="Get-EntraIdGroupMember.Valid input scenarios.Returns group members for valid group Id" time="0.0039" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Returns group members for valid group object" name="Get-EntraIdGroupMember.Valid input scenarios.Returns group members for valid group object" time="0.0121" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Get-EntraIdGroupMember.Invalid input scenarios" executed="True" result="Success" success="True" time="0.0299" asserts="0" description="Get-EntraIdGroupMember.Invalid input scenarios">
+                <results>
+                  <test-case description="Throws on invalid GroupId" name="Get-EntraIdGroupMember.Invalid input scenarios.Throws on invalid GroupId" time="0.0035" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+      <test-suite type="TestFixture" name="C:\CODE\GitHub\AzureStackNerd\EntraIdDSC\tests\Get-EntraIdGroupOwner.Tests.ps1" executed="True" result="Success" success="True" time="0.2129" asserts="0" description="C:\CODE\GitHub\AzureStackNerd\EntraIdDSC\tests\Get-EntraIdGroupOwner.Tests.ps1">
+        <results>
+          <test-suite type="TestFixture" name="Get-EntraIdGroupOwner" executed="True" result="Success" success="True" time="0.0443" asserts="0" description="Get-EntraIdGroupOwner">
+            <results>
+              <test-suite type="TestFixture" name="Get-EntraIdGroupOwner.Valid input scenarios" executed="True" result="Success" success="True" time="0.0146" asserts="0" description="Get-EntraIdGroupOwner.Valid input scenarios">
+                <results>
+                  <test-case description="Returns group owners for valid group Id" name="Get-EntraIdGroupOwner.Valid input scenarios.Returns group owners for valid group Id" time="0.0038" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Returns group owners for valid group object" name="Get-EntraIdGroupOwner.Valid input scenarios.Returns group owners for valid group object" time="0.0057" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Get-EntraIdGroupOwner.Invalid input scenarios" executed="True" result="Success" success="True" time="0.0222" asserts="0" description="Get-EntraIdGroupOwner.Invalid input scenarios">
+                <results>
+                  <test-case description="Throws on invalid GroupId" name="Get-EntraIdGroupOwner.Invalid input scenarios.Throws on invalid GroupId" time="0.0029" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+      <test-suite type="TestFixture" name="C:\CODE\GitHub\AzureStackNerd\EntraIdDSC\tests\Get-EntraIdServicePrincipal.Tests.ps1" executed="True" result="Success" success="True" time="0.2026" asserts="0" description="C:\CODE\GitHub\AzureStackNerd\EntraIdDSC\tests\Get-EntraIdServicePrincipal.Tests.ps1">
+        <results>
+          <test-suite type="TestFixture" name="Get-EntraIdServicePrincipal" executed="True" result="Success" success="True" time="0.037" asserts="0" description="Get-EntraIdServicePrincipal">
+            <results>
+              <test-suite type="TestFixture" name="Get-EntraIdServicePrincipal.Valid input scenarios" executed="True" result="Success" success="True" time="0.0105" asserts="0" description="Get-EntraIdServicePrincipal.Valid input scenarios">
+                <results>
+                  <test-case description="Returns service principal for valid ServicePrincipalId" name="Get-EntraIdServicePrincipal.Valid input scenarios.Returns service principal for valid ServicePrincipalId" time="0.003" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Returns service principal for valid display name" name="Get-EntraIdServicePrincipal.Valid input scenarios.Returns service principal for valid display name" time="0.0027" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Get-EntraIdServicePrincipal.Invalid input scenarios" executed="True" result="Success" success="True" time="0.0221" asserts="0" description="Get-EntraIdServicePrincipal.Invalid input scenarios">
+                <results>
+                  <test-case description="Throws on invalid ServicePrincipalId" name="Get-EntraIdServicePrincipal.Invalid input scenarios.Throws on invalid ServicePrincipalId" time="0.0035" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Throws on invalid display name" name="Get-EntraIdServicePrincipal.Invalid input scenarios.Throws on invalid display name" time="0.0035" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+      <test-suite type="TestFixture" name="C:\CODE\GitHub\AzureStackNerd\EntraIdDSC\tests\Get-EntraIdUser.Tests.ps1" executed="True" result="Success" success="True" time="0.2249" asserts="0" description="C:\CODE\GitHub\AzureStackNerd\EntraIdDSC\tests\Get-EntraIdUser.Tests.ps1">
+        <results>
+          <test-suite type="TestFixture" name="Get-EntraIdUser" executed="True" result="Success" success="True" time="0.0501" asserts="0" description="Get-EntraIdUser">
+            <results>
+              <test-suite type="TestFixture" name="Get-EntraIdUser.Valid input scenarios" executed="True" result="Success" success="True" time="0.0104" asserts="0" description="Get-EntraIdUser.Valid input scenarios">
+                <results>
+                  <test-case description="Returns user for valid UserPrincipalName" name="Get-EntraIdUser.Valid input scenarios.Returns user for valid UserPrincipalName" time="0.0048" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Get-EntraIdUser.Invalid input scenarios" executed="True" result="Success" success="True" time="0.0239" asserts="0" description="Get-EntraIdUser.Invalid input scenarios">
+                <results>
+                  <test-case description="Throws when UserPrincipalName is missing" name="Get-EntraIdUser.Invalid input scenarios.Throws when UserPrincipalName is missing" time="0.0025" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Writes a warning when user does not exist" name="Get-EntraIdUser.Invalid input scenarios.Writes a warning when user does not exist" time="0.0055" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Get-EntraIdUser.Edge cases" executed="True" result="Success" success="True" time="0.034" asserts="0" description="Get-EntraIdUser.Edge cases">
+                <results>
+                  <test-case description="Handles empty result from Get-MgUser" name="Get-EntraIdUser.Edge cases.Handles empty result from Get-MgUser" time="0.0054" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+      <test-suite type="TestFixture" name="C:\CODE\GitHub\AzureStackNerd\EntraIdDSC\tests\Invoke-EntraIdGroupDesiredState.Tests.ps1" executed="True" result="Success" success="True" time="0.5128" asserts="0" description="C:\CODE\GitHub\AzureStackNerd\EntraIdDSC\tests\Invoke-EntraIdGroupDesiredState.Tests.ps1">
+        <results>
+          <test-suite type="TestFixture" name="Invoke-EntraIdGroupDesiredState" executed="True" result="Success" success="True" time="0.3401" asserts="0" description="Invoke-EntraIdGroupDesiredState">
+            <results>
+              <test-suite type="TestFixture" name="Invoke-EntraIdGroupDesiredState.Valid input scenarios - Processing JSON files" executed="True" result="Success" success="True" time="0.1173" asserts="0" description="Invoke-EntraIdGroupDesiredState.Valid input scenarios - Processing JSON files">
+                <results>
+                  <test-case description="Processes a single JSON file with one group" name="Invoke-EntraIdGroupDesiredState.Valid input scenarios - Processing JSON files.Processes a single JSON file with one group" time="0.0229" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Processes a JSONC file with comments" name="Invoke-EntraIdGroupDesiredState.Valid input scenarios - Processing JSON files.Processes a JSONC file with comments" time="0.0153" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Processes multiple groups in a single file" name="Invoke-EntraIdGroupDesiredState.Valid input scenarios - Processing JSON files.Processes multiple groups in a single file" time="0.0208" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Processes multiple JSON files" name="Invoke-EntraIdGroupDesiredState.Valid input scenarios - Processing JSON files.Processes multiple JSON files" time="0.0231" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Processes group with Administrative Unit" name="Invoke-EntraIdGroupDesiredState.Valid input scenarios - Processing JSON files.Processes group with Administrative Unit" time="0.0148" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Processes group with isAssignableToRole set to true" name="Invoke-EntraIdGroupDesiredState.Valid input scenarios - Processing JSON files.Processes group with isAssignableToRole set to true" time="0.0112" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Invoke-EntraIdGroupDesiredState.Invalid input scenarios" executed="True" result="Success" success="True" time="0.1588" asserts="0" description="Invoke-EntraIdGroupDesiredState.Invalid input scenarios">
+                <results>
+                  <test-case description="Throws when Path parameter is missing" name="Invoke-EntraIdGroupDesiredState.Invalid input scenarios.Throws when Path parameter is missing" time="0.0027" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Skips groups without owners" name="Invoke-EntraIdGroupDesiredState.Invalid input scenarios.Skips groups without owners" time="0.0127" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Handles invalid JSON gracefully" name="Invoke-EntraIdGroupDesiredState.Invalid input scenarios.Handles invalid JSON gracefully" time="0.0197" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Invoke-EntraIdGroupDesiredState.Edge cases" executed="True" result="Success" success="True" time="0.2897" asserts="0" description="Invoke-EntraIdGroupDesiredState.Edge cases">
+                <results>
+                  <test-case description="Handles empty directory with no JSON files" name="Invoke-EntraIdGroupDesiredState.Edge cases.Handles empty directory with no JSON files" time="0.0089" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Handles empty JSON array" name="Invoke-EntraIdGroupDesiredState.Edge cases.Handles empty JSON array" time="0.0128" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Handles group with empty members array" name="Invoke-EntraIdGroupDesiredState.Edge cases.Handles group with empty members array" time="0.0138" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Handles group with null members" name="Invoke-EntraIdGroupDesiredState.Edge cases.Handles group with null members" time="0.0206" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Handles JSONC with only comments gracefully" name="Invoke-EntraIdGroupDesiredState.Edge cases.Handles JSONC with only comments gracefully" time="0.0128" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Processes files in sorted order" name="Invoke-EntraIdGroupDesiredState.Edge cases.Processes files in sorted order" time="0.0182" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Handles recursive file search" name="Invoke-EntraIdGroupDesiredState.Edge cases.Handles recursive file search" time="0.0136" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Skips group and continues when owners is empty array" name="Invoke-EntraIdGroupDesiredState.Edge cases.Skips group and continues when owners is empty array" time="0.0201" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Invoke-EntraIdGroupDesiredState.ShouldProcess support" executed="True" result="Success" success="True" time="0.3099" asserts="0" description="Invoke-EntraIdGroupDesiredState.ShouldProcess support">
+                <results>
+                  <test-case description="Supports -WhatIf" name="Invoke-EntraIdGroupDesiredState.ShouldProcess support.Supports -WhatIf" time="0.0144" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Invoke-EntraIdGroupDesiredState.Integration with Set-EntraIdGroup" executed="True" result="Success" success="True" time="0.3228" asserts="0" description="Invoke-EntraIdGroupDesiredState.Integration with Set-EntraIdGroup">
+                <results>
+                  <test-case description="Passes correct parameters to Set-EntraIdGroup" name="Invoke-EntraIdGroupDesiredState.Integration with Set-EntraIdGroup.Passes correct parameters to Set-EntraIdGroup" time="0.0089" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+      <test-suite type="TestFixture" name="C:\CODE\GitHub\AzureStackNerd\EntraIdDSC\tests\Invoke-EntraIdUserDesiredState.Tests.ps1" executed="True" result="Success" success="True" time="0.5085" asserts="0" description="C:\CODE\GitHub\AzureStackNerd\EntraIdDSC\tests\Invoke-EntraIdUserDesiredState.Tests.ps1">
+        <results>
+          <test-suite type="TestFixture" name="Invoke-EntraIdUserDesiredState" executed="True" result="Success" success="True" time="0.3419" asserts="0" description="Invoke-EntraIdUserDesiredState">
+            <results>
+              <test-suite type="TestFixture" name="Invoke-EntraIdUserDesiredState.Valid input scenarios - Processing JSON files without protected users" executed="True" result="Success" success="True" time="0.0723" asserts="0" description="Invoke-EntraIdUserDesiredState.Valid input scenarios - Processing JSON files without protected users">
+                <results>
+                  <test-case description="Processes a single JSON file with one user" name="Invoke-EntraIdUserDesiredState.Valid input scenarios - Processing JSON files without protected users.Processes a single JSON file with one user" time="0.0105" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Updates existing user when user already exists" name="Invoke-EntraIdUserDesiredState.Valid input scenarios - Processing JSON files without protected users.Updates existing user when user already exists" time="0.012" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Processes multiple users in a single file" name="Invoke-EntraIdUserDesiredState.Valid input scenarios - Processing JSON files without protected users.Processes multiple users in a single file" time="0.0244" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Processes JSONC file with comments" name="Invoke-EntraIdUserDesiredState.Valid input scenarios - Processing JSON files without protected users.Processes JSONC file with comments" time="0.01" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Processes user with all supported properties" name="Invoke-EntraIdUserDesiredState.Valid input scenarios - Processing JSON files without protected users.Processes user with all supported properties" time="0.009" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Invoke-EntraIdUserDesiredState.Valid input scenarios - Protected users" executed="True" result="Success" success="True" time="0.1205" asserts="0" description="Invoke-EntraIdUserDesiredState.Valid input scenarios - Protected users">
+                <results>
+                  <test-case description="Skips protected users defined in ProtectedUsers.json" name="Invoke-EntraIdUserDesiredState.Valid input scenarios - Protected users.Skips protected users defined in ProtectedUsers.json" time="0.0167" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Skips protected users defined in ProtectedUsers.jsonc" name="Invoke-EntraIdUserDesiredState.Valid input scenarios - Protected users.Skips protected users defined in ProtectedUsers.jsonc" time="0.0105" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Writes error when multiple ProtectedUsers files exist" name="Invoke-EntraIdUserDesiredState.Valid input scenarios - Protected users.Writes error when multiple ProtectedUsers files exist" time="0.0075" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Processes normally when no ProtectedUsers file exists" name="Invoke-EntraIdUserDesiredState.Valid input scenarios - Protected users.Processes normally when no ProtectedUsers file exists" time="0.0085" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Invoke-EntraIdUserDesiredState.Invalid input scenarios" executed="True" result="Success" success="True" time="0.1379" asserts="0" description="Invoke-EntraIdUserDesiredState.Invalid input scenarios">
+                <results>
+                  <test-case description="Throws when Path parameter is missing" name="Invoke-EntraIdUserDesiredState.Invalid input scenarios.Throws when Path parameter is missing" time="0.0017" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Handles invalid JSON gracefully" name="Invoke-EntraIdUserDesiredState.Invalid input scenarios.Handles invalid JSON gracefully" time="0.0075" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Invoke-EntraIdUserDesiredState.Edge cases" executed="True" result="Success" success="True" time="0.2617" asserts="0" description="Invoke-EntraIdUserDesiredState.Edge cases">
+                <results>
+                  <test-case description="Handles empty directory with no JSON files" name="Invoke-EntraIdUserDesiredState.Edge cases.Handles empty directory with no JSON files" time="0.0049" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Handles empty JSON array" name="Invoke-EntraIdUserDesiredState.Edge cases.Handles empty JSON array" time="0.0099" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Handles user with minimal properties" name="Invoke-EntraIdUserDesiredState.Edge cases.Handles user with minimal properties" time="0.0388" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Handles null property values" name="Invoke-EntraIdUserDesiredState.Edge cases.Handles null property values" time="0.0096" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Processes files in sorted order" name="Invoke-EntraIdUserDesiredState.Edge cases.Processes files in sorted order" time="0.0103" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Handles recursive file search" name="Invoke-EntraIdUserDesiredState.Edge cases.Handles recursive file search" time="0.0074" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Processes mix of new and existing users" name="Invoke-EntraIdUserDesiredState.Edge cases.Processes mix of new and existing users" time="0.0159" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Handles empty ProtectedUsers array" name="Invoke-EntraIdUserDesiredState.Edge cases.Handles empty ProtectedUsers array" time="0.0174" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Invoke-EntraIdUserDesiredState.ShouldProcess support" executed="True" result="Success" success="True" time="0.2868" asserts="0" description="Invoke-EntraIdUserDesiredState.ShouldProcess support">
+                <results>
+                  <test-case description="Supports -WhatIf" name="Invoke-EntraIdUserDesiredState.ShouldProcess support.Supports -WhatIf" time="0.0117" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Invoke-EntraIdUserDesiredState.Integration with Add-EntraIdUser and Set-EntraIdUser" executed="True" result="Success" success="True" time="0.3206" asserts="0" description="Invoke-EntraIdUserDesiredState.Integration with Add-EntraIdUser and Set-EntraIdUser">
+                <results>
+                  <test-case description="Passes correct parameters to Add-EntraIdUser" name="Invoke-EntraIdUserDesiredState.Integration with Add-EntraIdUser and Set-EntraIdUser.Passes correct parameters to Add-EntraIdUser" time="0.0139" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Passes correct user object to Set-EntraIdUser" name="Invoke-EntraIdUserDesiredState.Integration with Add-EntraIdUser and Set-EntraIdUser.Passes correct user object to Set-EntraIdUser" time="0.0135" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+      <test-suite type="TestFixture" name="C:\CODE\GitHub\AzureStackNerd\EntraIdDSC\tests\PrivateFunctions.Tests.ps1" executed="True" result="Success" success="True" time="0.6751" asserts="0" description="C:\CODE\GitHub\AzureStackNerd\EntraIdDSC\tests\PrivateFunctions.Tests.ps1">
+        <results>
+          <test-suite type="TestFixture" name="Get-ObjectType" executed="True" result="Success" success="True" time="0.1864" asserts="0" description="Get-ObjectType">
+            <results>
+              <test-suite type="TestFixture" name="Get-ObjectType.Valid input scenarios - User detection" executed="True" result="Success" success="True" time="0.024" asserts="0" description="Get-ObjectType.Valid input scenarios - User detection">
+                <results>
+                  <test-case description="Returns &quot;User&quot; for valid UPN matching a user" name="Get-ObjectType.Valid input scenarios - User detection.Returns &quot;User&quot; for valid UPN matching a user" time="0.0072" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Returns &quot;User&quot; for UPN with subdomain" name="Get-ObjectType.Valid input scenarios - User detection.Returns &quot;User&quot; for UPN with subdomain" time="0.0063" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Returns &quot;User&quot; for UPN with numbers and special characters" name="Get-ObjectType.Valid input scenarios - User detection.Returns &quot;User&quot; for UPN with numbers and special characters" time="0.006" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Get-ObjectType.Valid input scenarios - ServicePrincipal detection" executed="True" result="Success" success="True" time="0.0442" asserts="0" description="Get-ObjectType.Valid input scenarios - ServicePrincipal detection">
+                <results>
+                  <test-case description="Returns &quot;ServicePrincipal&quot; for display name matching a service principal" name="Get-ObjectType.Valid input scenarios - ServicePrincipal detection.Returns &quot;ServicePrincipal&quot; for display name matching a service principal" time="0.0072" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Checks ServicePrincipal before Group for non-UPN names" name="Get-ObjectType.Valid input scenarios - ServicePrincipal detection.Checks ServicePrincipal before Group for non-UPN names" time="0.0086" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Get-ObjectType.Valid input scenarios - Group detection" executed="True" result="Success" success="True" time="0.0735" asserts="0" description="Get-ObjectType.Valid input scenarios - Group detection">
+                <results>
+                  <test-case description="Returns &quot;Group&quot; for display name matching a group" name="Get-ObjectType.Valid input scenarios - Group detection.Returns &quot;Group&quot; for display name matching a group" time="0.0079" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Returns &quot;Group&quot; when ServicePrincipal not found" name="Get-ObjectType.Valid input scenarios - Group detection.Returns &quot;Group&quot; when ServicePrincipal not found" time="0.0174" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Get-ObjectType.Invalid input scenarios" executed="True" result="Success" success="True" time="0.0917" asserts="0" description="Get-ObjectType.Invalid input scenarios">
+                <results>
+                  <test-case description="Throws when Name parameter is missing" name="Get-ObjectType.Invalid input scenarios.Throws when Name parameter is missing" time="0.0032" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Returns null when no object is found" name="Get-ObjectType.Invalid input scenarios.Returns null when no object is found" time="0.0048" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Returns null for display name with no matches" name="Get-ObjectType.Invalid input scenarios.Returns null for display name with no matches" time="0.006" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Get-ObjectType.Edge cases" executed="True" result="Success" success="True" time="0.138" asserts="0" description="Get-ObjectType.Edge cases">
+                <results>
+                  <test-case description="Handles empty string" name="Get-ObjectType.Edge cases.Handles empty string" time="0.004" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Handles whitespace-only string" name="Get-ObjectType.Edge cases.Handles whitespace-only string" time="0.0056" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Does not query User for non-UPN format (no @)" name="Get-ObjectType.Edge cases.Does not query User for non-UPN format (no @)" time="0.0068" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Does not query User for invalid UPN format (@@ or trailing dot)" name="Get-ObjectType.Edge cases.Does not query User for invalid UPN format (@@ or trailing dot)" time="0.0067" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Handles UPN-like string but user not found" name="Get-ObjectType.Edge cases.Handles UPN-like string but user not found" time="0.004" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Handles Graph API errors gracefully" name="Get-ObjectType.Edge cases.Handles Graph API errors gracefully" time="0.0064" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Handles names with special OData characters" name="Get-ObjectType.Edge cases.Handles names with special OData characters" time="0.008" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Get-ObjectType.UPN pattern matching" executed="True" result="Success" success="True" time="0.1628" asserts="0" description="Get-ObjectType.UPN pattern matching">
+                <results>
+                  <test-case description="Correctly identifies UPN pattern with @ and dot" name="Get-ObjectType.UPN pattern matching.Correctly identifies UPN pattern with @ and dot" time="0.0053" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Does not match @ without dot after" name="Get-ObjectType.UPN pattern matching.Does not match @ without dot after" time="0.0068" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+          <test-suite type="TestFixture" name="Test-GraphAuth" executed="True" result="Success" success="True" time="0.3333" asserts="0" description="Test-GraphAuth">
+            <results>
+              <test-suite type="TestFixture" name="Test-GraphAuth.Valid scenarios - Already authenticated" executed="True" result="Success" success="True" time="0.028" asserts="0" description="Test-GraphAuth.Valid scenarios - Already authenticated">
+                <results>
+                  <test-case description="Returns successfully when valid context exists" name="Test-GraphAuth.Valid scenarios - Already authenticated.Returns successfully when valid context exists" time="0.0125" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Does not call Connect-MgGraph when context is valid" name="Test-GraphAuth.Valid scenarios - Already authenticated.Does not call Connect-MgGraph when context is valid" time="0.0115" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Test-GraphAuth.Valid scenarios - Not authenticated" executed="True" result="Success" success="True" time="0.0764" asserts="0" description="Test-GraphAuth.Valid scenarios - Not authenticated">
+                <results>
+                  <test-case description="Calls Connect-MgGraph when no context exists" name="Test-GraphAuth.Valid scenarios - Not authenticated.Calls Connect-MgGraph when no context exists" time="0.029" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Passes NoWelcome parameter to Connect-MgGraph" name="Test-GraphAuth.Valid scenarios - Not authenticated.Passes NoWelcome parameter to Connect-MgGraph" time="0.0153" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Test-GraphAuth.Invalid scenarios" executed="True" result="Success" success="True" time="0.1045" asserts="0" description="Test-GraphAuth.Invalid scenarios">
+                <results>
+                  <test-case description="Throws when Get-MgContext fails" name="Test-GraphAuth.Invalid scenarios.Throws when Get-MgContext fails" time="0.0102" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Throws when Connect-MgGraph fails" name="Test-GraphAuth.Invalid scenarios.Throws when Connect-MgGraph fails" time="0.0137" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Test-GraphAuth.Edge cases" executed="True" result="Success" success="True" time="0.1392" asserts="0" description="Test-GraphAuth.Edge cases">
+                <results>
+                  <test-case description="Handles Get-MgContext returning empty object" name="Test-GraphAuth.Edge cases.Handles Get-MgContext returning empty object" time="0.0165" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Handles Connect-MgGraph with ErrorAction Stop" name="Test-GraphAuth.Edge cases.Handles Connect-MgGraph with ErrorAction Stop" time="0.0141" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+          <test-suite type="TestFixture" name="Test-UserPrincipalName" executed="True" result="Success" success="True" time="0.475" asserts="0" description="Test-UserPrincipalName">
+            <results>
+              <test-suite type="TestFixture" name="Test-UserPrincipalName.Valid UPN formats" executed="True" result="Success" success="True" time="0.0224" asserts="0" description="Test-UserPrincipalName.Valid UPN formats">
+                <results>
+                  <test-case description="Returns true for standard UPN format" name="Test-UserPrincipalName.Valid UPN formats.Returns true for standard UPN format" time="0.0023" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Returns true for UPN with subdomain" name="Test-UserPrincipalName.Valid UPN formats.Returns true for UPN with subdomain" time="0.0022" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Returns true for UPN with numbers" name="Test-UserPrincipalName.Valid UPN formats.Returns true for UPN with numbers" time="0.0022" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Returns true for UPN with dot in local part" name="Test-UserPrincipalName.Valid UPN formats.Returns true for UPN with dot in local part" time="0.0022" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Returns true for UPN with hyphen in domain" name="Test-UserPrincipalName.Valid UPN formats.Returns true for UPN with hyphen in domain" time="0.0027" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Returns true for UPN with underscore in local part" name="Test-UserPrincipalName.Valid UPN formats.Returns true for UPN with underscore in local part" time="0.0025" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Returns true for UPN with multiple subdomains" name="Test-UserPrincipalName.Valid UPN formats.Returns true for UPN with multiple subdomains" time="0.0022" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Returns true for minimal valid UPN" name="Test-UserPrincipalName.Valid UPN formats.Returns true for minimal valid UPN" time="0.0021" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Test-UserPrincipalName.Invalid UPN formats" executed="True" result="Success" success="True" time="0.0565" asserts="0" description="Test-UserPrincipalName.Invalid UPN formats">
+                <results>
+                  <test-case description="Returns false for UPN without @ sign" name="Test-UserPrincipalName.Invalid UPN formats.Returns false for UPN without @ sign" time="0.0022" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Returns false for UPN without domain part" name="Test-UserPrincipalName.Invalid UPN formats.Returns false for UPN without domain part" time="0.0022" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Returns false for UPN without local part" name="Test-UserPrincipalName.Invalid UPN formats.Returns false for UPN without local part" time="0.0022" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Returns false for UPN without TLD" name="Test-UserPrincipalName.Invalid UPN formats.Returns false for UPN without TLD" time="0.0103" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Returns false for UPN with multiple @ signs" name="Test-UserPrincipalName.Invalid UPN formats.Returns false for UPN with multiple @ signs" time="0.0022" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Returns false for UPN with spaces" name="Test-UserPrincipalName.Invalid UPN formats.Returns false for UPN with spaces" time="0.0024" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Returns false for empty string" name="Test-UserPrincipalName.Invalid UPN formats.Returns false for empty string" time="0.0036" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Returns false for whitespace only" name="Test-UserPrincipalName.Invalid UPN formats.Returns false for whitespace only" time="0.0022" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Returns false for UPN with space in domain" name="Test-UserPrincipalName.Invalid UPN formats.Returns false for UPN with space in domain" time="0.0023" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Test-UserPrincipalName.Invalid input scenarios" executed="True" result="Success" success="True" time="0.0668" asserts="0" description="Test-UserPrincipalName.Invalid input scenarios">
+                <results>
+                  <test-case description="Throws when UserPrincipalName parameter is missing" name="Test-UserPrincipalName.Invalid input scenarios.Throws when UserPrincipalName parameter is missing" time="0.003" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Handles null input" name="Test-UserPrincipalName.Invalid input scenarios.Handles null input" time="0.0033" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Test-UserPrincipalName.Edge cases" executed="True" result="Success" success="True" time="0.0904" asserts="0" description="Test-UserPrincipalName.Edge cases">
+                <results>
+                  <test-case description="Returns false for UPN with leading dot" name="Test-UserPrincipalName.Edge cases.Returns false for UPN with leading dot" time="0.0022" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Returns false for UPN with trailing dot" name="Test-UserPrincipalName.Edge cases.Returns false for UPN with trailing dot" time="0.0022" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Returns true for UPN with plus sign (valid in RFC)" name="Test-UserPrincipalName.Edge cases.Returns true for UPN with plus sign (valid in RFC)" time="0.0024" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Returns false for UPN starting with @" name="Test-UserPrincipalName.Edge cases.Returns false for UPN starting with @" time="0.0022" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Returns false for UPN ending with @" name="Test-UserPrincipalName.Edge cases.Returns false for UPN ending with @" time="0.0022" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Handles very long UPN" name="Test-UserPrincipalName.Edge cases.Handles very long UPN" time="0.0037" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Returns false for UPN with only @ and dots" name="Test-UserPrincipalName.Edge cases.Returns false for UPN with only @ and dots" time="0.0023" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Handles UPN with international characters" name="Test-UserPrincipalName.Edge cases.Handles UPN with international characters" time="0.0022" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Test-UserPrincipalName.Error handling" executed="True" result="Success" success="True" time="0.106" asserts="0" description="Test-UserPrincipalName.Error handling">
+                <results>
+                  <test-case description="Catches and rethrows exceptions with proper error message" name="Test-UserPrincipalName.Error handling.Catches and rethrows exceptions with proper error message" time="0.0118" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Test-UserPrincipalName.Verbose output" executed="True" result="Success" success="True" time="0.138" asserts="0" description="Test-UserPrincipalName.Verbose output">
+                <results>
+                  <test-case description="Writes verbose message for valid UPN" name="Test-UserPrincipalName.Verbose output.Writes verbose message for valid UPN" time="0.0207" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Writes verbose message for invalid UPN" name="Test-UserPrincipalName.Verbose output.Writes verbose message for invalid UPN" time="0.0072" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+      <test-suite type="TestFixture" name="C:\CODE\GitHub\AzureStackNerd\EntraIdDSC\tests\Remove-EntraIdGroup.Tests.ps1" executed="True" result="Success" success="True" time="0.2589" asserts="0" description="C:\CODE\GitHub\AzureStackNerd\EntraIdDSC\tests\Remove-EntraIdGroup.Tests.ps1">
+        <results>
+          <test-suite type="TestFixture" name="Remove-EntraIdGroup" executed="True" result="Success" success="True" time="0.0753" asserts="0" description="Remove-EntraIdGroup">
+            <results>
+              <test-suite type="TestFixture" name="Remove-EntraIdGroup.Valid input" executed="True" result="Success" success="True" time="0.0254" asserts="0" description="Remove-EntraIdGroup.Valid input">
+                <results>
+                  <test-case description="Removes group with valid Id" name="Remove-EntraIdGroup.Valid input.Removes group with valid Id" time="0.0094" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Removes group with valid DisplayName" name="Remove-EntraIdGroup.Valid input.Removes group with valid DisplayName" time="0.0117" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Remove-EntraIdGroup.Invalid input" executed="True" result="Success" success="True" time="0.0425" asserts="0" description="Remove-EntraIdGroup.Invalid input">
+                <results>
+                  <test-case description="Throws error for missing Id" name="Remove-EntraIdGroup.Invalid input.Throws error for missing Id" time="0.0021" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Throws error for missing DisplayName" name="Remove-EntraIdGroup.Invalid input.Throws error for missing DisplayName" time="0.0107" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Remove-EntraIdGroup.Edge cases" executed="True" result="Success" success="True" time="0.0701" asserts="0" description="Remove-EntraIdGroup.Edge cases">
+                <results>
+                  <test-case description="Handles non-existent group Id gracefully" name="Remove-EntraIdGroup.Edge cases.Handles non-existent group Id gracefully" time="0.0084" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Handles already deleted group Id" name="Remove-EntraIdGroup.Edge cases.Handles already deleted group Id" time="0.0075" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Throws error for non-existent DisplayName" name="Remove-EntraIdGroup.Edge cases.Throws error for non-existent DisplayName" time="0.0074" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+      <test-suite type="TestFixture" name="C:\CODE\GitHub\AzureStackNerd\EntraIdDSC\tests\Set-EntraIdGroup.Tests.ps1" executed="True" result="Success" success="True" time="0.4827" asserts="0" description="C:\CODE\GitHub\AzureStackNerd\EntraIdDSC\tests\Set-EntraIdGroup.Tests.ps1">
+        <results>
+          <test-suite type="TestFixture" name="Set-EntraIdGroup" executed="True" result="Success" success="True" time="0.301" asserts="0" description="Set-EntraIdGroup">
+            <results>
+              <test-suite type="TestFixture" name="Set-EntraIdGroup.Valid input scenarios - Creating new Direct group" executed="True" result="Success" success="True" time="0.038" asserts="0" description="Set-EntraIdGroup.Valid input scenarios - Creating new Direct group">
+                <results>
+                  <test-case description="Creates a new Direct group with minimal parameters" name="Set-EntraIdGroup.Valid input scenarios - Creating new Direct group.Creates a new Direct group with minimal parameters" time="0.0156" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Creates a new Direct group with members and owners" name="Set-EntraIdGroup.Valid input scenarios - Creating new Direct group.Creates a new Direct group with members and owners" time="0.0104" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Creates a group with IsAssignableToRole set to true" name="Set-EntraIdGroup.Valid input scenarios - Creating new Direct group.Creates a group with IsAssignableToRole set to true" time="0.0074" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Set-EntraIdGroup.Valid input scenarios - Creating new Dynamic group" executed="True" result="Success" success="True" time="0.0573" asserts="0" description="Set-EntraIdGroup.Valid input scenarios - Creating new Dynamic group">
+                <results>
+                  <test-case description="Creates a new Dynamic group with membership rule" name="Set-EntraIdGroup.Valid input scenarios - Creating new Dynamic group.Creates a new Dynamic group with membership rule" time="0.0078" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Does not add members to Dynamic groups" name="Set-EntraIdGroup.Valid input scenarios - Creating new Dynamic group.Does not add members to Dynamic groups" time="0.0075" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Set-EntraIdGroup.Valid input scenarios - Updating existing groups" executed="True" result="Success" success="True" time="0.1179" asserts="0" description="Set-EntraIdGroup.Valid input scenarios - Updating existing groups">
+                <results>
+                  <test-case description="Updates group description when it differs" name="Set-EntraIdGroup.Valid input scenarios - Updating existing groups.Updates group description when it differs" time="0.0145" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Does not update when group is already in desired state" name="Set-EntraIdGroup.Valid input scenarios - Updating existing groups.Does not update when group is already in desired state" time="0.0087" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Adds missing members to existing group" name="Set-EntraIdGroup.Valid input scenarios - Updating existing groups.Adds missing members to existing group" time="0.0068" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Removes extra members from existing group" name="Set-EntraIdGroup.Valid input scenarios - Updating existing groups.Removes extra members from existing group" time="0.007" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Synchronizes both members and owners" name="Set-EntraIdGroup.Valid input scenarios - Updating existing groups.Synchronizes both members and owners" time="0.0116" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Set-EntraIdGroup.Valid input scenarios - Administrative Units" executed="True" result="Success" success="True" time="0.1489" asserts="0" description="Set-EntraIdGroup.Valid input scenarios - Administrative Units">
+                <results>
+                  <test-case description="Creates group in Administrative Unit when specified" name="Set-EntraIdGroup.Valid input scenarios - Administrative Units.Creates group in Administrative Unit when specified" time="0.0111" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Throws when Administrative Unit does not exist" name="Set-EntraIdGroup.Valid input scenarios - Administrative Units.Throws when Administrative Unit does not exist" time="0.0047" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Warns when trying to change AU membership for existing group" name="Set-EntraIdGroup.Valid input scenarios - Administrative Units.Warns when trying to change AU membership for existing group" time="0.011" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Set-EntraIdGroup.Invalid input scenarios" executed="True" result="Success" success="True" time="0.1606" asserts="0" description="Set-EntraIdGroup.Invalid input scenarios">
+                <results>
+                  <test-case description="Verifies DisplayName parameter is mandatory" name="Set-EntraIdGroup.Invalid input scenarios.Verifies DisplayName parameter is mandatory" time="0.0022" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Verifies Description parameter is mandatory" name="Set-EntraIdGroup.Invalid input scenarios.Verifies Description parameter is mandatory" time="0.0018" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Verifies Owners parameter is mandatory" name="Set-EntraIdGroup.Invalid input scenarios.Verifies Owners parameter is mandatory" time="0.0017" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Throws when invalid GroupMembershipType is provided" name="Set-EntraIdGroup.Invalid input scenarios.Throws when invalid GroupMembershipType is provided" time="0.0019" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Set-EntraIdGroup.Edge cases" executed="True" result="Success" success="True" time="0.2174" asserts="0" description="Set-EntraIdGroup.Edge cases">
+                <results>
+                  <test-case description="Handles empty Members array" name="Set-EntraIdGroup.Edge cases.Handles empty Members array" time="0.0141" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Removes all members when Members is null and group exists" name="Set-EntraIdGroup.Edge cases.Removes all members when Members is null and group exists" time="0.0073" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Warns when IsAssignableToRole cannot be changed" name="Set-EntraIdGroup.Edge cases.Warns when IsAssignableToRole cannot be changed" time="0.0079" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Uses retry mechanism when checking group creation" name="Set-EntraIdGroup.Edge cases.Uses retry mechanism when checking group creation" time="0.0114" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Throws when group creation check fails after retries" name="Set-EntraIdGroup.Edge cases.Throws when group creation check fails after retries" time="0.0117" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Set-EntraIdGroup.ShouldProcess support" executed="True" result="Success" success="True" time="0.24" asserts="0" description="Set-EntraIdGroup.ShouldProcess support">
+                <results>
+                  <test-case description="Supports -WhatIf for new group creation" name="Set-EntraIdGroup.ShouldProcess support.Supports -WhatIf for new group creation" time="0.0049" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Supports -WhatIf for group updates" name="Set-EntraIdGroup.ShouldProcess support.Supports -WhatIf for group updates" time="0.0065" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+      <test-suite type="TestFixture" name="C:\CODE\GitHub\AzureStackNerd\EntraIdDSC\tests\Set-EntraIdUser.Tests.ps1" executed="True" result="Success" success="True" time="0.3253" asserts="0" description="C:\CODE\GitHub\AzureStackNerd\EntraIdDSC\tests\Set-EntraIdUser.Tests.ps1">
+        <results>
+          <test-suite type="TestFixture" name="Set-EntraIdUser" executed="True" result="Success" success="True" time="0.1521" asserts="0" description="Set-EntraIdUser">
+            <results>
+              <test-suite type="TestFixture" name="Set-EntraIdUser.Valid input scenarios" executed="True" result="Success" success="True" time="0.0363" asserts="0" description="Set-EntraIdUser.Valid input scenarios">
+                <results>
+                  <test-case description="Updates user properties when they differ from desired state" name="Set-EntraIdUser.Valid input scenarios.Updates user properties when they differ from desired state" time="0.0069" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Updates only properties that differ" name="Set-EntraIdUser.Valid input scenarios.Updates only properties that differ" time="0.0053" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Does not update when user is already in desired state" name="Set-EntraIdUser.Valid input scenarios.Does not update when user is already in desired state" time="0.004" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Updates multiple user properties" name="Set-EntraIdUser.Valid input scenarios.Updates multiple user properties" time="0.0052" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Does not update UserPrincipalName property" name="Set-EntraIdUser.Valid input scenarios.Does not update UserPrincipalName property" time="0.005" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Handles user with minimal properties" name="Set-EntraIdUser.Valid input scenarios.Handles user with minimal properties" time="0.0052" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Set-EntraIdUser.Invalid input scenarios" executed="True" result="Success" success="True" time="0.057" asserts="0" description="Set-EntraIdUser.Invalid input scenarios">
+                <results>
+                  <test-case description="Throws when user does not exist" name="Set-EntraIdUser.Invalid input scenarios.Throws when user does not exist" time="0.0046" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Throws when User parameter is missing" name="Set-EntraIdUser.Invalid input scenarios.Throws when User parameter is missing" time="0.0058" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Throws when User parameter is null" name="Set-EntraIdUser.Invalid input scenarios.Throws when User parameter is null" time="0.0017" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Throws when UserPrincipalName is missing from User object" name="Set-EntraIdUser.Invalid input scenarios.Throws when UserPrincipalName is missing from User object" time="0.0043" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Set-EntraIdUser.Edge cases" executed="True" result="Success" success="True" time="0.0978" asserts="0" description="Set-EntraIdUser.Edge cases">
+                <results>
+                  <test-case description="Handles null property values in desired state" name="Set-EntraIdUser.Edge cases.Handles null property values in desired state" time="0.0052" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Handles empty string property values" name="Set-EntraIdUser.Edge cases.Handles empty string property values" time="0.0051" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Handles boolean property changes" name="Set-EntraIdUser.Edge cases.Handles boolean property changes" time="0.0055" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Handles Update-MgUser exceptions" name="Set-EntraIdUser.Edge cases.Handles Update-MgUser exceptions" time="0.006" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Handles Get-EntraIdUser exceptions" name="Set-EntraIdUser.Edge cases.Handles Get-EntraIdUser exceptions" time="0.0045" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Handles user object with additional custom properties" name="Set-EntraIdUser.Edge cases.Handles user object with additional custom properties" time="0.0099" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Set-EntraIdUser.ShouldProcess support" executed="True" result="Success" success="True" time="0.1115" asserts="0" description="Set-EntraIdUser.ShouldProcess support">
+                <results>
+                  <test-case description="Supports -WhatIf for user updates" name="Set-EntraIdUser.ShouldProcess support.Supports -WhatIf for user updates" time="0.0043" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Respects -Confirm:$false" name="Set-EntraIdUser.ShouldProcess support.Respects -Confirm:$false" time="0.0052" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Set-EntraIdUser.Output validation" executed="True" result="Success" success="True" time="0.1233" asserts="0" description="Set-EntraIdUser.Output validation">
+                <results>
+                  <test-case description="Writes output when update is required" name="Set-EntraIdUser.Output validation.Writes output when update is required" time="0.0044" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Writes output when no update is required" name="Set-EntraIdUser.Output validation.Writes output when no update is required" time="0.0031" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+    </results>
+  </test-suite>
+</test-results>
