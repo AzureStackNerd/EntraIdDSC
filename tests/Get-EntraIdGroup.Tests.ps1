@@ -2,10 +2,10 @@
 Import-Module "$PSScriptRoot/../EntraIdDSC/" -Force
 
 InModuleScope EntraIdDSC {
-    BeforeAll {
-        Mock Test-GraphAuth { }
-    }
     Describe "Get-EntraIdGroup" {
+        BeforeAll {
+            Mock Test-GraphAuth { }
+        }
         Context "ByDisplayName parameter set" {
             It "Returns group when display name exists" {
                 Mock Get-MgGroup { @{DisplayName = 'TestGroup' } }
@@ -193,19 +193,14 @@ InModuleScope EntraIdDSC {
         }
 
         Context "Parameter validation" {
-            It "Throws when DisplayName parameter is missing" {
-                # Use Get-Command to verify DisplayName is mandatory in its parameter set
-                $param = (Get-Command Get-EntraIdGroup).Parameters['DisplayName']
-                $param.Attributes.Where({$_.TypeId.Name -eq 'ParameterAttribute' -and $_.ParameterSetName -eq 'ByDisplayName'}).Mandatory | Should -Be $true
-            }
-            It "Throws when Id parameter is missing" {
-                # Use Get-Command to verify Id is mandatory in its parameter set
-                $param = (Get-Command Get-EntraIdGroup).Parameters['Id']
-                $param.Attributes.Where({$_.TypeId.Name -eq 'ParameterAttribute' -and $_.ParameterSetName -eq 'ById'}).Mandatory | Should -Be $true
-            }
-            It "DisplayNamePattern is not mandatory" {
-                $param = (Get-Command Get-EntraIdGroup).Parameters['DisplayNamePattern']
-                $param.Attributes.Where({$_.TypeId.Name -eq 'ParameterAttribute' -and $_.ParameterSetName -eq 'ByDisplayNamePattern'}).Mandatory | Should -Be $false
+            It "<ParameterName> is <MandatoryStatus> in <ParameterSetName> parameter set" -TestCases @(
+                @{ ParameterName = 'DisplayName'; ParameterSetName = 'ByDisplayName'; IsMandatory = $true; MandatoryStatus = 'mandatory' }
+                @{ ParameterName = 'Id'; ParameterSetName = 'ById'; IsMandatory = $true; MandatoryStatus = 'mandatory' }
+                @{ ParameterName = 'DisplayNamePattern'; ParameterSetName = 'ByDisplayNamePattern'; IsMandatory = $false; MandatoryStatus = 'not mandatory' }
+            ) {
+                param($ParameterName, $ParameterSetName, $IsMandatory)
+                $param = (Get-Command Get-EntraIdGroup).Parameters[$ParameterName]
+                $param.Attributes.Where({$_.TypeId.Name -eq 'ParameterAttribute' -and $_.ParameterSetName -eq $ParameterSetName}).Mandatory | Should -Be $IsMandatory
             }
         }
 

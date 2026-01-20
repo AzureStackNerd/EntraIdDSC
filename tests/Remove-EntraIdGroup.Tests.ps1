@@ -6,26 +6,17 @@ Import-Module "$PSScriptRoot/../EntraIdDSC/" -Force
 
 InModuleScope EntraIdDSC {
     Describe 'Remove-EntraIdGroup' {
-        BeforeAll {
-            # Mock external dependencies with generic fallbacks
-            Mock -CommandName Remove-MgGroup -MockWith { }
-            Mock -CommandName Get-EntraIdGroup -MockWith {
-                @{
-                    Id = '11111111-1111-1111-1111-111111111111'
-                    DisplayName = 'TestGroup'
-                }
-            }
-        }
-
         Context 'ById parameter set' {
-            It 'Removes group with valid Id' {
+            BeforeEach {
+                Mock Remove-MgGroup { }
                 Mock Get-EntraIdGroup {
                     @{
                         Id = '11111111-1111-1111-1111-111111111111'
                         DisplayName = 'TestGroup'
                     }
                 }
-                Mock Remove-MgGroup { }
+            }
+            It 'Removes group with valid Id' {
                 Remove-EntraIdGroup -Id '11111111-1111-1111-1111-111111111111' -Confirm:$false
                 Should -Invoke -CommandName Remove-MgGroup -Times 1 -Exactly -ParameterFilter {
                     $GroupId -eq '11111111-1111-1111-1111-111111111111'
@@ -47,10 +38,6 @@ InModuleScope EntraIdDSC {
             }
 
             It 'Writes verbose message when group is removed by Id' {
-                Mock Get-EntraIdGroup {
-                    @{ Id = '11111111-1111-1111-1111-111111111111' }
-                }
-                Mock Remove-MgGroup { }
                 $verboseOutput = Remove-EntraIdGroup -Id '11111111-1111-1111-1111-111111111111' -Confirm:$false -Verbose 4>&1
                 $verboseMessages = $verboseOutput | Where-Object { $_ -is [System.Management.Automation.VerboseRecord] }
                 $verboseMessages -match "Group with Id '11111111-1111-1111-1111-111111111111' removed" | Should -Not -BeNullOrEmpty
@@ -61,16 +48,13 @@ InModuleScope EntraIdDSC {
                 { Remove-EntraIdGroup -Id '99999999-9999-9999-9999-999999999999' -Confirm:$false } | Should -Throw "*Group with Id '99999999-9999-9999-9999-999999999999' not found*"
             }
 
-            It 'Throws when Id is empty string' {
-                { Remove-EntraIdGroup -Id '' -Confirm:$false } | Should -Throw "*Id cannot be empty*"
-            }
-
-            It 'Throws when Id is whitespace only' {
-                { Remove-EntraIdGroup -Id '   ' -Confirm:$false } | Should -Throw "*Id cannot be empty*"
-            }
-
-            It 'Throws when Id is null' {
-                { Remove-EntraIdGroup -Id $null -Confirm:$false } | Should -Throw "*Id cannot be empty*"
+            It 'Throws when Id is <Description>' -TestCases @(
+                @{ Value = ''; Description = 'empty string' }
+                @{ Value = '   '; Description = 'whitespace only' }
+                @{ Value = $null; Description = 'null' }
+            ) {
+                param($Value)
+                { Remove-EntraIdGroup -Id $Value -Confirm:$false } | Should -Throw "*Id cannot be empty*"
             }
 
             It 'Handles uppercase GUID' {
@@ -80,13 +64,21 @@ InModuleScope EntraIdDSC {
                         DisplayName = 'TestGroup'
                     }
                 }
-                Mock Remove-MgGroup { }
                 Remove-EntraIdGroup -Id 'AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA' -Confirm:$false
                 Should -Invoke -CommandName Remove-MgGroup -Times 1 -Exactly
             }
         }
 
         Context 'ByName parameter set' {
+            BeforeEach {
+                Mock Remove-MgGroup { }
+                Mock Get-EntraIdGroup {
+                    @{
+                        Id = '33333333-3333-3333-3333-333333333333'
+                        DisplayName = 'TestGroup'
+                    }
+                }
+            }
             It 'Removes group with valid DisplayName' {
                 Mock Get-EntraIdGroup {
                     @{
@@ -94,7 +86,6 @@ InModuleScope EntraIdDSC {
                         DisplayName = 'TestGroupByName'
                     }
                 }
-                Mock Remove-MgGroup { }
                 Remove-EntraIdGroup -DisplayName 'TestGroupByName' -Confirm:$false
                 Should -Invoke -CommandName Remove-MgGroup -Times 1 -Exactly -ParameterFilter {
                     $GroupId -eq '33333333-3333-3333-3333-333333333333'
@@ -108,7 +99,6 @@ InModuleScope EntraIdDSC {
                         DisplayName = 'MyGroup'
                     }
                 }
-                Mock Remove-MgGroup { }
                 Remove-EntraIdGroup -DisplayName 'MyGroup' -Confirm:$false
                 Should -Invoke -CommandName Get-EntraIdGroup -Times 1 -Exactly -ParameterFilter {
                     $DisplayName -eq 'MyGroup'
@@ -116,13 +106,6 @@ InModuleScope EntraIdDSC {
             }
 
             It 'Writes verbose message when group is removed by DisplayName' {
-                Mock Get-EntraIdGroup {
-                    @{
-                        Id = '55555555-5555-5555-5555-555555555555'
-                        DisplayName = 'TestGroup'
-                    }
-                }
-                Mock Remove-MgGroup { }
                 $verboseOutput = Remove-EntraIdGroup -DisplayName 'TestGroup' -Confirm:$false -Verbose 4>&1
                 $verboseMessages = $verboseOutput | Where-Object { $_ -is [System.Management.Automation.VerboseRecord] }
                 $verboseMessages -match "Group with Name 'TestGroup' removed" | Should -Not -BeNullOrEmpty
@@ -133,16 +116,13 @@ InModuleScope EntraIdDSC {
                 { Remove-EntraIdGroup -DisplayName 'NonExistentGroup' -Confirm:$false } | Should -Throw "*Group with Name 'NonExistentGroup' not found*"
             }
 
-            It 'Throws when DisplayName is empty string' {
-                { Remove-EntraIdGroup -DisplayName '' -Confirm:$false } | Should -Throw "*DisplayName cannot be empty*"
-            }
-
-            It 'Throws when DisplayName is whitespace only' {
-                { Remove-EntraIdGroup -DisplayName '   ' -Confirm:$false } | Should -Throw "*DisplayName cannot be empty*"
-            }
-
-            It 'Throws when DisplayName is null' {
-                { Remove-EntraIdGroup -DisplayName $null -Confirm:$false } | Should -Throw "*DisplayName cannot be empty*"
+            It 'Throws when DisplayName is <Description>' -TestCases @(
+                @{ Value = ''; Description = 'empty string' }
+                @{ Value = '   '; Description = 'whitespace only' }
+                @{ Value = $null; Description = 'null' }
+            ) {
+                param($Value)
+                { Remove-EntraIdGroup -DisplayName $Value -Confirm:$false } | Should -Throw "*DisplayName cannot be empty*"
             }
 
             It 'Handles DisplayName with special characters' {
@@ -152,33 +132,27 @@ InModuleScope EntraIdDSC {
                         DisplayName = 'Test-Group_123 (Special)'
                     }
                 }
-                Mock Remove-MgGroup { }
                 Remove-EntraIdGroup -DisplayName 'Test-Group_123 (Special)' -Confirm:$false
                 Should -Invoke -CommandName Remove-MgGroup -Times 1 -Exactly
             }
         }
 
         Context 'ShouldProcess support' {
-            It 'Supports -WhatIf for removal by Id' {
+            BeforeEach {
+                Mock Remove-MgGroup { }
                 Mock Get-EntraIdGroup {
                     @{
                         Id = '11111111-1111-1111-1111-111111111111'
                         DisplayName = 'TestGroup'
                     }
                 }
-                Mock Remove-MgGroup { }
+            }
+            It 'Supports -WhatIf for removal by Id' {
                 Remove-EntraIdGroup -Id '11111111-1111-1111-1111-111111111111' -WhatIf
                 Should -Invoke -CommandName Remove-MgGroup -Times 0 -Exactly
             }
 
             It 'Supports -WhatIf for removal by DisplayName' {
-                Mock Get-EntraIdGroup {
-                    @{
-                        Id = '22222222-2222-2222-2222-222222222222'
-                        DisplayName = 'TestGroup'
-                    }
-                }
-                Mock Remove-MgGroup { }
                 Remove-EntraIdGroup -DisplayName 'TestGroup' -WhatIf
                 Should -Invoke -CommandName Remove-MgGroup -Times 0 -Exactly
             }
@@ -190,13 +164,6 @@ InModuleScope EntraIdDSC {
             }
 
             It 'Respects -Confirm:$true to skip removal' {
-                Mock Get-EntraIdGroup {
-                    @{
-                        Id = '11111111-1111-1111-1111-111111111111'
-                        DisplayName = 'TestGroup'
-                    }
-                }
-                Mock Remove-MgGroup { }
                 # With -Confirm:$true in non-interactive mode, ShouldProcess will not execute the action
                 # However, this may still throw or require user input, so we just verify WhatIf works instead
                 Remove-EntraIdGroup -Id '11111111-1111-1111-1111-111111111111' -WhatIf
@@ -210,31 +177,26 @@ InModuleScope EntraIdDSC {
                         DisplayName = 'TestGroup'
                     }
                 }
-                Mock Remove-MgGroup { }
                 Remove-EntraIdGroup -Id '33333333-3333-3333-3333-333333333333' -Confirm:$false
                 Should -Invoke -CommandName Remove-MgGroup -Times 1 -Exactly
             }
         }
 
         Context 'Error handling' {
-            It 'Throws when Remove-MgGroup fails for Id removal' {
+            BeforeEach {
                 Mock Get-EntraIdGroup {
                     @{
                         Id = '11111111-1111-1111-1111-111111111111'
                         DisplayName = 'TestGroup'
                     }
                 }
+            }
+            It 'Throws when Remove-MgGroup fails for Id removal' {
                 Mock Remove-MgGroup { throw 'Graph API Error' }
                 { Remove-EntraIdGroup -Id '11111111-1111-1111-1111-111111111111' -Confirm:$false } | Should -Throw '*Graph API Error*'
             }
 
             It 'Throws when Remove-MgGroup fails for DisplayName removal' {
-                Mock Get-EntraIdGroup {
-                    @{
-                        Id = '22222222-2222-2222-2222-222222222222'
-                        DisplayName = 'TestGroup'
-                    }
-                }
                 Mock Remove-MgGroup { throw 'Permission denied' }
                 { Remove-EntraIdGroup -DisplayName 'TestGroup' -Confirm:$false } | Should -Throw '*Permission denied*'
             }
@@ -251,28 +213,30 @@ InModuleScope EntraIdDSC {
         }
 
         Context 'Parameter validation' {
-            It 'Id parameter is not mandatory (but validated at runtime)' {
-                $param = (Get-Command Remove-EntraIdGroup).Parameters['Id']
-                $param.Attributes.Where({$_.TypeId.Name -eq 'ParameterAttribute' -and $_.ParameterSetName -eq 'ById'}).Mandatory | Should -Be $false
+            It '<ParameterName> parameter is not mandatory (but validated at runtime)' -TestCases @(
+                @{ ParameterName = 'Id'; ParameterSetName = 'ById' }
+                @{ ParameterName = 'DisplayName'; ParameterSetName = 'ByName' }
+            ) {
+                param($ParameterName, $ParameterSetName)
+                $param = (Get-Command Remove-EntraIdGroup).Parameters[$ParameterName]
+                $param.Attributes.Where({$_.TypeId.Name -eq 'ParameterAttribute' -and $_.ParameterSetName -eq $ParameterSetName}).Mandatory | Should -Be $false
             }
 
-            It 'DisplayName parameter is not mandatory (but validated at runtime)' {
-                $param = (Get-Command Remove-EntraIdGroup).Parameters['DisplayName']
-                $param.Attributes.Where({$_.TypeId.Name -eq 'ParameterAttribute' -and $_.ParameterSetName -eq 'ByName'}).Mandatory | Should -Be $false
-            }
-
-            It 'Supports pipeline input for Id parameter' {
-                $param = (Get-Command Remove-EntraIdGroup).Parameters['Id']
-                $param.Attributes.Where({$_.TypeId.Name -eq 'ParameterAttribute'}).ValueFromPipelineByPropertyName | Should -Be $true
-            }
-
-            It 'Supports pipeline input for DisplayName parameter' {
-                $param = (Get-Command Remove-EntraIdGroup).Parameters['DisplayName']
+            It 'Supports pipeline input for <ParameterName> parameter' -TestCases @(
+                @{ ParameterName = 'Id' }
+                @{ ParameterName = 'DisplayName' }
+            ) {
+                param($ParameterName)
+                $param = (Get-Command Remove-EntraIdGroup).Parameters[$ParameterName]
                 $param.Attributes.Where({$_.TypeId.Name -eq 'ParameterAttribute'}).ValueFromPipelineByPropertyName | Should -Be $true
             }
         }
 
         Context 'Pipeline input' {
+            BeforeEach {
+                Mock Remove-MgGroup { }
+            }
+
             It 'Accepts Id from pipeline by property name' {
                 Mock Get-EntraIdGroup {
                     @{
@@ -280,7 +244,6 @@ InModuleScope EntraIdDSC {
                         DisplayName = 'PipelineGroup'
                     }
                 }
-                Mock Remove-MgGroup { }
                 $inputObject = [PSCustomObject]@{ Id = '11111111-1111-1111-1111-111111111111' }
                 $inputObject | Remove-EntraIdGroup -Confirm:$false
                 Should -Invoke -CommandName Remove-MgGroup -Times 1 -Exactly
@@ -293,7 +256,6 @@ InModuleScope EntraIdDSC {
                         DisplayName = 'PipelineGroup'
                     }
                 }
-                Mock Remove-MgGroup { }
                 $inputObject = [PSCustomObject]@{ DisplayName = 'PipelineGroup' }
                 $inputObject | Remove-EntraIdGroup -Confirm:$false
                 Should -Invoke -CommandName Remove-MgGroup -Times 1 -Exactly
@@ -307,7 +269,6 @@ InModuleScope EntraIdDSC {
                         DisplayName = "Group-$Id"
                     }
                 }
-                Mock Remove-MgGroup { }
                 $groups = @(
                     [PSCustomObject]@{ Id = '11111111-1111-1111-1111-111111111111' }
                     [PSCustomObject]@{ Id = '22222222-2222-2222-2222-222222222222' }
@@ -319,6 +280,15 @@ InModuleScope EntraIdDSC {
         }
 
         Context 'Edge cases' {
+            BeforeEach {
+                Mock Remove-MgGroup { }
+                Mock Get-EntraIdGroup {
+                    @{
+                        Id = '11111111-1111-1111-1111-111111111111'
+                        DisplayName = 'TestGroup'
+                    }
+                }
+            }
             It 'Handles group that was just created (eventual consistency)' {
                 Mock Get-EntraIdGroup {
                     @{
@@ -326,7 +296,6 @@ InModuleScope EntraIdDSC {
                         DisplayName = 'NewGroup'
                     }
                 }
-                Mock Remove-MgGroup { }
                 Remove-EntraIdGroup -Id '11111111-1111-1111-1111-111111111111' -Confirm:$false
                 Should -Invoke -CommandName Remove-MgGroup -Times 1 -Exactly
             }
@@ -337,7 +306,6 @@ InModuleScope EntraIdDSC {
                         Id = '11111111-1111-1111-1111-111111111111'
                     }
                 }
-                Mock Remove-MgGroup { }
                 Remove-EntraIdGroup -Id '11111111-1111-1111-1111-111111111111' -Confirm:$false
                 Should -Invoke -CommandName Remove-MgGroup -Times 1 -Exactly
             }
@@ -349,19 +317,11 @@ InModuleScope EntraIdDSC {
                         DisplayName = ' TestGroup '
                     }
                 }
-                Mock Remove-MgGroup { }
                 Remove-EntraIdGroup -DisplayName ' TestGroup ' -Confirm:$false
                 Should -Invoke -CommandName Remove-MgGroup -Times 1 -Exactly
             }
 
             It 'Uses ErrorAction Stop when calling Remove-MgGroup' {
-                Mock Get-EntraIdGroup {
-                    @{
-                        Id = '11111111-1111-1111-1111-111111111111'
-                        DisplayName = 'TestGroup'
-                    }
-                }
-                Mock Remove-MgGroup { }
                 Remove-EntraIdGroup -Id '11111111-1111-1111-1111-111111111111' -Confirm:$false
                 Should -Invoke -CommandName Remove-MgGroup -Times 1 -Exactly -ParameterFilter {
                     $ErrorAction -eq 'Stop'

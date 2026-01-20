@@ -5,13 +5,11 @@ Import-Module "$PSScriptRoot/../EntraIdDSC/" -Force
 
 InModuleScope EntraIdDSC {
     Describe 'Add-EntraIdUser' {
-        BeforeAll {
-            # Mock external dependencies
-            Mock -CommandName Test-GraphAuth -MockWith { $true }
-            Mock -CommandName New-MgUser -MockWith { return @{ Id = '11111111-1111-1111-1111-111111111111'; UserPrincipalName = 'user@test.com' } }
-        }
-
         Context 'Valid input scenarios' {
+            BeforeEach {
+                Mock Test-GraphAuth { $true }
+                Mock New-MgUser { return @{ Id = '11111111-1111-1111-1111-111111111111'; UserPrincipalName = 'user@test.com' } }
+            }
             It 'Creates a user with valid parameters' {
                 $params = @{
                     DisplayName = 'Test User'
@@ -25,6 +23,11 @@ InModuleScope EntraIdDSC {
         }
 
         Context 'Invalid input scenarios' {
+            BeforeEach {
+                Mock Test-GraphAuth { $true }
+                Mock New-MgUser { return @{ Id = '11111111-1111-1111-1111-111111111111'; UserPrincipalName = 'user@test.com' } }
+            }
+
             It 'Throws when UserPrincipalName is missing' {
                 $params = @{
                     DisplayName = 'Test User'
@@ -41,49 +44,37 @@ InModuleScope EntraIdDSC {
                 { Add-EntraIdUser @params } | Should -Throw
             }
 
-            It 'Throws when UserPrincipalName is invalid format' {
+            It 'Throws when <Parameter> is whitespace only' -TestCases @(
+                @{ Parameter = 'DisplayName'; DisplayName = '   '; UserPrincipalName = 'user@test.com'; ErrorMessage = '*DisplayName is required*' }
+                @{ Parameter = 'UserPrincipalName'; DisplayName = 'Test User'; UserPrincipalName = '   '; ErrorMessage = '*UserPrincipalName is required*' }
+            ) {
+                param($DisplayName, $UserPrincipalName, $ErrorMessage)
                 $params = @{
-                    DisplayName = 'Test User'
-                    UserPrincipalName = 'notavalidemail'
-                    AdditionalProperties = @{ GivenName = 'Test'; Surname = 'User' }
+                    DisplayName = $DisplayName
+                    UserPrincipalName = $UserPrincipalName
                 }
-                { Add-EntraIdUser @params } | Should -Throw "*not in a valid format*"
+                { Add-EntraIdUser @params } | Should -Throw $ErrorMessage
             }
 
-            It 'Throws when DisplayName is whitespace only' {
-                $params = @{
-                    DisplayName = '   '
-                    UserPrincipalName = 'user@test.com'
-                }
-                { Add-EntraIdUser @params } | Should -Throw "*DisplayName is required*"
-            }
-
-            It 'Throws when UserPrincipalName is whitespace only' {
+            It 'Throws when UserPrincipalName is <Description>' -TestCases @(
+                @{ UserPrincipalName = 'notavalidemail'; Description = 'invalid format' }
+                @{ UserPrincipalName = 'user@'; Description = 'has no domain' }
+                @{ UserPrincipalName = 'usertest.com'; Description = 'has no @' }
+            ) {
+                param($UserPrincipalName)
                 $params = @{
                     DisplayName = 'Test User'
-                    UserPrincipalName = '   '
-                }
-                { Add-EntraIdUser @params } | Should -Throw "*UserPrincipalName is required*"
-            }
-
-            It 'Throws when UserPrincipalName has no domain' {
-                $params = @{
-                    DisplayName = 'Test User'
-                    UserPrincipalName = 'user@'
-                }
-                { Add-EntraIdUser @params } | Should -Throw "*not in a valid format*"
-            }
-
-            It 'Throws when UserPrincipalName has no @' {
-                $params = @{
-                    DisplayName = 'Test User'
-                    UserPrincipalName = 'usertest.com'
+                    UserPrincipalName = $UserPrincipalName
                 }
                 { Add-EntraIdUser @params } | Should -Throw "*not in a valid format*"
             }
         }
 
         Context 'Edge cases' {
+            BeforeEach {
+                Mock Test-GraphAuth { $true }
+                Mock New-MgUser { return @{ Id = '11111111-1111-1111-1111-111111111111'; UserPrincipalName = 'user@test.com' } }
+            }
             It 'Handles empty AdditionalProperties' {
                 $params = @{
                     DisplayName = 'Test User'
@@ -181,38 +172,33 @@ InModuleScope EntraIdDSC {
         }
 
         Context 'Error handling' {
-            It 'Throws when Test-GraphAuth fails' {
-                Mock -CommandName Test-GraphAuth -MockWith { throw "Not authenticated" }
+            It 'Throws when <Scenario>' -TestCases @(
+                @{ Scenario = 'Test-GraphAuth fails'; MockCommand = 'Test-GraphAuth'; ErrorThrown = 'Not authenticated'; ErrorExpected = '*Not authenticated*' }
+                @{ Scenario = 'New-MgUser fails'; MockCommand = 'New-MgUser'; ErrorThrown = 'Graph API Error: User already exists'; ErrorExpected = '*User already exists*' }
+                @{ Scenario = 'Graph API throws permission error'; MockCommand = 'New-MgUser'; ErrorThrown = 'Insufficient privileges'; ErrorExpected = '*Insufficient privileges*' }
+            ) {
+                param($MockCommand, $ErrorThrown, $ErrorExpected)
+
+                if ($MockCommand -eq 'Test-GraphAuth') {
+                    Mock Test-GraphAuth { throw $ErrorThrown }
+                } else {
+                    Mock Test-GraphAuth { $true }
+                    Mock New-MgUser { throw $ErrorThrown }
+                }
 
                 $params = @{
                     DisplayName = 'Test User'
                     UserPrincipalName = 'user@test.com'
                 }
-                { Add-EntraIdUser @params } | Should -Throw "*Not authenticated*"
-            }
-
-            It 'Throws when New-MgUser fails' {
-                Mock -CommandName New-MgUser -MockWith { throw "Graph API Error: User already exists" }
-
-                $params = @{
-                    DisplayName = 'Test User'
-                    UserPrincipalName = 'user@test.com'
-                }
-                { Add-EntraIdUser @params } | Should -Throw "*User already exists*"
-            }
-
-            It 'Does not create user when Graph API throws permission error' {
-                Mock -CommandName New-MgUser -MockWith { throw "Insufficient privileges" }
-
-                $params = @{
-                    DisplayName = 'Test User'
-                    UserPrincipalName = 'user@test.com'
-                }
-                { Add-EntraIdUser @params } | Should -Throw "*Insufficient privileges*"
+                { Add-EntraIdUser @params } | Should -Throw $ErrorExpected
             }
         }
 
         Context 'ShouldProcess support' {
+            BeforeEach {
+                Mock Test-GraphAuth { $true }
+                Mock New-MgUser { return @{ Id = '11111111-1111-1111-1111-111111111111'; UserPrincipalName = 'user@test.com' } }
+            }
             It 'Supports -WhatIf' {
                 $params = @{
                     DisplayName = 'Test User'
@@ -235,7 +221,12 @@ InModuleScope EntraIdDSC {
         }
 
         Context 'Output validation' {
+            BeforeEach {
+                Mock Test-GraphAuth { $true }
+            }
+
             It 'Writes success message with DisplayName and UPN' {
+                Mock New-MgUser { return @{ Id = '11111111-1111-1111-1111-111111111111'; UserPrincipalName = 'john.doe@test.com' } }
                 $params = @{
                     DisplayName = 'John Doe'
                     UserPrincipalName = 'john.doe@test.com'
@@ -245,7 +236,7 @@ InModuleScope EntraIdDSC {
             }
 
             It 'Returns user object from New-MgUser' {
-                Mock -CommandName New-MgUser -MockWith {
+                Mock New-MgUser {
                     return @{
                         Id = '12345678-1234-1234-1234-123456789012'
                         UserPrincipalName = 'user@test.com'
