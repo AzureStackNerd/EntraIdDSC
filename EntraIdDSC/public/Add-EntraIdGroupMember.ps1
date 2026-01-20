@@ -33,39 +33,41 @@ function Add-EntraIdGroupMember {
         [Parameter(Mandatory, ParameterSetName = 'ByDisplayName', Position = 0, ValueFromPipeline, ValueFromPipelineByPropertyName)]
         [string]$GroupDisplayName,
         [Parameter(Mandatory)]
-        [array]$Members
+        [string[]]$Members
     )
 
     process {
-        if ($PSCmdlet.ShouldProcess("Group: $GroupDisplayName ($GroupId)", "Add specified members")) {
-            Test-GraphAuth
+        Test-GraphAuth
 
-            # Resolve group Id or group display name based on parameter set
-            switch ($PSCmdlet.ParameterSetName) {
-                'ByDisplayName' {
-                    $groupParams = @{
-                        DisplayName = "$GroupDisplayName"
-                    }
-                    $group = Get-EntraIdGroup @groupParams
-                    if (!$group) {
-                        Write-Warning "No group found with display name '$GroupDisplayName'."
-                        return
-                    }
-                    $GroupId = $group.Id
+        # Resolve group Id or group display name based on parameter set
+        switch ($PSCmdlet.ParameterSetName) {
+            'ByDisplayName' {
+                $groupParams = @{
+                    DisplayName = $GroupDisplayName
                 }
-                'ById' {
-                    $groupParams = @{
-                        Id = $GroupId
-                    }
-                    $group = Get-EntraIdGroup @groupParams
-                    if (!$group) {
-                        Write-Warning "No group found with Id '$GroupId'."
-                        return
-                    }
-                    $GroupDisplayName = $group.DisplayName
+                $group = Get-EntraIdGroup @groupParams
+                if (!$group) {
+                    Write-Warning "No group found with display name '$GroupDisplayName'."
+                    return
                 }
+                $GroupId = $group.Id
+                Write-Verbose "Resolved group '$GroupDisplayName' to Id: $GroupId"
             }
+            'ById' {
+                $groupParams = @{
+                    Id = $GroupId
+                }
+                $group = Get-EntraIdGroup @groupParams
+                if (!$group) {
+                    Write-Warning "No group found with Id '$GroupId'."
+                    return
+                }
+                $GroupDisplayName = $group.DisplayName
+                Write-Verbose "Resolved group Id '$GroupId' to DisplayName: $GroupDisplayName"
+            }
+        }
 
+        if ($PSCmdlet.ShouldProcess("Group: $GroupDisplayName ($GroupId)", "Add specified members")) {
             # Base parameters that are common for all member additions
             $baseMemberParams = @{
                 TargetGroupId          = $GroupId
@@ -74,8 +76,9 @@ function Add-EntraIdGroupMember {
 
             # Add all provided members directly
             foreach ($memberEntry in $Members) {
-                if ($memberEntry -like '*@*') {
+                if (Test-UserPrincipalName -UserPrincipalName $memberEntry) {
                     # User
+                    Write-Verbose "Searching for user with UPN: $memberEntry"
                     $memberUserParams = @{
                         UserPrincipalName = $memberEntry
                     }
@@ -94,6 +97,7 @@ function Add-EntraIdGroupMember {
                 }
                 else {
                     # Group
+                    Write-Verbose "Searching for group with DisplayName: $memberEntry"
                     $memberGroupParams = @{
                         DisplayName = $memberEntry
                     }
@@ -108,6 +112,7 @@ function Add-EntraIdGroupMember {
                     }
                     else {
                         # Try as service principal
+                        Write-Verbose "Group not found, searching for service principal with DisplayName: $memberEntry"
                         $memberSpnParams = @{
                             DisplayName = $memberEntry
                         }
