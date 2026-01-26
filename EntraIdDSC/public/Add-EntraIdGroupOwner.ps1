@@ -3,7 +3,7 @@
     Adds an owner to an Entra ID (Azure AD) group by group Id or display name.
 
 .DESCRIPTION
-    This function adds specified owners to an Entra ID group using Microsoft Graph. It supports searching for the group by Id or display name. Owners can be users, identified by their UPN.
+    This function adds specified owners to an Entra ID group using Microsoft Graph. It supports searching for the group by Id or display name. Owners can be users, groups, or service principals, identified by their UPN or display name.
 
 .PARAMETER GroupId
     The object Id (GUID) of the Entra ID group to add owners to.
@@ -12,7 +12,7 @@
     The display name of the Entra ID group to add owners to.
 
 .PARAMETER Owners
-    An array of user principal names (UPNs) to add as owners.
+    An array of user principal names (UPNs), group display names, or service principal display names to add as owners.
 
 .EXAMPLE
     Add-EntraIdGroupOwner -GroupId "00000000-0000-0000-0000-000000000001" -Owners @("user1@contoso.com", "user2@contoso.com")
@@ -33,111 +33,97 @@ function Add-EntraIdGroupOwner {
         [Parameter(Mandatory, ParameterSetName='ByDisplayName', Position=0, ValueFromPipeline, ValueFromPipelineByPropertyName)]
         [string]$GroupDisplayName,
         [Parameter(Mandatory)]
-        [array]$Owners
+        [string[]]$Owners
     )
 
     process {
-        if ($PSCmdlet.ShouldProcess("Group: $GroupDisplayName ($GroupId)", "Add specified owners")) {
-            Test-GraphAuth
+        Test-GraphAuth
 
-            # Resolve group Id or group display name based on parameter set
-            switch ($PSCmdlet.ParameterSetName) {
-                'ByDisplayName' {
-                    $groupParams = @{
-                        DisplayName = "$GroupDisplayName"
-                    }
-                    $group = Get-EntraIdGroup @groupParams
-                    if (!$group) {
-                        Write-Warning "No group found with display name '$GroupDisplayName'."
-                        return
-                    }
-                    $GroupId = $group.Id
+        # Resolve group Id or group display name based on parameter set
+        switch ($PSCmdlet.ParameterSetName) {
+            'ByDisplayName' {
+                $groupParams = @{
+                    DisplayName = $GroupDisplayName
                 }
-                'ById' {
-                    $groupParams = @{
-                        Id = $GroupId
-                    }
-                    $group = Get-EntraIdGroup @groupParams
-                    if (!$group) {
-                        Write-Warning "No group found with Id '$GroupId'."
-                        return
-                    }
-                    $GroupDisplayName = $group.DisplayName
+                $group = Get-EntraIdGroup @groupParams
+                if (!$group) {
+                    Write-Warning "No group found with display name '$GroupDisplayName'."
+                    return
                 }
+                $GroupId = $group.Id
+                Write-Verbose "Resolved group '$GroupDisplayName' to Id: $GroupId"
+            }
+            'ById' {
+                $groupParams = @{
+                    Id = $GroupId
+                }
+                $group = Get-EntraIdGroup @groupParams
+                if (!$group) {
+                    Write-Warning "No group found with Id '$GroupId'."
+                    return
+                }
+                $GroupDisplayName = $group.DisplayName
+                Write-Verbose "Resolved group Id '$GroupId' to DisplayName: $GroupDisplayName"
+            }
+        }
+
+        if ($PSCmdlet.ShouldProcess("Group: $GroupDisplayName ($GroupId)", "Add specified owners")) {
+            # Base parameters that are common for all owner additions
+            $baseOwnerParams = @{
+                TargetGroupId          = $GroupId
+                TargetGroupDisplayName = $GroupDisplayName
             }
 
             # Add all provided owners directly
             foreach ($ownerEntry in $Owners) {
-                if ($ownerEntry -like '*@*') {
+                if (Test-UserPrincipalName -UserPrincipalName $ownerEntry) {
+                    # User
+                    Write-Verbose "Searching for user with UPN: $ownerEntry"
                     $ownerUserParams = @{
                         UserPrincipalName = $ownerEntry
                     }
                     $ownerUserObj = Get-EntraIdUser @ownerUserParams
                     if ($ownerUserObj) {
-                        $ownerUserId = $ownerUserObj.Id
-                        $addOwnerParams = @{
-                            GroupId = $GroupId
-                            DirectoryObjectId = $ownerUserId
+                        $addOwnerParams = $baseOwnerParams + @{
+                            OwnerType       = 'user'
+                            OwnerIdentifier = $ownerEntry
+                            OwnerId         = $ownerUserObj.Id
                         }
-                        try {
-                            New-MgGroupOwner @addOwnerParams
-                            Write-Output "Added owner $ownerEntry to group $GroupDisplayName ($GroupId)."
-                        } catch {
-                            if ($_.Exception.Message -match "already an owner") {
-                                Write-Warning "Owner $ownerEntry is already an owner of the group. Skipping."
-                            } else {
-                                throw
-                            }
-                        }
-                    } else {
+                        Add-GroupOwnerWithErrorHandling @addOwnerParams
+                    }
+                    else {
                         Write-Warning "User not found: $ownerEntry"
                     }
                 }
                 else {
                     # Group
-                    $memberGroupParams = @{
+                    Write-Verbose "Searching for group with DisplayName: $ownerEntry"
+                    $ownerGroupParams = @{
                         DisplayName = $ownerEntry
                     }
-                    $memberGroupObj = Get-EntraIdGroup @memberGroupParams
-                    if ($null -ne $memberGroupObj) {
-                        $memberGroupId = $memberGroupObj.Id
-                        $addOwnerParams = @{
-                            GroupId = $GroupId
-                            DirectoryObjectId = $memberGroupId
+                    $ownerGroupObj = Get-EntraIdGroup @ownerGroupParams
+                    if ($null -ne $ownerGroupObj) {
+                        $addOwnerParams = $baseOwnerParams + @{
+                            OwnerType       = 'group'
+                            OwnerIdentifier = $ownerEntry
+                            OwnerId         = $ownerGroupObj.Id
                         }
-                        try {
-                            New-MgGroupOwner @addOwnerParams
-                            Write-Output "Added group $ownerEntry as owner of group $GroupDisplayName ($GroupId)."
-                        } catch {
-                            if ($_.Exception.Message -match "already an owner") {
-                                Write-Warning "Owner $ownerEntry is already an owner of the group. Skipping."
-                            } else {
-                                throw
-                            }
-                        }
+                        Add-GroupOwnerWithErrorHandling @addOwnerParams
                     }
                     else {
                         # Try as service principal
-                        $memberSpnParams = @{
+                        Write-Verbose "Group not found, searching for service principal with DisplayName: $ownerEntry"
+                        $ownerSpnParams = @{
                             DisplayName = $ownerEntry
                         }
-                        $memberSpnObj = Get-EntraIdServicePrincipal @memberSpnParams
-                        if ($null -ne $memberSpnObj) {
-                            $memberSpnId = $memberSpnObj.Id
-                            $addOwnerParams = @{
-                                GroupId = $GroupId
-                                DirectoryObjectId = $memberSpnId
+                        $ownerSpnObj = Get-EntraIdServicePrincipal @ownerSpnParams
+                        if ($null -ne $ownerSpnObj) {
+                            $addOwnerParams = $baseOwnerParams + @{
+                                OwnerType       = 'service principal'
+                                OwnerIdentifier = $ownerEntry
+                                OwnerId         = $ownerSpnObj.Id
                             }
-                            try {
-                                New-MgGroupOwner @addOwnerParams
-                                Write-Output "Added service principal $ownerEntry as owner of group $GroupDisplayName ($GroupId)."
-                            } catch {
-                                if ($_.Exception.Message -match "already an owner") {
-                                    Write-Warning "Owner $ownerEntry is already an owner of the group. Skipping."
-                                } else {
-                                    throw
-                                }
-                            }
+                            Add-GroupOwnerWithErrorHandling @addOwnerParams
                         }
                         else {
                             Write-Warning "Group or ServicePrincipal not found: $ownerEntry"
