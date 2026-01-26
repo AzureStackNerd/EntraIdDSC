@@ -463,7 +463,7 @@ InModuleScope EntraIdDSC {
                 }
                 Mock Remove-MgGroupMemberDirectoryObjectByRef { }
 
-                'PipelineGroup' | Remove-EntraIdGroupMember -GroupDisplayName { $_ } -Members @('user@test.com') -Confirm:$false
+                'PipelineGroup' | Remove-EntraIdGroupMember -Members @('user@test.com') -Confirm:$false
 
                 Should -Invoke -CommandName Remove-MgGroupMemberDirectoryObjectByRef -Times 1 -Exactly
             }

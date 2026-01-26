@@ -463,7 +463,7 @@ InModuleScope EntraIdDSC {
                 }
                 Mock Remove-MgGroupOwnerDirectoryObjectByRef { }
 
-                'PipelineGroup' | Remove-EntraIdGroupOwner -GroupDisplayName { $_ } -Owners @('owner@test.com') -Confirm:$false
+                'PipelineGroup' | Remove-EntraIdGroupOwner -Owners @('owner@test.com') -Confirm:$false
 
                 Should -Invoke -CommandName Remove-MgGroupOwnerDirectoryObjectByRef -Times 1 -Exactly
             }

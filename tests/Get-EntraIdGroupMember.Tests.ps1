@@ -361,7 +361,7 @@ InModuleScope EntraIdDSC {
             }
 
             It 'Accepts GroupDisplayName from pipeline' {
-                $result = 'TestGroup' | Get-EntraIdGroupMember -GroupDisplayName { $_ }
+                $result = 'TestGroup' | Get-EntraIdGroupMember
                 $result | Should -Not -BeNullOrEmpty
             }
 
