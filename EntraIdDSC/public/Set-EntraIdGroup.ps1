@@ -171,11 +171,13 @@ function Set-EntraIdGroup {
         if ($PSCmdlet.ShouldProcess("Group '$DisplayName'", "Check group creation status")) {
             if ($newGroup) {
                 # Check if the group was created successfully with retry mechanism
+                # Also verify the member endpoint is ready (different API endpoint with separate replication)
                 $groupParams = @{
                     DisplayName = "$DisplayName"
                 }
                 $retries = @(1, 5, 15, 30)
                 $group = $null
+                $memberEndpointReady = $false
                 foreach ($delay in $retries) {
                     if ($delay -gt 0) {
                         Write-Verbose "Waiting $delay seconds before checking group creation..."
@@ -183,10 +185,25 @@ function Set-EntraIdGroup {
                     }
                     $group = Get-EntraIdGroup @groupParams
                     if ($group) {
-                        break
+                        # Also verify the member endpoint is ready
+                        try {
+                            $membersParams = @{
+                                GroupId          = $group.Id
+                                All              = $true
+                                ConsistencyLevel = "eventual"
+                                CountVariable    = "MemberCount"
+                            }
+                            $null = Get-MgGroupMember @membersParams
+                            $memberEndpointReady = $true
+                            break
+                        }
+                        catch {
+                            Write-Verbose "Group found but member endpoint not ready yet: $($_.Exception.Message)"
+                            # Continue retrying
+                        }
                     }
                 }
-                if (!$group) {
+                if (!$group -or !$memberEndpointReady) {
                     $retryCount = $retries.Count
                     $totalWaitTime = ($retries | Measure-Object -Sum).Sum
                     throw "Group '$DisplayName' creation check failed after $retryCount retry attempts ($totalWaitTime seconds total wait time)."
