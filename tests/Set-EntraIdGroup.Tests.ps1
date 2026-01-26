@@ -26,6 +26,7 @@ InModuleScope EntraIdDSC {
             Mock -CommandName Get-MgDirectoryAdministrativeUnit -MockWith { $null }
             Mock -CommandName New-MgDirectoryAdministrativeUnitMember -MockWith { }
             Mock -CommandName Get-MgDirectoryAdministrativeUnitMember -MockWith { @() }
+            Mock -CommandName Get-MgGroupMember -MockWith { @() }
             Mock -CommandName Write-Warning -MockWith { }
             Mock -CommandName Start-Sleep -MockWith { }
         }
